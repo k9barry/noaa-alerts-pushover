@@ -13,6 +13,13 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - TZ=UTC
-    # Optional: Run on a schedule using cron or external scheduler
-    # For continuous operation, uncomment the command below:
-    # command: sh -c "while true; do python fetch.py && sleep 300; done"
+      # Run modes: once, loop, cron
+      # once: Run once and exit (default)
+      # loop: Run continuously with CHECK_INTERVAL seconds between checks
+      # cron: Use cron scheduler with CRON_SCHEDULE
+      - RUN_MODE=once
+      - CHECK_INTERVAL=300
+      # Example cron: */5 * * * * (every 5 minutes)
+      # - CRON_SCHEDULE=*/5 * * * *
+    # Uncomment to pass additional arguments to fetch.py:
+    # command: ["--debug"]

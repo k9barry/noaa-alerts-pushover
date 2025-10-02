@@ -28,7 +28,12 @@ Sends out NOAA Severe Weather Alerts via [Pushover](http://www.pushover.net). An
 
 3. **Edit counties.json** to add the counties you want to monitor. Find county codes on the [NOAA website](http://www.nws.noaa.gov/emwin/winugc.htm).
 
-4. **Run with Docker Compose:**
+4. **Validate your setup (optional but recommended):**
+   ```bash
+   python3 test_setup.py
+   ```
+
+5. **Run with Docker Compose:**
    ```bash
    docker-compose up -d
    ```
@@ -57,7 +62,12 @@ If you prefer to run without Docker:
    python models.py
    ```
 
-5. **Run the application:**
+5. **Validate your setup:**
+   ```bash
+   python test_setup.py
+   ```
+
+6. **Run the application:**
    ```bash
    python fetch.py
    ```

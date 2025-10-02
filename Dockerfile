@@ -20,11 +20,18 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application files
 COPY . .
 
-# Create output directory
-RUN mkdir -p /app/output
+# Create necessary directories
+RUN mkdir -p /app/output /app/data
+
+# Copy and set entrypoint
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
+ENV RUN_MODE=once
+ENV CHECK_INTERVAL=300
 
-# Run the application
-CMD ["python", "fetch.py"]
+# Use entrypoint script
+ENTRYPOINT ["/entrypoint.sh"]
+CMD []

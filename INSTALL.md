@@ -53,7 +53,12 @@ Docker provides the easiest and most consistent way to run NOAA Alerts Pushover.
    ]
    ```
 
-5. **Build and run the container:**
+5. **Validate your setup (recommended):**
+   ```bash
+   python3 test_setup.py
+   ```
+
+6. **Build and run the container:**
    ```bash
    docker-compose up -d
    ```
@@ -62,20 +67,44 @@ Docker provides the easiest and most consistent way to run NOAA Alerts Pushover.
 
 By default, the container runs once and exits. For continuous monitoring:
 
-#### Option 1: Modify docker-compose.yml
+#### Option 1: Use Loop Mode (Recommended)
 
-Edit `docker-compose.yml` and uncomment the command line:
+Use the included loop mode configuration:
+
+```bash
+docker-compose -f docker-compose.loop.yml up -d
+```
+
+Or set the environment variable in your docker-compose.yml:
 
 ```yaml
 services:
   noaa-alerts:
-    # ... other settings ...
-    command: sh -c "while true; do python fetch.py && sleep 300; done"
+    environment:
+      - RUN_MODE=loop
+      - CHECK_INTERVAL=300  # Check every 5 minutes
 ```
 
-This runs the check every 5 minutes (300 seconds). Adjust as needed.
+#### Option 2: Use Environment Variables
 
-#### Option 2: Use External Scheduler
+Create a `.env` file from `.env.example`:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env`:
+```
+RUN_MODE=loop
+CHECK_INTERVAL=300
+```
+
+Then run:
+```bash
+docker-compose up -d
+```
+
+#### Option 3: Use External Scheduler
 
 Keep the default single-run behavior and schedule with:
 
@@ -177,7 +206,12 @@ brew install python@3.12 git
    python models.py
    ```
 
-8. **Test the application:**
+8. **Validate your setup:**
+   ```bash
+   python test_setup.py
+   ```
+
+9. **Test the application:**
    ```bash
    python fetch.py --debug
    ```
