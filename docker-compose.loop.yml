@@ -1,0 +1,22 @@
+version: '3.8'
+
+# Example configuration for continuous monitoring
+# Usage: docker-compose -f docker-compose.loop.yml up -d
+
+services:
+  noaa-alerts:
+    build: .
+    container_name: noaa-alerts-pushover
+    restart: unless-stopped
+    volumes:
+      - ./config.txt:/app/config.txt:ro
+      - ./counties.json:/app/counties.json:ro
+      - ./output:/app/output
+      - ./data:/app/data
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TZ=UTC
+      - RUN_MODE=loop
+      - CHECK_INTERVAL=300  # Check every 5 minutes (300 seconds)
+    # Optional: Enable debug mode
+    # command: ["--debug"]

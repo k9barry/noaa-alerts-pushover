@@ -29,11 +29,11 @@ for filename in output_files:
         else:
             continue
 
-        now_ts = arrow.utcnow().timestamp
+        now_ts = arrow.utcnow().timestamp()
         if expires_at < now_ts:
             files_to_delete.append(filepath)
 
 
 for filepath in files_to_delete:
-    print 'Deleting filepath: %s' % filepath
+    print('Deleting filepath: %s' % filepath)
     os.remove(filepath)

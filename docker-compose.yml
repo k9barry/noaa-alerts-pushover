@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  noaa-alerts:
+    build: .
+    container_name: noaa-alerts-pushover
+    restart: unless-stopped
+    volumes:
+      - ./config.txt:/app/config.txt:ro
+      - ./counties.json:/app/counties.json:ro
+      - ./output:/app/output
+      - ./data:/app/data
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TZ=UTC
+      # Run modes: once, loop, cron
+      # once: Run once and exit (default)
+      # loop: Run continuously with CHECK_INTERVAL seconds between checks
+      # cron: Use cron scheduler with CRON_SCHEDULE
+      - RUN_MODE=once
+      - CHECK_INTERVAL=300
+      # Example cron: */5 * * * * (every 5 minutes)
+      # - CRON_SCHEDULE=*/5 * * * *
+    # Uncomment to pass additional arguments to fetch.py:
+    # command: ["--debug"]

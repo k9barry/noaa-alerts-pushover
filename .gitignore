@@ -60,3 +60,5 @@ config.txt
 log.txt
 alerts.db
 output/
+data/
+.env
