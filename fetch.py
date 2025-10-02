@@ -155,7 +155,7 @@ class Parser(object):
 
         # Create an XML doc from the URL contents
         logger.info('Fetching Alerts Feed')
-        request = requests.get('http://alerts.weather.gov/cap/us.php?x=1')
+        request = requests.get('https://api.weather.gov/alerts')
         tree = lxml.etree.fromstring(request.text.encode('utf-8'))
 
         # Keep track of how many alerts we create

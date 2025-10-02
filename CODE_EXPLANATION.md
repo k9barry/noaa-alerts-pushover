@@ -72,7 +72,7 @@ counties.json → Load monitored counties
 
 ```python
 # Request NOAA data
-GET http://alerts.weather.gov/cap/us.php?x=1
+GET https://api.weather.gov/alerts
     → Receive ATOM/CAP XML feed
     → Parse all active alerts
     → Extract metadata for each alert:
@@ -291,7 +291,7 @@ The `alert_id` field should be indexed for faster lookups. The Peewee ORM handle
 
 ### NOAA Weather Alerts API
 
-**Base URL:** `http://alerts.weather.gov/cap/us.php?x=1`
+**Base URL:** `https://api.weather.gov/alerts`
 
 **Format:** ATOM feed with CAP (Common Alerting Protocol) extensions
 

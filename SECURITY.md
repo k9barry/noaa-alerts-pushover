@@ -36,7 +36,7 @@ If you discover a security vulnerability, please report it by opening a GitHub i
 
 1. **HTTPS is used for all external API calls**
    - Pushover API: `https://api.pushover.net`
-   - NOAA API: `http://alerts.weather.gov` (NOAA's endpoint)
+   - NOAA API: `https://api.weather.gov` (NOAA's endpoint)
 
 2. **Disable SSL warnings in production**
    - The code disables urllib3 warnings but maintains certificate verification
