@@ -128,7 +128,19 @@ class Parser(object):
         """ Fetches the NOAA detail XML feed for an alert and saves the description """
         logger.info('Fetching Detail Link for Alert %s' % alert.alert_id)
         request = requests.get(alert.api_url)
-        tree = lxml.etree.fromstring(request.text.encode('utf-8'))
+        # Check for HTML or wrong content type
+        if (
+            'text/html' in request.headers.get('Content-Type', '')
+            or request.text.strip().lower().startswith('<!doctype html')
+            or request.text.strip().lower().startswith('<html')
+        ):
+            logger.error(f"Expected XML but got HTML for alert {alert.alert_id}. Response was:\n{request.text[:1000]}")
+            return None
+        try:
+            tree = lxml.etree.fromstring(request.text.encode('utf-8'))
+        except lxml.etree.XMLSyntaxError as e:
+            logger.error(f"Failed to parse alert detail XML: {e}\nResponse was:\n{request.text[:1000]}")
+            return None
 
         info_el = tree.find(CAP_NS + 'info')
         headline = info_el.find(CAP_NS + 'headline').text
@@ -154,55 +166,68 @@ class Parser(object):
         """ Fetches the NOAA alerts XML feed and inserts into database """
 
         logger.info('Fetching Alerts Feed')
-        request = requests.get('https://api.weather.gov/alerts') # https://api.weather.gov/alerts/active
+        request = requests.get('https://api.weather.gov/alerts')
         if request.status_code != 200:
             logger.error(f"Failed to fetch alerts feed: HTTP {request.status_code}")
             return
+        # Check for HTML or wrong content type
+        if (
+            'text/html' in request.headers.get('Content-Type', '')
+            or request.text.strip().lower().startswith('<!doctype html')
+            or request.text.strip().lower().startswith('<html')
+        ):
+            logger.error(f"Expected JSON but got HTML. Response was:\n{request.text[:1000]}")
+            return
         try:
-            tree = lxml.etree.fromstring(request.text.encode('utf-8'))
-        except lxml.etree.XMLSyntaxError as e:
-            logger.error(f"Failed to parse alerts feed XML: {e}\nResponse was:\n{request.text[:1000]}")
+            data = request.json()
+        except Exception as e:
+            logger.error(f"Failed to parse alerts feed JSON: {e}\nResponse was:\n{request.text[:1000]}")
             return
 
         total_count = 0
         insert_count = 0
         existing_count = 0
 
-        for entry_el in tree.findall(ATOM_NS + 'entry'):
+        for feature in data.get('features', []):
             total_count += 1
-            alert_id = hashlib.sha224(entry_el.find(ATOM_NS + 'id').text).hexdigest()
-            title = entry_el.find(ATOM_NS + 'title').text
-            event = entry_el.find(CAP_NS + 'event').text
-            expires_dt = arrow.get(entry_el.find(CAP_NS + 'expires').text)
-            url = entry_el.find(ATOM_NS + 'link').attrib['href']
-            api_url = entry_el.find(ATOM_NS + 'id').text
-            # Calculate the expiration timetamp
-            expires = expires_dt.isoformat()
-            expires_utc_ts = int(expires_dt.to('UTC').timestamp())
+            properties = feature.get('properties', {})
+            alert_id = hashlib.sha224(properties.get('id', '').encode('utf-8')).hexdigest()
+            # Ensure title is never None or empty for DB NOT NULL constraint
+            title = properties.get('headline')
+            if not title:
+                title = properties.get('event')
+            if not title:
+                title = properties.get('id')
+            if not title:
+                title = 'NO TITLE'
+            event = properties.get('event', '')
+            detail = ''
+            description = properties.get('description', '')
+            expires_str = properties.get('expires')
+            try:
+                expires_dt = arrow.get(expires_str) if expires_str else None
+                expires = expires_dt.isoformat() if expires_dt else None
+                expires_utc_ts = int(expires_dt.to('UTC').timestamp()) if expires_dt else 0
+            except Exception:
+                expires = None
+                expires_utc_ts = 0
+            url = properties.get('uri', '')
+            api_url = properties.get('@id', '')
+            fips_list = properties.get('geocode', {}).get('FIPS6', [])
+            ugc_list = properties.get('geocode', {}).get('UGC', [])
+            if isinstance(fips_list, str):
+                fips_list = [fips_list]
+            if isinstance(ugc_list, str):
+                ugc_list = [ugc_list]
 
-            fips_list = []
-            ugc_list = []
-
-            geocode_el = entry_el.find(CAP_NS + 'geocode')
-            if geocode_el is not None:
-                for value_name_el in geocode_el.findall(ATOM_NS + 'valueName'):
-                    if value_name_el.text == 'FIPS6':
-                        fips_el = value_name_el.getnext()
-                        if fips_el is not None and fips_el.text is not None:
-                            fips_list = fips_el.text.split(' ')
-                    elif value_name_el.text == 'UGC':
-                        ugc_el = value_name_el.getnext()
-                        if ugc_el is not None and ugc_el.text is not None:
-                            ugc_list = ugc_el.text.split(' ')
-
-            sub_events = []
-            if event in ('Severe Weather Statement', 'Special Weather Statement'):
-                summary = entry_el.find(ATOM_NS + 'summary').text.upper()
+            # Optionally extract sub-events from description
+            if event in ('Severe Weather Statement', 'Special Weather Statement') and description:
+                summary = description.upper()
+                sub_events = []
                 for item in ('Thunderstorm', 'Strong Storm', 'Wind', 'Rain', 'Hail', 'Tornado', 'Flood'):
                     if item.upper() in summary:
                         sub_events.append(item)
-
-            detail = ', '.join(sub_events)
+                detail = ', '.join(sub_events)
 
             try:
                 alert_record = Alert.get(Alert.alert_id == alert_id)
@@ -214,7 +239,7 @@ class Parser(object):
                     title=title,
                     event=event,
                     details=detail,
-                    description=None,
+                    description=description,
                     expires=expires,
                     expires_utc_ts=expires_utc_ts,
                     url=url,
