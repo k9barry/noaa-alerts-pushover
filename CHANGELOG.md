@@ -20,7 +20,8 @@ This is a major update that modernizes the entire codebase and adds Docker suppo
 #### Security Improvements
 - **SSL verification**: Fixed insecure `verify=False` in API calls
 - **Request timeouts**: Added 30-second timeouts to prevent hanging
-- **Better error handling**: Improved handling of network and parsing errors
+- **Robust error handling**: HTML response detection, status code validation, and safe parsing
+- **API response validation**: Prevents processing of unexpected content types
 - **Security documentation**: Comprehensive SECURITY.md with best practices
 
 #### Code Quality
@@ -80,6 +81,27 @@ This is a major update that modernizes the entire codebase and adds Docker suppo
 - Fixed arrow replace method (`.replace` → `.shift` for date math)
 - Fixed exception syntax (`Exception, e` → `Exception as e`)
 - Fixed print statements (Python 2 → Python 3 syntax)
+
+### 🛡️ Enhanced Error Handling
+
+The application now includes robust error handling for NOAA API interactions:
+
+#### API Response Validation
+- **HTTP Status Code Checking**: Validates successful responses before processing
+- **Content Type Detection**: Detects when APIs return HTML instead of expected JSON/XML
+- **HTML Response Protection**: Prevents crashes when NOAA APIs return error pages
+
+#### JSON Parsing Improvements
+- **Try/Catch Blocks**: Graceful handling of malformed JSON responses
+- **Error Logging**: Detailed error messages with response previews for debugging
+- **Graceful Degradation**: Application continues running even if one alert fails to parse
+
+#### XML Parsing Improvements
+- **XMLSyntaxError Handling**: Catches and logs XML parsing failures
+- **Safe Fallback**: Returns None for unparseable alerts instead of crashing
+- **Debug Information**: Logs first 1000 characters of problematic responses
+
+These improvements ensure the application remains stable even when NOAA's APIs are experiencing issues or maintenance.
 
 ### 🆕 New Features
 
