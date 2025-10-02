@@ -1,7 +1,13 @@
 import datetime
+import os
 import peewee
 
-db = peewee.SqliteDatabase('alerts.db', threadlocals=True)
+# Store database in data directory for better Docker volume management
+DB_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data')
+os.makedirs(DB_DIR, exist_ok=True)
+DB_PATH = os.path.join(DB_DIR, 'alerts.db')
+
+db = peewee.SqliteDatabase(DB_PATH, pragmas={'journal_mode': 'wal'})
 
 class BaseModel(peewee.Model):
     class Meta:

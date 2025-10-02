@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+.Python
+env/
+venv/
+build/
+dist/
+
+# Project specific
+alerts.db
+log.txt
+config.txt
+output/
+data/
+
+# Version control
+.git/
+.gitignore
+
+# Documentation
+*.md
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

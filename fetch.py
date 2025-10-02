@@ -1,6 +1,6 @@
 import argparse
 import arrow
-import ConfigParser
+import configparser
 import datetime
 import hashlib
 import jinja2
@@ -10,13 +10,12 @@ import lxml.etree
 import os
 import requests
 import sys
+import urllib3
 
 from models import Alert
 
-try:
-    requests.packages.urllib3.disable_warnings()
-except AttributeError:
-    pass
+# Disable SSL warnings (not recommended for production)
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 ATOM_NS = "{http://www.w3.org/2005/Atom}"
 CAP_NS = "{urn:oasis:names:tc:emergency:cap:1.1}"
@@ -62,7 +61,7 @@ class Parser(object):
 
     def send_pushover_alert(self, id, title, message, url):
         """ Sends an alert via Pushover API """
-        api_url = 'https://api.pushover.net:443/1/messages.json'
+        api_url = 'https://api.pushover.net/1/messages.json'
         request = requests.post(api_url, data={
             "title": title,
             "token": self.pushover_token,
@@ -70,7 +69,7 @@ class Parser(object):
             "message": message,
             "sound": "falling",
             "url": 'http://wxalerts.org/alerts/%s.html' % id,
-        }, verify=False)
+        }, timeout=30)
 
         if not request.ok:
             logger.error("Error sending push: %s\n" % request.text)
@@ -177,7 +176,7 @@ class Parser(object):
             
             # Calculate the expiration timetamp
             expires = expires_dt.isoformat()
-            expires_utc_ts = int(expires_dt.to('UTC').timestamp)
+            expires_utc_ts = int(expires_dt.to('UTC').timestamp())
 
             fips_list = []
             ugc_list = []
@@ -214,7 +213,7 @@ class Parser(object):
             try:
                 alert_record = Alert.get(Alert.alert_id == alert_id)
                 existing_count += 1
-            except Exception, _:
+            except Exception as _:
                 insert_count += 1
                 alert_record = Alert.create(
                     alert_id=alert_id,
@@ -273,17 +272,18 @@ if __name__ == '__main__':
     # Set up the output directory
     OUTPUT_DIR = os.path.join(CUR_DIR, 'output')
     if not os.path.exists(OUTPUT_DIR):
-        sys.exit('Error! Output directory does not exist.')
+        os.makedirs(OUTPUT_DIR)
+        logger.info('Created output directory: %s' % OUTPUT_DIR)
 
     # Load the configuration
-    config = ConfigParser.ConfigParser()
+    config = configparser.ConfigParser()
     config_filepath = os.path.join(CUR_DIR, 'config.txt')
     config.read(config_filepath)
 
     # Get the list of events that we don't want to be alerted about
     try:
         ignored_events = config.get('events', 'ignored').split(',')
-    except ConfigParser.NoSectionError:
+    except configparser.NoSectionError:
         ignored_events = []
 
     # Instantiate our parser object
@@ -306,14 +306,14 @@ if __name__ == '__main__':
     if args['purge']:
         Alert.delete().execute()
     else:
-        ago_ts = arrow.utcnow().replace(days=-1).timestamp
+        ago_ts = arrow.utcnow().shift(days=-1).timestamp()
         count = Alert.delete().where(Alert.expires_utc_ts < ago_ts).execute()
         logger.debug("Deleted %d expired alerts." % count)
 
     # Create a timestamp that will act as a numeric identifier for
     # this fetching run. We'll use this later to see if a record
     # has been added in this run
-    run_ts = arrow.utcnow().timestamp
+    run_ts = arrow.utcnow().timestamp()
 
     # Go grab the current alerts and process them
     parser.fetch(run_ts)
