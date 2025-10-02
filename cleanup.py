@@ -7,7 +7,10 @@ CUR_DIR = os.path.dirname(os.path.realpath(__file__))
 OUTPUT_DIR = os.path.join(CUR_DIR, 'output')
 
 files_to_delete = []
-output_files = os.listdir(OUTPUT_DIR)
+if os.path.exists(OUTPUT_DIR):
+    output_files = os.listdir(OUTPUT_DIR)
+else:
+    print(f"Directory {OUTPUT_DIR} does not exist. Skipping cleanup.")
 
 for filename in output_files:
     

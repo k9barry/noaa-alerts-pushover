@@ -154,6 +154,7 @@ class Parser(object):
         """ Fetches the NOAA alerts XML feed and inserts into database """
 
         logger.info('Fetching Alerts Feed')
+<<<<<<< HEAD
         request = requests.get('http://alerts.weather.gov/cap/us.php?x=1')
         if request.status_code != 200:
             logger.error(f"Failed to fetch alerts feed: HTTP {request.status_code}")
@@ -163,6 +164,10 @@ class Parser(object):
         except lxml.etree.XMLSyntaxError as e:
             logger.error(f"Failed to parse alerts feed XML: {e}\nResponse was:\n{request.text[:1000]}")
             return
+=======
+        request = requests.get('https://api.weather.gov/alerts')
+        tree = lxml.etree.fromstring(request.text.encode('utf-8'))
+>>>>>>> abb38984a71ae5b1d95af4c15dc05c6d76adfe50
 
         total_count = 0
         insert_count = 0
