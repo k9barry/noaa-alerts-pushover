@@ -23,6 +23,9 @@ COPY . .
 # Create necessary directories
 RUN mkdir -p /app/output /app/data
 
+# Initialize database
+RUN python models.py
+
 # Copy and set entrypoint
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
