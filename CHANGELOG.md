@@ -13,7 +13,7 @@ This is a major update that modernizes the entire codebase and adds Docker suppo
 
 #### Docker Support
 - **Full containerization**: Added Dockerfile and docker-compose.yml
-- **Easy deployment**: Run the entire application with `docker-compose up`
+- **Easy deployment**: Run the entire application with `docker compose up`
 - **Volume management**: Proper data persistence with Docker volumes
 - **Optimized builds**: Efficient Docker image with .dockerignore
 
@@ -178,12 +178,12 @@ noaa-alerts-pushover/
 2. **Pull and build:**
    ```bash
    git pull
-   docker-compose build
+   docker compose build
    ```
 
 3. **Run:**
    ```bash
-   docker-compose up
+   docker compose up
    ```
 
 ### 🎯 Compatibility

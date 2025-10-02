@@ -64,8 +64,8 @@ If you discover a security vulnerability, please report it by opening a GitHub i
 
 3. **Keep base images updated**
    ```bash
-   docker-compose pull
-   docker-compose build --no-cache
+   docker compose pull
+   docker compose build --no-cache
    ```
 
 ### Database Security
@@ -176,9 +176,9 @@ git status
 **Docker:**
 ```bash
 git pull
-docker-compose down
-docker-compose build --no-cache
-docker-compose up -d
+docker compose down
+docker compose build --no-cache
+docker compose up -d
 ```
 
 **Manual:**

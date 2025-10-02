@@ -88,13 +88,13 @@ requests==2.32.3
 **Example Usage**:
 ```bash
 # Single check
-docker-compose up
+docker compose up
 
 # Continuous (5 min intervals)
-docker-compose -f docker-compose.loop.yml up -d
+docker compose -f docker-compose.loop.yml up -d
 
 # Custom interval
-docker-compose run -e RUN_MODE=loop -e CHECK_INTERVAL=120 noaa-alerts
+docker compose run -e RUN_MODE=loop -e CHECK_INTERVAL=120 noaa-alerts
 ```
 
 ### 5. Code Quality ✅
@@ -207,7 +207,7 @@ git clone https://github.com/k9barry/noaa-alerts-pushover.git
 cd noaa-alerts-pushover
 cp config.txt.example config.txt
 # Edit config.txt
-docker-compose -f docker-compose.loop.yml up -d
+docker compose -f docker-compose.loop.yml up -d
 ```
 
 **Python**:

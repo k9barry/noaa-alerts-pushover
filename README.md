@@ -36,7 +36,7 @@ Sends out NOAA Severe Weather Alerts via [Pushover](http://www.pushover.net). An
 
 5. **Run with Docker Compose:**
    ```bash
-   docker-compose up -d
+   docker compose up -d
    ```
 
 The service will check for alerts once and exit. To run continuously, see the [Installation Guide](INSTALL.md).

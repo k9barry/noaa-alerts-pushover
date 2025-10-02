@@ -60,7 +60,7 @@ Docker provides the easiest and most consistent way to run NOAA Alerts Pushover.
 
 6. **Build and run the container:**
    ```bash
-   docker-compose up -d
+   docker compose up -d
    ```
 
 ### Running on a Schedule
@@ -72,7 +72,7 @@ By default, the container runs once and exits. For continuous monitoring:
 Use the included loop mode configuration:
 
 ```bash
-docker-compose -f docker-compose.loop.yml up -d
+docker compose -f docker-compose.loop.yml up -d
 ```
 
 Or set the environment variable in your docker-compose.yml:
@@ -101,7 +101,7 @@ CHECK_INTERVAL=300
 
 Then run:
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 #### Option 3: Use External Scheduler
@@ -111,32 +111,32 @@ Keep the default single-run behavior and schedule with:
 **Cron (Linux/Mac):**
 ```bash
 # Run every 5 minutes
-*/5 * * * * cd /path/to/noaa-alerts-pushover && docker-compose up
+*/5 * * * * cd /path/to/noaa-alerts-pushover && docker compose up
 ```
 
 **Task Scheduler (Windows):**
 Create a scheduled task that runs:
 ```
-docker-compose -f C:\path\to\noaa-alerts-pushover\docker-compose.yml up
+docker compose -f C:\path\to\noaa-alerts-pushover\docker-compose.yml up
 ```
 
 ### Docker Commands
 
 ```bash
 # View logs
-docker-compose logs -f
+docker compose logs -f
 
 # Stop the container
-docker-compose down
+docker compose down
 
 # Rebuild after changes
-docker-compose build
+docker compose build
 
 # Run with purge flag
-docker-compose run --rm noaa-alerts python fetch.py --purge
+docker compose run --rm noaa-alerts python fetch.py --purge
 
 # Debug mode
-docker-compose run --rm noaa-alerts python fetch.py --debug
+docker compose run --rm noaa-alerts python fetch.py --debug
 ```
 
 ## Manual Installation
@@ -372,7 +372,7 @@ tail -f log.txt
 
 For Docker:
 ```bash
-docker-compose logs -f
+docker compose logs -f
 ```
 
 ### Getting Help
@@ -414,8 +414,8 @@ python cleanup.py
 **Docker:**
 ```bash
 git pull
-docker-compose build
-docker-compose up -d
+docker compose build
+docker compose up -d
 ```
 
 **Manual:**

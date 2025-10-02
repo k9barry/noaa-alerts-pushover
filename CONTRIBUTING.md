@@ -133,7 +133,7 @@ Examples:
 
 5. **Test Docker build** (if Docker changes):
    ```bash
-   docker-compose build
+   docker compose build
    ```
 
 ### Test Coverage Areas
