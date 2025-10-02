@@ -1,7 +1,5 @@
-version: '3.8'
-
 # Example configuration for continuous monitoring
-# Usage: docker-compose -f docker-compose.loop.yml up -d
+# Usage: docker compose -f docker-compose.loop.yml up -d
 
 services:
   noaa-alerts:

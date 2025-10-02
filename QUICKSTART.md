@@ -72,18 +72,18 @@ This checks that everything is configured correctly.
 
 **Single check:**
 ```bash
-docker-compose up
+docker compose up
 ```
 
 **Continuous monitoring (every 5 minutes):**
 ```bash
-docker-compose -f docker-compose.loop.yml up -d
+docker compose -f docker-compose.loop.yml up -d
 ```
 
 **Custom interval:**
 ```bash
 # Check every 2 minutes (120 seconds)
-docker-compose run -e RUN_MODE=loop -e CHECK_INTERVAL=120 noaa-alerts
+docker compose run -e RUN_MODE=loop -e CHECK_INTERVAL=120 noaa-alerts
 ```
 
 #### Python (Manual)
@@ -113,7 +113,7 @@ python3 fetch.py --debug
 ### Run Once
 Check for alerts once and exit:
 ```bash
-docker-compose up
+docker compose up
 # or
 python3 fetch.py
 ```
@@ -121,7 +121,7 @@ python3 fetch.py
 ### Continuous Monitoring
 Check every N seconds continuously:
 ```bash
-docker-compose -f docker-compose.loop.yml up -d
+docker compose -f docker-compose.loop.yml up -d
 # or setup a cron job
 ```
 
@@ -152,22 +152,22 @@ python3 fetch.py --nopush --debug
 
 ### View Logs
 ```bash
-docker-compose logs -f
+docker compose logs -f
 ```
 
 ### Stop Container
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ### Run One-Time Check
 ```bash
-docker-compose run --rm noaa-alerts
+docker compose run --rm noaa-alerts
 ```
 
 ### Debug Container
 ```bash
-docker-compose run --rm noaa-alerts --debug
+docker compose run --rm noaa-alerts --debug
 ```
 
 ## Troubleshooting
@@ -196,7 +196,7 @@ python3 fetch.py --purge
 ### Docker Build Errors?
 ```bash
 # Rebuild from scratch
-docker-compose build --no-cache
+docker compose build --no-cache
 ```
 
 ## What's Next?
@@ -229,10 +229,10 @@ docker-compose build --no-cache
 | Debug mode | `python3 fetch.py --debug` |
 | No push | `python3 fetch.py --nopush` |
 | Clear alerts | `python3 fetch.py --purge` |
-| Docker once | `docker-compose up` |
-| Docker loop | `docker-compose -f docker-compose.loop.yml up -d` |
+| Docker once | `docker compose up` |
+| Docker loop | `docker compose -f docker-compose.loop.yml up -d` |
 | View logs | `tail -f log.txt` |
-| Docker logs | `docker-compose logs -f` |
+| Docker logs | `docker compose logs -f` |
 
 ---
 
