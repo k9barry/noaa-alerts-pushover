@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.12']
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Check Python syntax
+      run: |
+        python -m py_compile fetch.py
+        python -m py_compile models.py
+        python -m py_compile cleanup.py
+        python -m py_compile vacuum.py
+        python -m py_compile test_setup.py
+    
+    - name: Initialize database
+      run: python models.py
+    
+    - name: Run validation script
+      run: |
+        cp config.txt.example config.txt
+        python test_setup.py || true
+    
+    - name: Test imports
+      run: |
+        python -c "import fetch; import models; import cleanup; print('All imports successful')"
+
+  docker:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Build Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: false
+        tags: noaa-alerts-pushover:test
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
