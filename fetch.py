@@ -18,7 +18,7 @@ from models import Alert
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 ATOM_NS = "{http://www.w3.org/2005/Atom}"
-CAP_NS = "{urn:oasis:names:tc:emergency:cap:1.1}"
+CAP_NS = "{urn:oasis:names:tc:emergency:cap:1.2}"
 
 
 class Parser(object):
@@ -153,27 +153,29 @@ class Parser(object):
     def fetch(self, run_timestamp):
         """ Fetches the NOAA alerts XML feed and inserts into database """
 
-        # Create an XML doc from the URL contents
         logger.info('Fetching Alerts Feed')
         request = requests.get('http://alerts.weather.gov/cap/us.php?x=1')
-        tree = lxml.etree.fromstring(request.text.encode('utf-8'))
+        if request.status_code != 200:
+            logger.error(f"Failed to fetch alerts feed: HTTP {request.status_code}")
+            return
+        try:
+            tree = lxml.etree.fromstring(request.text.encode('utf-8'))
+        except lxml.etree.XMLSyntaxError as e:
+            logger.error(f"Failed to parse alerts feed XML: {e}\nResponse was:\n{request.text[:1000]}")
+            return
 
-        # Keep track of how many alerts we create
         total_count = 0
         insert_count = 0
         existing_count = 0
 
         for entry_el in tree.findall(ATOM_NS + 'entry'):
-
             total_count += 1
-
             alert_id = hashlib.sha224(entry_el.find(ATOM_NS + 'id').text).hexdigest()
             title = entry_el.find(ATOM_NS + 'title').text
             event = entry_el.find(CAP_NS + 'event').text
             expires_dt = arrow.get(entry_el.find(CAP_NS + 'expires').text)
             url = entry_el.find(ATOM_NS + 'link').attrib['href']
             api_url = entry_el.find(ATOM_NS + 'id').text
-            
             # Calculate the expiration timetamp
             expires = expires_dt.isoformat()
             expires_utc_ts = int(expires_dt.to('UTC').timestamp())
@@ -181,9 +183,7 @@ class Parser(object):
             fips_list = []
             ugc_list = []
 
-            # Get the FIPS and UGC codes that this alert applies to
             geocode_el = entry_el.find(CAP_NS + 'geocode')
-
             if geocode_el is not None:
                 for value_name_el in geocode_el.findall(ATOM_NS + 'valueName'):
                     if value_name_el.text == 'FIPS6':
@@ -195,9 +195,6 @@ class Parser(object):
                         if ugc_el is not None and ugc_el.text is not None:
                             ugc_list = ugc_el.text.split(' ')
 
-            # If it's a special or severe weather statement, look inside it to see
-            # if we can extract any keywords. We'll store these separately but put them
-            # in any push messages we send out.
             sub_events = []
             if event in ('Severe Weather Statement', 'Special Weather Statement'):
                 summary = entry_el.find(ATOM_NS + 'summary').text.upper()
@@ -205,11 +202,8 @@ class Parser(object):
                     if item.upper() in summary:
                         sub_events.append(item)
 
-            # Concatenate the sub events (if any) into a detail string
             detail = ', '.join(sub_events)
 
-            # See if this alert exists. If it does, don't do anything since
-            # we don't update existing alerts. (NOAA doesn't do this I think?)
             try:
                 alert_record = Alert.get(Alert.alert_id == alert_id)
                 existing_count += 1
@@ -220,7 +214,7 @@ class Parser(object):
                     title=title,
                     event=event,
                     details=detail,
-                    description = None,
+                    description=None,
                     expires=expires,
                     expires_utc_ts=expires_utc_ts,
                     url=url,
@@ -230,7 +224,6 @@ class Parser(object):
                     created=run_timestamp,
                 )
 
-        # Log our totals
         logger.debug("Found %d alerts in feed." % total_count)
         logger.info("Inserted %d new alerts." % insert_count)
         logger.debug("Matched %d existing alerts." % existing_count)
