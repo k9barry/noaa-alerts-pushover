@@ -91,8 +91,16 @@ If you discover a security vulnerability, please report it by opening a GitHub i
 1. **Input validation**
    - County codes are validated against configured lists
    - XML parsing uses secure lxml library with proper namespace handling
+   - API responses validated for correct content type before processing
 
-2. **Dependency management**
+2. **Error handling and resilience**
+   - HTTP status codes validated before processing responses
+   - HTML response detection prevents processing of error pages
+   - JSON/XML parsing errors caught and logged safely
+   - Malformed API responses don't crash the application
+   - Individual alert failures don't prevent processing of other alerts
+
+3. **Dependency management**
    - All dependencies are pinned to specific versions
    - Regularly update dependencies:
    ```bash
@@ -100,18 +108,22 @@ If you discover a security vulnerability, please report it by opening a GitHub i
    pip install --upgrade -r requirements.txt
    ```
 
-3. **Logging security**
+4. **Logging security**
    - Logs are stored in `log.txt`
    - No credentials are logged
+   - Error responses truncated to first 1000 characters in logs
    - Consider log rotation for long-running deployments
 
 ### Known Security Considerations
 
 #### 1. NOAA API Endpoint
-- The NOAA weather alerts feed uses HTTP (not HTTPS)
-- This is controlled by NOAA and not something we can change
-- Alert data is public information, so this is not a critical security issue
-- We validate and sanitize all data received from the API
+- The NOAA weather alerts API uses HTTPS (`https://api.weather.gov/alerts`)
+- Alert data is public information
+- We validate all data received from the API:
+  - HTTP status codes are checked
+  - Content types are validated
+  - HTML error pages are detected and rejected
+  - JSON/XML parsing is protected with try/catch blocks
 
 #### 2. HTML Output Files
 - Alert detail pages are generated and stored in `output/`

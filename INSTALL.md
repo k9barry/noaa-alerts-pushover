@@ -343,6 +343,13 @@ If using multiple instances, ensure only one is running at a time.
 2. Verify your Pushover credentials in config.txt
 3. Run with `--debug` flag to see detailed logs
 4. Check log.txt for errors
+5. Verify NOAA API is accessible: `curl https://api.weather.gov/alerts`
+
+#### API Errors or HTML Responses
+The application now automatically detects and handles cases where NOAA's API returns HTML error pages instead of JSON/XML. If you see these errors in logs:
+- The application will continue running and retry on the next scheduled check
+- These are typically temporary NOAA API maintenance issues
+- Check `log.txt` for detailed error messages with response previews
 
 #### Permission Denied Errors (Linux)
 Ensure the application has write permissions:

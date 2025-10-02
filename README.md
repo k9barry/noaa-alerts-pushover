@@ -11,6 +11,7 @@ Sends out NOAA Severe Weather Alerts via [Pushover](http://www.pushover.net). An
 - 🐳 Docker and Docker Compose support
 - 💾 SQLite database to prevent duplicate notifications
 - 🔄 Automatic cleanup of expired alerts
+- 🛡️ Robust error handling for API failures and malformed responses
 
 ## Quick Start with Docker (Recommended)
 

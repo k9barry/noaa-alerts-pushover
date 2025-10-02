@@ -447,20 +447,72 @@ if event in ('Severe Weather Statement', 'Special Weather Statement'):
 
 ## Error Handling
 
+The application includes comprehensive error handling to ensure stability even when NOAA APIs are experiencing issues.
+
+### API Response Validation
+
+#### HTTP Status Code Checking
+```python
+request = requests.get('https://api.weather.gov/alerts')
+if request.status_code != 200:
+    logger.error(f"Failed to fetch alerts feed: HTTP {request.status_code}")
+    return
+```
+
+#### Content Type Detection
+The application validates that responses contain expected data formats (JSON or XML) and not HTML error pages:
+
+```python
+# Check for HTML responses
+if (
+    'text/html' in request.headers.get('Content-Type', '')
+    or request.text.strip().lower().startswith('<!doctype html')
+    or request.text.strip().lower().startswith('<html')
+):
+    logger.error(f"Expected JSON but got HTML. Response was:\n{request.text[:1000]}")
+    return
+```
+
+This prevents crashes when NOAA's API returns maintenance pages or error responses.
+
+### JSON Parsing with Error Recovery
+
+```python
+try:
+    data = request.json()
+except Exception as e:
+    logger.error(f"Failed to parse alerts feed JSON: {e}\nResponse was:\n{request.text[:1000]}")
+    return
+```
+
+Malformed JSON is caught and logged with the first 1000 characters of the response for debugging.
+
+### XML Parsing with Safe Fallback
+
+```python
+try:
+    tree = lxml.etree.fromstring(request.text.encode('utf-8'))
+except lxml.etree.XMLSyntaxError as e:
+    logger.error(f"Failed to parse alert detail XML: {e}\nResponse was:\n{request.text[:1000]}")
+    return None
+```
+
+Invalid XML returns `None` instead of crashing, allowing the application to continue processing other alerts.
+
 ### Network Errors
-- Timeouts set to 30 seconds
-- No retries (cron/scheduler handles re-runs)
-- Errors logged to log.txt
+- Timeouts set to 30 seconds for all requests
+- No automatic retries (cron/scheduler handles re-runs)
+- All network errors logged to log.txt with context
 
 ### Database Errors
 - WAL mode prevents most lock issues
 - Peewee handles connection management
 - Unique constraint on alert_id prevents duplicates
 
-### XML Parsing Errors
-- Invalid XML logged and skipped
-- Missing elements handled gracefully with None checks
-- Namespace issues caught by lxml
+### Graceful Degradation
+- Individual alert failures don't stop processing of other alerts
+- Application exits gracefully if critical errors occur (e.g., configuration missing)
+- Detailed error logging helps with troubleshooting
 
 ## Performance Considerations
 

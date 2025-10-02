@@ -21,8 +21,12 @@ This document summarizes the complete modernization of the NOAA Alerts Pushover 
 - `.timestamp` → `.timestamp()`
 - `.replace(days=-1)` → `.shift(days=-1)`
 - Updated urllib3 warnings handling
+- Added comprehensive error handling for API calls
+- Added HTTP status code validation
+- Added HTML response detection for both JSON and XML endpoints
+- Added try/catch blocks for JSON and XML parsing
 
-**Result**: All Python files now work with Python 3.12+
+**Result**: All Python files now work with Python 3.12+ with robust error handling
 
 ### 2. Dependency Updates ✅
 
@@ -60,8 +64,10 @@ requests==2.32.3
 | Request Timeouts | None | 30 seconds |
 | SSL Warnings | Broken handling | Proper urllib3 |
 | API URLs | Port in URL | Standard HTTPS |
+| Error Handling | Basic | Comprehensive validation |
+| Response Validation | None | Content-type checking |
 
-**Result**: No security warnings, proper error handling
+**Result**: No security warnings, robust error handling, API response validation
 
 ### 4. Docker Support ✅
 
@@ -97,8 +103,12 @@ docker-compose run -e RUN_MODE=loop -e CHECK_INTERVAL=120 noaa-alerts
 - Auto-create output directory (no more manual setup)
 - Database WAL mode (better concurrency)
 - Better directory structure (data/ folder)
-- Improved error handling
-- Better logging configuration
+- **Robust error handling for API failures**
+  - HTTP status code validation
+  - HTML response detection
+  - JSON/XML parsing with try/catch blocks
+  - Graceful degradation on individual alert failures
+- Better logging configuration with error context
 
 **New Scripts**:
 - `test_setup.py` - Validates configuration before running
