@@ -179,6 +179,14 @@ docker compose run --rm noaa-alerts --debug
 4. Check `log.txt` for errors
 
 ### Permission Errors?
+
+**Docker:**
+```bash
+# Container runs as UID 1000, ensure directories are writable
+sudo chown -R 1000:1000 ./output ./data
+```
+
+**Manual installation:**
 ```bash
 chmod 600 config.txt
 chmod 755 *.py

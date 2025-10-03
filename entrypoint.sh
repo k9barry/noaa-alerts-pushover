@@ -23,8 +23,8 @@ case "$MODE" in
   
   cron)
     echo "Setting up cron job with schedule: ${CRON_SCHEDULE:-*/5 * * * *}"
-    # Write cron job to crontab
-    echo "${CRON_SCHEDULE:-*/5 * * * *} cd /app && python fetch.py $* >> /var/log/cron.log 2>&1" | crontab -
+    # Write cron job to crontab - log to /app for non-root user write access
+    echo "${CRON_SCHEDULE:-*/5 * * * *} cd /app && python fetch.py $* >> /app/cron.log 2>&1" | crontab -
     # Start cron in foreground
     exec cron -f
     ;;
