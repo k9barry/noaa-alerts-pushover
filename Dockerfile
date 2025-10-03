@@ -23,12 +23,20 @@ COPY . .
 # Create necessary directories
 RUN mkdir -p /app/output /app/data
 
-# Initialize database
-RUN python models.py
-
 # Copy and set entrypoint
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+
+# Create non-root user 'noaa' and set ownership
+RUN useradd -m -u 1000 noaa && \
+    chown -R noaa:noaa /app && \
+    chown noaa:noaa /entrypoint.sh
+
+# Switch to noaa user
+USER noaa
+
+# Initialize database
+RUN python models.py
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
