@@ -15,7 +15,7 @@ services:
       - PYTHONUNBUFFERED=1
       - TZ=UTC
       - RUN_MODE=loop
-      - CHECK_INTERVAL=300  # Check every 5 minutes (300 seconds)
+      - CHECK_INTERVAL=90  # Check every 5 minutes (300 seconds)
     healthcheck:
       test: ["CMD", "/healthcheck.sh"]
       interval: 30s
