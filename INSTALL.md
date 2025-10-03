@@ -58,7 +58,21 @@ Docker provides the easiest and most consistent way to run NOAA Alerts Pushover.
    python3 test_setup.py
    ```
 
-6. **Build and run the container:**
+6. **Set permissions for volume directories (if needed):**
+   
+   The container runs as user `noaa` (UID 1000). Ensure mounted directories are writable:
+   ```bash
+   # Option 1: Set ownership to UID 1000
+   sudo chown -R 1000:1000 ./output ./data
+   
+   # Option 2: Use permissive permissions
+   chmod 777 ./output ./data
+   ```
+   
+   > **Note**: If your host user has UID 1000 (check with `id -u`), no changes are needed.
+   > See [DOCKER_NONROOT.md](DOCKER_NONROOT.md) for more details.
+
+7. **Build and run the container:**
    ```bash
    docker compose up -d
    ```
@@ -352,11 +366,24 @@ The application now automatically detects and handles cases where NOAA's API ret
 - Check `log.txt` for detailed error messages with response previews
 
 #### Permission Denied Errors (Linux)
+
+**For Docker:**
+The container runs as user `noaa` (UID 1000). If you see permission errors:
+```bash
+# Ensure mounted directories are writable
+sudo chown -R 1000:1000 ./output ./data
+# Or use permissive permissions
+chmod 777 ./output ./data
+```
+
+**For manual installation:**
 Ensure the application has write permissions:
 ```bash
 chmod +x fetch.py
 chmod 644 config.txt
 ```
+
+See [DOCKER_NONROOT.md](DOCKER_NONROOT.md) for more details on Docker permissions.
 
 ### Debugging
 

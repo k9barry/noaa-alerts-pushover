@@ -48,8 +48,10 @@ If you discover a security vulnerability, please report it by opening a GitHub i
 
 ### Docker Security
 
-1. **Run as non-root user**
-   - Consider adding a non-root user to the Dockerfile for enhanced security
+1. **Run as non-root user** ✅ Implemented
+   - The Dockerfile now includes a non-root user for enhanced security
+   - Container runs as user `noaa` (UID 1000)
+   - See [DOCKER_NONROOT.md](DOCKER_NONROOT.md) for volume mount permission details
    ```dockerfile
    RUN useradd -m -u 1000 noaa && chown -R noaa:noaa /app
    USER noaa
