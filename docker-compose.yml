@@ -15,8 +15,8 @@ services:
       # once: Run once and exit (default)
       # loop: Run continuously with CHECK_INTERVAL seconds between checks
       # cron: Use cron scheduler with CRON_SCHEDULE
-      - RUN_MODE=once
-      - CHECK_INTERVAL=300
+      - RUN_MODE=loop
+      - CHECK_INTERVAL=90
       # Example cron: */5 * * * * (every 5 minutes)
       # - CRON_SCHEDULE=*/5 * * * *
     healthcheck:
