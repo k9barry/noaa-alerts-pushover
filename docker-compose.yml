@@ -19,5 +19,11 @@ services:
       - CHECK_INTERVAL=300
       # Example cron: */5 * * * * (every 5 minutes)
       # - CRON_SCHEDULE=*/5 * * * *
+    healthcheck:
+      test: ["CMD", "/healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
     # Uncomment to pass additional arguments to fetch.py:
     # command: ["--debug"]

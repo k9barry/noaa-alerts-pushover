@@ -27,10 +27,15 @@ RUN mkdir -p /app/output /app/data
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
+# Copy and set healthcheck script
+COPY healthcheck.sh /healthcheck.sh
+RUN chmod +x /healthcheck.sh
+
 # Create non-root user 'noaa' and set ownership
 RUN useradd -m -u 1000 noaa && \
     chown -R noaa:noaa /app && \
-    chown noaa:noaa /entrypoint.sh
+    chown noaa:noaa /entrypoint.sh && \
+    chown noaa:noaa /healthcheck.sh
 
 # Switch to noaa user
 USER noaa
