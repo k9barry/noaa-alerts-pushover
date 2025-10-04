@@ -151,6 +151,7 @@ For continuous monitoring, set up a cron job or use the Docker Compose configura
 
 - [Quick Start Guide](QUICKSTART.md) - Get started in 5 minutes
 - [Installation Guide](INSTALL.md) - Detailed setup instructions
+- [Management Tools](MANAGEMENT_TOOLS.md) - Dozzle and SQLitebrowser usage guide
 - [How It Works](CODE_EXPLANATION.md) - Technical overview of the codebase
 - [Security](SECURITY.md) - Security best practices and considerations
 - [Changelog](CHANGELOG.md) - Version history and updates

@@ -219,6 +219,8 @@ The database file is located at `./data/alerts.db` and contains:
 - Using a reverse proxy with authentication
 - Binding to localhost only (default configuration)
 
+For detailed information about these tools, including advanced configuration, security considerations, and troubleshooting, see [MANAGEMENT_TOOLS.md](MANAGEMENT_TOOLS.md).
+
 ## Manual Installation
 
 For systems without Docker or if you prefer a traditional Python installation.
