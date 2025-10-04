@@ -3,12 +3,13 @@ FROM python:3.12-slim
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies including gosu for user switching
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     gcc \
     libxml2-dev \
     libxslt-dev \
+    gosu \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching
@@ -40,9 +41,9 @@ RUN chown -R noaa:noaa /app/data /app/output && chmod 775 /app/data /app/output
 # Set ownership for all app files (optional, but ensures noaa can write)
 RUN chown -R noaa:noaa /app
 
-# Switch to noaa user
-USER noaa
-
+# Note: We intentionally do NOT switch to noaa user here.
+# The entrypoint script will handle ownership fixes and then switch to noaa user.
+# This allows the entrypoint to fix permissions on mounted volumes.
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
