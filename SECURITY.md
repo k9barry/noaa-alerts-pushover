@@ -92,13 +92,13 @@ If you discover a security vulnerability, please report it by opening a GitHub i
 
 1. **Input validation**
    - County codes are validated against configured lists
-   - XML parsing uses secure lxml library with proper namespace handling
+   - JSON parsing uses Python's built-in json module for safety
    - API responses validated for correct content type before processing
 
 2. **Error handling and resilience**
    - HTTP status codes validated before processing responses
    - HTML response detection prevents processing of error pages
-   - JSON/XML parsing errors caught and logged safely
+   - JSON parsing errors caught and logged safely
    - Malformed API responses don't crash the application
    - Individual alert failures don't prevent processing of other alerts
 
@@ -125,7 +125,7 @@ If you discover a security vulnerability, please report it by opening a GitHub i
   - HTTP status codes are checked
   - Content types are validated
   - HTML error pages are detected and rejected
-  - JSON/XML parsing is protected with try/catch blocks
+  - JSON parsing is protected with try/catch blocks
 
 #### 2. HTML Output Files
 - Alert detail pages are generated and stored in `output/`
@@ -137,7 +137,6 @@ If you discover a security vulnerability, please report it by opening a GitHub i
 - Dependencies are kept up-to-date
 - Current dependencies:
   - **requests**: HTTP library (industry standard)
-  - **lxml**: XML parsing (secure when properly used)
   - **peewee**: ORM (SQL injection protection)
   - **Jinja2**: Template engine (XSS protection)
   - **arrow**: Date/time handling

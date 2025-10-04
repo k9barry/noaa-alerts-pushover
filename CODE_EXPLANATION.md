@@ -18,14 +18,14 @@ This document provides a technical overview of the NOAA Alerts Pushover applicat
 │  NOAA Weather   │
 │   Alerts API    │
 └────────┬────────┘
-         │ XML Feed
+         │ JSON Feed
          ▼
 ┌─────────────────┐
 │   fetch.py      │◄──── Configuration (config.txt, counties.json)
 │  (Main Script)  │
 └────────┬────────┘
          │
-         ├──► Parse XML
+         ├──► Parse JSON
          │
          ├──► Filter Counties
          │
@@ -73,7 +73,7 @@ counties.json → Load monitored counties
 ```python
 # Request NOAA data
 GET https://api.weather.gov/alerts
-    → Receive ATOM/CAP XML feed
+    → Receive GeoJSON feed
     → Parse all active alerts
     → Extract metadata for each alert:
         - Alert ID (SHA-224 hash of NOAA ID)
@@ -134,7 +134,7 @@ The main application script that orchestrates the entire process.
 **`Parser.fetch(run_timestamp)`**
 ```python
 # Main alert fetching logic:
-1. Request NOAA XML feed
+1. Request NOAA JSON feed
 2. Parse each alert entry
 3. Calculate expiration timestamps
 4. Extract FIPS/UGC codes
@@ -156,8 +156,8 @@ The main application script that orchestrates the entire process.
 **`Parser.details_for_alert(alert)`**
 ```python
 # Fetch detailed information:
-1. Request alert-specific XML from NOAA
-2. Parse CAP (Common Alerting Protocol) format
+1. Request alert-specific JSON from NOAA
+2. Parse GeoJSON response
 3. Extract:
    - Headline
    - Event type
@@ -293,46 +293,45 @@ The `alert_id` field should be indexed for faster lookups. The Peewee ORM handle
 
 **Base URL:** `https://api.weather.gov/alerts`
 
-**Format:** ATOM feed with CAP (Common Alerting Protocol) extensions
-
-**Namespaces:**
-- ATOM: `http://www.w3.org/2005/Atom`
-- CAP: `urn:oasis:names:tc:emergency:cap:1.1`
+**Format:** GeoJSON with CAP (Common Alerting Protocol) properties
 
 **Response Structure:**
-```xml
-<feed xmlns="http://www.w3.org/2005/Atom">
-  <entry>
-    <id>NOAA alert unique ID</id>
-    <title>Alert title</title>
-    <updated>2024-01-01T12:00:00-00:00</updated>
-    <link href="public URL"/>
-    <cap:event>Event Type</cap:event>
-    <cap:expires>2024-01-01T18:00:00-00:00</cap:expires>
-    <cap:geocode>
-      <valueName>FIPS6</valueName>
-      <value>012057 008005</value>
-      <valueName>UGC</valueName>
-      <value>FL057 CO005</value>
-    </cap:geocode>
-  </entry>
-</feed>
+```json
+{
+  "@context": [...],
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "id": "https://api.weather.gov/alerts/urn:oid:...",
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "@id": "https://api.weather.gov/alerts/urn:oid:...",
+        "id": "urn:oid:...",
+        "areaDesc": "Jefferson County; Boulder County",
+        "geocode": {
+          "FIPS6": ["012057", "008005"],
+          "UGC": ["FL057", "CO005"]
+        },
+        "sent": "2024-01-01T12:00:00-00:00",
+        "effective": "2024-01-01T12:00:00-00:00",
+        "expires": "2024-01-01T18:00:00-00:00",
+        "status": "Actual",
+        "messageType": "Alert",
+        "category": "Met",
+        "severity": "Severe",
+        "event": "Tornado Warning",
+        "headline": "Tornado Warning issued...",
+        "description": "Full alert description",
+        "instruction": "Safety instructions",
+        "senderName": "NWS Office Name"
+      }
+    }
+  ]
+}
 ```
 
-**Detail API:** Each alert has a unique API URL that provides full CAP XML:
-```xml
-<alert>
-  <info>
-    <event>Tornado Warning</event>
-    <headline>Tornado Warning issued...</headline>
-    <description>Full alert description</description>
-    <instruction>Safety instructions</instruction>
-    <area>
-      <areaDesc>County names</areaDesc>
-    </area>
-  </info>
-</alert>
-```
+**Detail API:** Each alert has a unique API URL that provides the full GeoJSON feature with all properties.
 
 ### Pushover API
 
@@ -579,7 +578,6 @@ tail -f log.txt
 - **arrow**: Modern Python datetime library with better API
 - **beautifulsoup4**: HTML parsing for cleanup script
 - **Jinja2**: Template engine for generating HTML alert pages
-- **lxml**: Fast XML parser with namespace support
 - **peewee**: Lightweight ORM for SQLite
 - **requests**: HTTP library for API calls
 

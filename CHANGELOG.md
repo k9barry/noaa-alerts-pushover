@@ -1,5 +1,27 @@
 # Changelog
 
+## Version 2.1.0 - 2024
+
+### 🔧 API Changes
+
+#### Removed XML Dependencies
+- **Removed lxml dependency**: No longer needed as NOAA API returns JSON
+- **Updated to JSON parsing**: All API responses are now parsed as JSON/GeoJSON
+- **Simplified code**: Removed XML namespace handling and etree parsing
+- **Modern API usage**: Using current NOAA Weather API v1 format
+
+The NOAA Weather API returns JSON/GeoJSON format, not XML. Updated code to parse JSON responses directly:
+- Main alerts feed: GeoJSON FeatureCollection
+- Individual alert details: GeoJSON Feature with properties
+- All needed fields (headline, event, description, instruction, senderName, areaDesc) are available in JSON
+
+**Breaking Change**: If you have lxml installed, you can remove it. The application no longer uses it.
+
+### 📦 Dependency Changes
+
+- **Removed**: lxml (XML parsing library)
+- All other dependencies remain the same
+
 ## Version 2.0.0 - 2024
 
 This is a major update that modernizes the entire codebase and adds Docker support.

@@ -146,7 +146,6 @@ For continuous monitoring, set up a cron job or use the Docker Compose configura
 - **arrow** - Date/time handling
 - **beautifulsoup4** - HTML parsing for cleanup tasks
 - **Jinja2** - Template engine for alert pages
-- **lxml** - XML parsing for NOAA feeds
 - **peewee** - ORM for SQLite database
 - **requests** - HTTP client for API calls
 
