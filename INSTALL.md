@@ -77,6 +77,23 @@ Docker provides the easiest and most consistent way to run NOAA Alerts Pushover.
    docker compose up -d
    ```
 
+8. **Access management tools:**
+   
+   The Docker Compose setup includes two additional services for monitoring and management:
+   
+   - **Dozzle (Log Viewer)**: http://localhost:8080
+     - Real-time log viewing for all containers
+     - Search and filter capabilities
+     - Lightweight and fast
+   
+   - **SQLitebrowser (Database Viewer)**: http://localhost:8081
+     - Browse the alerts database
+     - View alert history
+     - Run SQL queries
+     - Export data
+   
+   Both services start automatically and require no configuration.
+
 ### Running on a Schedule
 
 By default, the container runs once and exits. For continuous monitoring:
@@ -137,11 +154,17 @@ docker compose -f C:\path\to\noaa-alerts-pushover\docker-compose.yml up
 ### Docker Commands
 
 ```bash
-# View logs
+# View logs (traditional method)
 docker compose logs -f
 
-# Stop the container
+# View logs with Dozzle (web interface)
+# Open http://localhost:8080 in your browser
+
+# Stop all containers
 docker compose down
+
+# Stop only the main application (keep management tools running)
+docker compose stop noaa-alerts
 
 # Rebuild after changes
 docker compose build
@@ -152,6 +175,51 @@ docker compose run --rm noaa-alerts python fetch.py --purge
 # Debug mode
 docker compose run --rm noaa-alerts python fetch.py --debug
 ```
+
+### Management Tools Usage
+
+#### Dozzle Log Viewer
+
+Dozzle provides a web-based interface for viewing Docker container logs:
+
+```bash
+# Access at http://localhost:8080
+```
+
+Features:
+- Real-time log streaming
+- Search and filter logs
+- Multi-container support
+- Dark/light theme
+- No authentication needed (localhost only)
+
+#### SQLitebrowser Database Viewer
+
+SQLitebrowser provides a web-based interface for the SQLite database:
+
+```bash
+# Access at http://localhost:8081
+```
+
+Features:
+- Browse alert history
+- View database schema and indexes
+- Execute SQL queries
+- Export data to CSV/JSON
+- View statistics
+
+The database file is located at `./data/alerts.db` and contains:
+- Alert history
+- FIPS and UGC codes
+- Expiration timestamps
+- URLs and metadata
+
+**Security Note**: These management tools are intended for local development and monitoring. For production deployments, consider:
+- Restricting access with firewall rules
+- Using a reverse proxy with authentication
+- Binding to localhost only (default configuration)
+
+For detailed information about these tools, including advanced configuration, security considerations, and troubleshooting, see [MANAGEMENT_TOOLS.md](MANAGEMENT_TOOLS.md).
 
 ## Manual Installation
 

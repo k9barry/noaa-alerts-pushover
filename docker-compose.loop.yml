@@ -15,7 +15,7 @@ services:
       - PYTHONUNBUFFERED=1
       - TZ=UTC
       - RUN_MODE=loop
-      - CHECK_INTERVAL=90  # Check every 5 minutes (300 seconds)
+      - CHECK_INTERVAL=90  # Check every 90 seconds
     healthcheck:
       test: ["CMD", "/healthcheck.sh"]
       interval: 30s
@@ -24,3 +24,33 @@ services:
       start_period: 10s
     # Optional: Enable debug mode
     # command: ["--debug"]
+
+  # Dozzle - Real-time log viewer for Docker containers
+  # Access at: http://localhost:8080
+  dozzle:
+    image: amir20/dozzle:latest
+    container_name: noaa-alerts-dozzle
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - "8080:8080"
+    environment:
+      - DOZZLE_LEVEL=info
+      - DOZZLE_TAILSIZE=300
+      - DOZZLE_FILTER=name=noaa-alerts-pushover
+
+  # SQLitebrowser - Web-based SQLite database viewer
+  # Access at: http://localhost:8081
+  sqlitebrowser:
+    image: lscr.io/linuxserver/sqlitebrowser:latest
+    container_name: noaa-alerts-sqlitebrowser
+    restart: unless-stopped
+    volumes:
+      - ./data:/data
+    ports:
+      - "8081:3000"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC

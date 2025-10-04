@@ -2,6 +2,27 @@
 
 ## Version 2.1.0 - 2024
 
+### 🆕 New Features
+
+#### Management Tools
+- **Dozzle integration**: Real-time log viewer accessible at http://localhost:8080
+- **SQLitebrowser integration**: Web-based database viewer at http://localhost:8081
+- **Comprehensive documentation**: New MANAGEMENT_TOOLS.md guide covering usage, security, and troubleshooting
+- **Zero configuration**: Both tools work out-of-the-box with docker compose
+
+#### Enhanced Docker Compose
+- Added Dozzle service for real-time log monitoring
+- Added SQLitebrowser service for database inspection
+- Updated docker-compose.yml and docker-compose.loop.yml
+- Proper port mappings (8080 for logs, 8081 for database)
+- Security best practices documented
+
+#### Documentation Updates
+- New [MANAGEMENT_TOOLS.md](MANAGEMENT_TOOLS.md) with comprehensive tool documentation
+- Updated [README.md](README.md) with management tools section
+- Updated [INSTALL.md](INSTALL.md) with detailed usage instructions
+- Updated [QUICKSTART.md](QUICKSTART.md) with quick access information
+- Added security considerations for production deployments
 ### 🔧 API Changes
 
 #### Removed XML Dependencies
