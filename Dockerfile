@@ -9,7 +9,6 @@ RUN apt-get update && \
     gcc \
     libxml2-dev \
     libxslt-dev \
-    nano \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching
@@ -18,22 +17,15 @@ COPY requirements.txt .
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-
 # Create non-root user 'noaa'
 RUN useradd -m -u 1000 noaa
-
 
 # Copy application files (excluding entrypoint and healthcheck scripts)
 COPY . .
 
-
-# Copy entrypoint and healthcheck scripts explicitly
 # Copy entrypoint and healthcheck scripts explicitly
 COPY entrypoint.sh /entrypoint.sh
 COPY healthcheck.sh /healthcheck.sh
-
-# Copy default config.txt.example as /config.txt
-COPY config.txt.example /config.txt
 
 # Create necessary directories, set permissions, and ensure ownership for 'noaa' user
 RUN mkdir -p /app/output /app/data
