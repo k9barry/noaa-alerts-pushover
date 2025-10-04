@@ -20,7 +20,7 @@ def test_python_version():
 def test_imports():
     """Test that all required modules can be imported"""
     print("\nChecking required modules...")
-    modules = ['arrow', 'beautifulsoup4', 'jinja2', 'lxml', 'peewee', 'requests']
+    modules = ['arrow', 'beautifulsoup4', 'jinja2', 'peewee', 'requests']
     all_ok = True
     
     for module_name in modules:

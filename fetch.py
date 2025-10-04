@@ -6,7 +6,6 @@ import hashlib
 import jinja2
 import json
 import logging
-import lxml.etree
 import os
 import requests
 import sys
@@ -16,9 +15,6 @@ from models import Alert
 
 # Disable SSL warnings (not recommended for production)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
-ATOM_NS = "{http://www.w3.org/2005/Atom}"
-CAP_NS = "{urn:oasis:names:tc:emergency:cap:1.2}"
 
 
 class Parser(object):
@@ -125,7 +121,7 @@ class Parser(object):
 
 
     def details_for_alert(self, alert):
-        """ Fetches the NOAA detail XML feed for an alert and saves the description """
+        """ Fetches the NOAA detail JSON feed for an alert and returns the description """
         logger.info('Fetching Detail Link for Alert %s' % alert.alert_id)
         request = requests.get(alert.api_url)
         # Check for HTML or wrong content type
@@ -134,31 +130,24 @@ class Parser(object):
             or request.text.strip().lower().startswith('<!doctype html')
             or request.text.strip().lower().startswith('<html')
         ):
-            logger.error(f"Expected XML but got HTML for alert {alert.alert_id}. Response was:\n{request.text[:1000]}")
+            logger.error(f"Expected JSON but got HTML for alert {alert.alert_id}. Response was:\n{request.text[:1000]}")
             return None
         try:
-            tree = lxml.etree.fromstring(request.text.encode('utf-8'))
-        except lxml.etree.XMLSyntaxError as e:
-            logger.error(f"Failed to parse alert detail XML: {e}\nResponse was:\n{request.text[:1000]}")
+            data = request.json()
+        except Exception as e:
+            logger.error(f"Failed to parse alert detail JSON: {e}\nResponse was:\n{request.text[:1000]}")
             return None
 
-        info_el = tree.find(CAP_NS + 'info')
-        headline = info_el.find(CAP_NS + 'headline').text
-        event = info_el.find(CAP_NS + 'event').text
-        issuer = info_el.find(CAP_NS + 'senderName').text
-        description = info_el.find(CAP_NS + 'description').text
-        instructions = info_el.find(CAP_NS + 'instruction').text
-
-        area_el = info_el.find(CAP_NS + 'area')
-        area = area_el.find(CAP_NS + 'areaDesc').text
+        # Extract properties from the GeoJSON feature response
+        properties = data.get('properties', {})
         
         return {
-            'headline': headline, 
-            'event': event, 
-            'issuer': issuer, 
-            'description': description, 
-            'instructions': instructions, 
-            'area': area,
+            'headline': properties.get('headline', ''), 
+            'event': properties.get('event', ''), 
+            'issuer': properties.get('senderName', ''), 
+            'description': properties.get('description', ''), 
+            'instructions': properties.get('instruction', ''), 
+            'area': properties.get('areaDesc', ''),
         }
 
 
