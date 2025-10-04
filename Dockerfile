@@ -9,6 +9,7 @@ RUN apt-get update && \
     gcc \
     libxml2-dev \
     libxslt-dev \
+    nano \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching
@@ -25,6 +26,7 @@ RUN useradd -m -u 1000 noaa
 # Copy application files (excluding entrypoint and healthcheck scripts)
 COPY . .
 
+
 # Copy entrypoint and healthcheck scripts explicitly
 # Copy entrypoint and healthcheck scripts explicitly
 COPY entrypoint.sh /entrypoint.sh
@@ -37,8 +39,8 @@ COPY config.txt.example /config.txt
 RUN mkdir -p /app/output /app/data
 
 # Set permissions and ownership for entrypoint and healthcheck scripts
-RUN chmod +x /entrypoint.sh /healthcheck.sh /fix_configtxt.sh && \
-    chown noaa:noaa /entrypoint.sh /healthcheck.sh /fix_configtxt.sh
+RUN chmod +x /entrypoint.sh /healthcheck.sh && \
+    chown noaa:noaa /entrypoint.sh /healthcheck.sh
 
 # Force ownership of /app/data and /app/output to noaa (fixes volume or root-owned dir issues)
 RUN chown -R noaa:noaa /app/data /app/output && chmod 775 /app/data /app/output
