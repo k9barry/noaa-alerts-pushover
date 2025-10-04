@@ -41,7 +41,7 @@ Sends out NOAA Severe Weather Alerts via [Pushover](http://www.pushover.net). An
    docker compose up -d
    ```
 
-The service will check for alerts once and exit. To run continuously, see the [Installation Guide](INSTALL.md).
+The service will run continuously, checking for alerts every 5 minutes by default. For configuration options, see the [Installation Guide](INSTALL.md).
 
 ## Management Tools
 
@@ -145,7 +145,7 @@ ignored = Red Flag Warning,Heat Advisory
 
 ### Running on a Schedule
 
-For continuous monitoring, set up a cron job or use the Docker Compose configuration with a loop. See [INSTALL.md](INSTALL.md) for details.
+The Docker Compose configuration runs in loop mode by default, checking every 5 minutes. For manual installations, you can set up a cron job. See [INSTALL.md](INSTALL.md) for details.
 
 ## Documentation
 
