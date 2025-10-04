@@ -10,6 +10,11 @@ if [ "$(id -u)" = "0" ]; then
   echo "Fixing ownership of /app/data and /app/output..."
   chown -R noaa:noaa /app/data /app/output 2>/dev/null || true
   echo "Switching to noaa user..."
+  echo "Initializing database..."
+  gosu noaa python models.py || echo "Database initialization failed or already exists"
+else
+  echo "Initializing database..."
+  python models.py || echo "Database initialization failed or already exists"
 fi
 
 # Default mode is single run
