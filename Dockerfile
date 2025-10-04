@@ -17,31 +17,38 @@ COPY requirements.txt .
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application files
+
+# Create non-root user 'noaa'
+RUN useradd -m -u 1000 noaa
+
+
+# Copy application files (excluding entrypoint and healthcheck scripts)
 COPY . .
 
-# Create necessary directories
+# Copy entrypoint and healthcheck scripts explicitly
+# Copy entrypoint and healthcheck scripts explicitly
+COPY entrypoint.sh /entrypoint.sh
+COPY healthcheck.sh /healthcheck.sh
+
+# Copy default config.txt.example as /config.txt
+COPY config.txt.example /config.txt
+
+# Create necessary directories, set permissions, and ensure ownership for 'noaa' user
 RUN mkdir -p /app/output /app/data
 
-# Copy and set entrypoint
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+# Set permissions and ownership for entrypoint and healthcheck scripts
+RUN chmod +x /entrypoint.sh /healthcheck.sh /fix_configtxt.sh && \
+    chown noaa:noaa /entrypoint.sh /healthcheck.sh /fix_configtxt.sh
 
-# Copy and set healthcheck script
-COPY healthcheck.sh /healthcheck.sh
-RUN chmod +x /healthcheck.sh
+# Force ownership of /app/data and /app/output to noaa (fixes volume or root-owned dir issues)
+RUN chown -R noaa:noaa /app/data /app/output && chmod 775 /app/data /app/output
 
-# Create non-root user 'noaa' and set ownership
-RUN useradd -m -u 1000 noaa && \
-    chown -R noaa:noaa /app && \
-    chown noaa:noaa /entrypoint.sh && \
-    chown noaa:noaa /healthcheck.sh
+# Set ownership for all app files (optional, but ensures noaa can write)
+RUN chown -R noaa:noaa /app
 
 # Switch to noaa user
 USER noaa
 
-# Initialize database
-RUN python models.py
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1

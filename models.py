@@ -2,12 +2,18 @@ import datetime
 import os
 import peewee
 
-# Store database in data directory for better Docker volume management
-DB_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data')
-os.makedirs(DB_DIR, exist_ok=True)
-DB_PATH = os.path.join(DB_DIR, 'alerts.db')
+# Try Docker path first, fallback to local path
+docker_db_path = '/app/data/alerts.db'
+local_db_path = os.path.join(os.path.dirname(__file__), 'data', 'alerts.db')
+db_path = docker_db_path if os.path.exists('/app/data') else local_db_path
 
-db = peewee.SqliteDatabase(DB_PATH, pragmas={'journal_mode': 'wal'})
+data_dir = os.path.dirname(db_path)
+os.makedirs(data_dir, exist_ok=True)
+
+db = peewee.SqliteDatabase(db_path, pragmas={
+    'journal_mode': 'wal',
+    'cache_size': -1024 * 64  # 64MB page-cache.
+})
 
 class BaseModel(peewee.Model):
     class Meta:
@@ -30,5 +36,6 @@ class Alert(BaseModel):
         return self.title
 
 if __name__ == "__main__":
-    db.connect()
+    if db.is_closed():
+        db.connect()
     db.create_tables([Alert,])
