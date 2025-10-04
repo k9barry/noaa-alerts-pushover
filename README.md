@@ -12,8 +12,6 @@ Sends out NOAA Severe Weather Alerts via [Pushover](http://www.pushover.net). An
 - 💾 SQLite database to prevent duplicate notifications
 - 🔄 Automatic cleanup of expired alerts
 - 🛡️ Robust error handling for API failures and malformed responses
-- 📊 Dozzle for real-time log viewing
-- 🗄️ SQLitebrowser for database management
 
 ## Quick Start with Docker (Recommended)
 
@@ -42,25 +40,6 @@ Sends out NOAA Severe Weather Alerts via [Pushover](http://www.pushover.net). An
    ```
 
 The service will run continuously, checking for alerts every 5 minutes by default. For configuration options, see the [Installation Guide](INSTALL.md).
-
-## Management Tools
-
-When running with Docker Compose, two additional services are available for monitoring and management:
-
-### Dozzle - Log Viewer
-Access real-time logs at **http://localhost:8080**
-- View container logs in real-time
-- Search and filter log messages
-- No authentication required (for local use)
-
-### SQLitebrowser - Database Viewer
-Access the database at **http://localhost:8081**
-- Browse alert history
-- View database schema
-- Run SQL queries
-- Export data
-
-These services start automatically with `docker compose up -d` and require no additional configuration.
 
 ## Manual Installation (Python)
 
@@ -151,7 +130,6 @@ The Docker Compose configuration runs in loop mode by default, checking every 5 
 
 - [Quick Start Guide](QUICKSTART.md) - Get started in 5 minutes
 - [Installation Guide](INSTALL.md) - Detailed setup instructions
-- [Management Tools](MANAGEMENT_TOOLS.md) - Dozzle and SQLitebrowser usage guide
 - [How It Works](CODE_EXPLANATION.md) - Technical overview of the codebase
 - [Security](SECURITY.md) - Security best practices and considerations
 - [Changelog](CHANGELOG.md) - Version history and updates
