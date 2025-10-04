@@ -13,7 +13,6 @@ dist/
 # Project specific
 alerts.db
 log.txt
-config.txt
 output/
 data/
 
