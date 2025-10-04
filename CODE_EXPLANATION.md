@@ -486,17 +486,17 @@ except Exception as e:
 
 Malformed JSON is caught and logged with the first 1000 characters of the response for debugging.
 
-### XML Parsing with Safe Fallback
+### JSON Parsing with Safe Fallback
 
 ```python
 try:
-    tree = lxml.etree.fromstring(request.text.encode('utf-8'))
-except lxml.etree.XMLSyntaxError as e:
-    logger.error(f"Failed to parse alert detail XML: {e}\nResponse was:\n{request.text[:1000]}")
+    data = request.json()
+except Exception as e:
+    logger.error(f"Failed to parse alert detail JSON: {e}\nResponse was:\n{request.text[:1000]}")
     return None
 ```
 
-Invalid XML returns `None` instead of crashing, allowing the application to continue processing other alerts.
+Invalid JSON returns `None` instead of crashing, allowing the application to continue processing other alerts.
 
 ### Network Errors
 - Timeouts set to 30 seconds for all requests
