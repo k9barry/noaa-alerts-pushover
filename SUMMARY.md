@@ -351,7 +351,8 @@ Potential future enhancements:
 - Alert severity filtering
 - Geographic radius monitoring
 - REST API for integration
-- Alert history dashboard
+- ~~Alert history dashboard~~ ✅ (Added via SQLitebrowser in v2.1.0)
+- ~~Log monitoring interface~~ ✅ (Added via Dozzle in v2.1.0)
 
 ## Conclusion
 
