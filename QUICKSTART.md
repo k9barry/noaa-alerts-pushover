@@ -86,10 +86,6 @@ docker compose run -e RUN_MODE=once noaa-alerts
 docker compose run -e RUN_MODE=loop -e CHECK_INTERVAL=120 noaa-alerts
 ```
 
-**Access management tools:**
-- **Dozzle (Logs)**: http://localhost:8080
-- **SQLitebrowser (Database)**: http://localhost:8081
-
 #### Python (Manual)
 
 **Initialize database:**
@@ -156,11 +152,7 @@ python3 fetch.py --nopush --debug
 
 ### View Logs
 ```bash
-# Command line
 docker compose logs -f
-
-# Web interface (recommended)
-# Open http://localhost:8080
 ```
 
 ### Stop Container
@@ -177,30 +169,6 @@ docker compose run --rm noaa-alerts
 ```bash
 docker compose run --rm noaa-alerts --debug
 ```
-
-### View Database
-```bash
-# Web interface
-# Open http://localhost:8081
-```
-
-## Management Tools
-
-When using Docker Compose, you get two free management tools:
-
-### Dozzle - Log Viewer (Port 8080)
-- Real-time log streaming
-- Search and filter logs
-- Beautiful web interface
-- Access: http://localhost:8080
-
-### SQLitebrowser - Database Viewer (Port 8081)
-- Browse alert history
-- Run SQL queries
-- Export data
-- Access: http://localhost:8081
-
-Both tools start automatically with `docker compose up -d`.
 
 ## Troubleshooting
 
@@ -273,8 +241,6 @@ docker compose build --no-cache
 | Docker once | `docker compose run -e RUN_MODE=once noaa-alerts` |
 | View logs | `tail -f log.txt` |
 | Docker logs | `docker compose logs -f` |
-| Web logs | http://localhost:8080 |
-| Database viewer | http://localhost:8081 |
 
 ---
 
