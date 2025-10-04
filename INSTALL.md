@@ -96,43 +96,37 @@ Docker provides the easiest and most consistent way to run NOAA Alerts Pushover.
 
 ### Running on a Schedule
 
-By default, the container runs once and exits. For continuous monitoring:
+By default, the docker-compose.yml is configured for continuous monitoring using loop mode.
 
-#### Option 1: Use Loop Mode (Recommended)
+#### Option 1: Use Loop Mode (Default)
 
-Use the included loop mode configuration:
+The default docker-compose.yml runs in loop mode with checks every 5 minutes:
 
 ```bash
-docker compose -f docker-compose.loop.yml up -d
+docker compose up -d
 ```
 
-Or set the environment variable in your docker-compose.yml:
+To customize the interval, edit the `CHECK_INTERVAL` value in docker-compose.yml:
 
 ```yaml
 services:
   noaa-alerts:
     environment:
       - RUN_MODE=loop
-      - CHECK_INTERVAL=300  # Check every 5 minutes
+      - CHECK_INTERVAL=300  # Check every 5 minutes (300 seconds)
 ```
 
-#### Option 2: Use Environment Variables
+Or override it when running:
+```bash
+docker compose run -e CHECK_INTERVAL=120 noaa-alerts
+```
 
-Create a `.env` file from `.env.example`:
+#### Option 2: Use Single Run Mode
+
+To run once and exit (for external schedulers):
 
 ```bash
-cp .env.example .env
-```
-
-Edit `.env`:
-```
-RUN_MODE=loop
-CHECK_INTERVAL=300
-```
-
-Then run:
-```bash
-docker compose up -d
+docker compose run -e RUN_MODE=once noaa-alerts
 ```
 
 #### Option 3: Use External Scheduler

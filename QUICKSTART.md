@@ -70,14 +70,14 @@ This checks that everything is configured correctly.
 
 #### Docker (Recommended)
 
-**Single check:**
+**Continuous monitoring (default, every 5 minutes):**
 ```bash
-docker compose up
+docker compose up -d
 ```
 
-**Continuous monitoring (every 90 seconds):**
+**Single check:**
 ```bash
-docker compose -f docker-compose.loop.yml up -d
+docker compose run -e RUN_MODE=once noaa-alerts
 ```
 
 **Custom interval:**
@@ -117,15 +117,15 @@ python3 fetch.py --debug
 ### Run Once
 Check for alerts once and exit:
 ```bash
-docker compose up
+docker compose run -e RUN_MODE=once noaa-alerts
 # or
 python3 fetch.py
 ```
 
 ### Continuous Monitoring
-Check every N seconds continuously:
+Check every N seconds continuously (default):
 ```bash
-docker compose -f docker-compose.loop.yml up -d
+docker compose up -d
 # or setup a cron job
 ```
 
@@ -269,8 +269,8 @@ docker compose build --no-cache
 | Debug mode | `python3 fetch.py --debug` |
 | No push | `python3 fetch.py --nopush` |
 | Clear alerts | `python3 fetch.py --purge` |
-| Docker once | `docker compose up` |
-| Docker loop | `docker compose -f docker-compose.loop.yml up -d` |
+| Docker loop | `docker compose up -d` |
+| Docker once | `docker compose run -e RUN_MODE=once noaa-alerts` |
 | View logs | `tail -f log.txt` |
 | Docker logs | `docker compose logs -f` |
 | Web logs | http://localhost:8080 |
