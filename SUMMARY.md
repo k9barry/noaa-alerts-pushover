@@ -23,8 +23,8 @@ This document summarizes the complete modernization of the NOAA Alerts Pushover 
 - Updated urllib3 warnings handling
 - Added comprehensive error handling for API calls
 - Added HTTP status code validation
-- Added HTML response detection for both JSON and XML endpoints
-- Added try/catch blocks for JSON and XML parsing
+- Added HTML response detection for JSON endpoints
+- Added try/catch blocks for JSON parsing
 
 **Result**: All Python files now work with Python 3.12+ with robust error handling
 
@@ -41,15 +41,16 @@ requests==2.7.0
 ... and 7 more
 ```
 
-**After** (6 packages, latest stable):
+**After** (5 packages, latest stable):
 ```
 arrow==1.3.0
 beautifulsoup4==4.12.3
 Jinja2==3.1.4
-lxml==5.2.2
 peewee==3.17.6
 requests==2.32.3
 ```
+
+**Note**: lxml removed in v2.1.0 as NOAA API returns JSON, not XML.
 
 **Impact**: 
 - 7 obsolete dependencies removed
@@ -106,7 +107,7 @@ docker compose run -e RUN_MODE=loop -e CHECK_INTERVAL=120 noaa-alerts
 - **Robust error handling for API failures**
   - HTTP status code validation
   - HTML response detection
-  - JSON/XML parsing with try/catch blocks
+  - JSON parsing with try/catch blocks
   - Graceful degradation on individual alert failures
 - Better logging configuration with error context
 

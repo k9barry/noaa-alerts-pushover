@@ -237,8 +237,7 @@ For systems without Docker or if you prefer a traditional Python installation.
 **Ubuntu/Debian:**
 ```bash
 sudo apt update
-sudo apt install -y python3 python3-pip python3-venv git \
-    gcc libxml2-dev libxslt-dev
+sudo apt install -y python3 python3-pip python3-venv git
 ```
 
 **macOS:**
@@ -428,7 +427,7 @@ If using multiple instances, ensure only one is running at a time.
 5. Verify NOAA API is accessible: `curl https://api.weather.gov/alerts`
 
 #### API Errors or HTML Responses
-The application now automatically detects and handles cases where NOAA's API returns HTML error pages instead of JSON/XML. If you see these errors in logs:
+The application now automatically detects and handles cases where NOAA's API returns HTML error pages instead of JSON. If you see these errors in logs:
 - The application will continue running and retry on the next scheduled check
 - These are typically temporary NOAA API maintenance issues
 - Check `log.txt` for detailed error messages with response previews

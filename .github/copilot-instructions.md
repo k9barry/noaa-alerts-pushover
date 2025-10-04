@@ -21,8 +21,8 @@ This file provides context and guidelines for GitHub Copilot when working with t
 ### Core Components
 
 1. **fetch.py** - Main application script
-   - Fetches NOAA XML feeds
-   - Parses CAP (Common Alerting Protocol) format
+   - Fetches NOAA JSON feeds
+   - Parses GeoJSON format with CAP properties
    - Filters alerts by county codes (FIPS/UGC)
    - Manages database operations
    - Sends Pushover notifications
@@ -45,7 +45,7 @@ This file provides context and guidelines for GitHub Copilot when working with t
 ### Data Flow
 
 ```
-NOAA API → fetch.py → Parse XML → Filter Counties → Check Database
+NOAA API → fetch.py → Parse JSON → Filter Counties → Check Database
                                                            ↓
                                                       Insert New
                                                            ↓
@@ -79,7 +79,6 @@ from models import Alert
 
 ### Key Dependencies
 - **arrow**: Date/time handling (timezone-aware)
-- **lxml**: XML parsing for NOAA feeds
 - **peewee**: SQLite ORM
 - **requests**: HTTP client for API calls
 - **jinja2**: Template engine for HTML generation
@@ -109,11 +108,13 @@ run_ts = arrow.utcnow().timestamp()
 expires_ts = arrow.get(expires_str).timestamp()
 ```
 
-### XML Namespace Handling
-NOAA feeds use two namespaces:
+### JSON Response Handling
+NOAA API returns GeoJSON format with CAP properties:
 ```python
-ATOM_NS = "{http://www.w3.org/2005/Atom}"
-CAP_NS = "{urn:oasis:names:tc:emergency:cap:1.2}"
+data = request.json()
+properties = data.get('properties', {})
+event = properties.get('event', '')
+description = properties.get('description', '')
 ```
 
 ### Logging
@@ -147,10 +148,10 @@ JSON array of county objects:
 
 ### NOAA Weather Alerts API
 - **Base URL**: `https://api.weather.gov/alerts`
-- **Format**: ATOM feed with CAP extensions
+- **Format**: GeoJSON with CAP properties
 - **Rate Limiting**: Be respectful, implement delays if needed
 - **SSL**: Verify certificates (currently disabled with urllib3 warning suppression)
-- **Response**: XML with alert entries containing FIPS/UGC codes
+- **Response**: JSON with GeoJSON features containing FIPS/UGC codes
 
 ### Pushover API
 - **Endpoint**: `https://api.pushover.net/1/messages.json`
@@ -222,7 +223,7 @@ GitHub Actions workflow in `.github/workflows/ci.yml`:
 - SSL verification should be enabled in production
 - Implement timeouts for API requests
 - Handle API rate limiting
-- Validate and sanitize XML input from NOAA
+- Validate and sanitize JSON input from NOAA
 
 ### Database
 - Use parameterized queries (Peewee handles this)
@@ -314,7 +315,7 @@ noaa-alerts-pushover/
 
 ### Common Issues
 1. **NOAA API failures**: Implement retries with exponential backoff
-2. **Malformed XML**: Wrap parsing in try-except blocks
+2. **Malformed JSON**: Wrap parsing in try-except blocks
 3. **Database locks**: WAL mode helps, but still handle OperationalError
 4. **Missing config**: Exit gracefully with clear error message
 5. **Network timeouts**: Set reasonable timeout values on requests
