@@ -13,7 +13,7 @@
 #### Enhanced Docker Compose
 - Added Dozzle service for real-time log monitoring
 - Added SQLitebrowser service for database inspection
-- Updated docker-compose.yml and docker-compose.loop.yml
+- Updated docker-compose.yml with management tools
 - Proper port mappings (8080 for logs, 8081 for database)
 - Security best practices documented
 

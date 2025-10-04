@@ -234,8 +234,7 @@ GitHub Actions workflow in `.github/workflows/ci.yml`:
 
 ### Files
 - **Dockerfile**: Python 3.12-slim base
-- **docker-compose.yml**: Standard single-run mode
-- **docker-compose.loop.yml**: Continuous monitoring
+- **docker-compose.yml**: Includes loop mode and management tools
 - **entrypoint.sh**: Flexible run modes (once, loop, cron)
 - **.dockerignore**: Excludes unnecessary files
 

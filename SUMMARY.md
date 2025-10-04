@@ -74,11 +74,9 @@ requests==2.32.3
 
 **New Files**:
 - `Dockerfile` - Python 3.12-slim base image
-- `docker-compose.yml` - Standard single-run mode
-- `docker-compose.loop.yml` - Continuous monitoring
+- `docker-compose.yml` - Includes loop mode configuration
 - `.dockerignore` - Efficient builds
 - `entrypoint.sh` - Flexible run modes
-- `.env.example` - Environment config
 
 **Features**:
 - Three run modes: once, loop, cron
@@ -88,11 +86,11 @@ requests==2.32.3
 
 **Example Usage**:
 ```bash
-# Single check
-docker compose up
+# Continuous monitoring (default, 5 min intervals)
+docker compose up -d
 
-# Continuous (5 min intervals)
-docker compose -f docker-compose.loop.yml up -d
+# Single check
+docker compose run -e RUN_MODE=once noaa-alerts
 
 # Custom interval
 docker compose run -e RUN_MODE=loop -e CHECK_INTERVAL=120 noaa-alerts
@@ -151,9 +149,8 @@ docker compose run -e RUN_MODE=loop -e CHECK_INTERVAL=120 noaa-alerts
 ### 8. Additional Files ✅
 
 - `config.txt.example` - Configuration template
-- `.env.example` - Docker environment template
 - `test_setup.py` - Setup validation script
-- Updated `.gitignore` - Exclude data/, .env
+- Updated `.gitignore` - Exclude data/
 
 ## Statistics
 
@@ -208,7 +205,7 @@ git clone https://github.com/k9barry/noaa-alerts-pushover.git
 cd noaa-alerts-pushover
 cp config.txt.example config.txt
 # Edit config.txt
-docker compose -f docker-compose.loop.yml up -d
+docker compose up -d
 ```
 
 **Python**:
@@ -278,7 +275,6 @@ noaa-alerts-pushover/
 │   ├── detail.html             # Alert template
 │   └── sample.xml              # Test data
 ├── .dockerignore               # Docker efficiency
-├── .env.example                # Environment template
 ├── .gitignore                  # Git exclusions
 ├── CHANGELOG.md                # Version history
 ├── CODE_EXPLANATION.md         # Architecture docs
@@ -293,8 +289,7 @@ noaa-alerts-pushover/
 ├── cleanup.py                  # HTML cleanup
 ├── config.txt.example          # Config template
 ├── counties.json               # Counties to monitor
-├── docker-compose.loop.yml     # Continuous mode
-├── docker-compose.yml          # Standard mode
+├── docker-compose.yml          # Docker Compose config
 ├── entrypoint.sh               # Docker entry
 ├── fetch.py                    # Main application
 ├── models.py                   # Database ORM
