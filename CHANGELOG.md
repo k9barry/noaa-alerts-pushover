@@ -1,5 +1,54 @@
 # Changelog
 
+## Version 2.2.0 - 2024
+
+### 📝 Documentation Improvements
+
+#### Template Customization Guide
+- **New file**: `templates/TEMPLATE_GUIDE.md` (300+ lines)
+- **Content**: Comprehensive guide for customizing `detail.html` template
+- **Includes**:
+  - All available template variables (alert data, expires timestamp)
+  - 7 practical customization examples
+  - Jinja2 template syntax reference
+  - Testing instructions
+  - Best practices for accessibility
+  - Mobile-friendly layout examples
+  - Troubleshooting common issues
+
+#### Enhanced Setup Validation Tool
+- **New features** in `test_setup.py`:
+  - `--fix` flag: Automatically create config.txt and initialize database
+  - `--interactive` flag: Prompt before each fix for user control
+- **Auto-fixes**:
+  - Missing config.txt (creates from config.txt.example)
+  - Uninitialized database (runs database setup)
+- **Benefits**: One-command setup reduces friction for new users
+
+#### Sample Data Format Update
+- **Removed**: `templates/sample.xml` (outdated XML CAP format)
+- **Added**: `templates/sample.json` (modern GeoJSON/CAP format)
+- **Added**: `templates/README.md` (templates directory documentation)
+- **Why**: Sample data now matches actual NOAA API response format
+
+### 📚 Files Changed
+- `templates/sample.xml` - Deleted (107 lines removed)
+- `templates/sample.json` - Created (88 lines added)
+- `templates/README.md` - Created (71 lines added)
+- `templates/TEMPLATE_GUIDE.md` - Created (318 lines added, moved from root)
+- `test_setup.py` - Enhanced (80 lines added)
+- `README.md` - Updated (23 lines added for customization section)
+
+### 🔄 Documentation Consolidation
+- **Combined** INSTALL.md and QUICKSTART.md into comprehensive INSTALL.md
+- **Combined** CHANGELOG.md and CHANGES_SUMMARY.md into single CHANGELOG.md
+- **Incorporated** DOCKER_NONROOT.md content into INSTALL.md
+- **Incorporated** SUMMARY.md modernization details into README.md
+- **Removed** redundant documentation files to reduce maintenance burden
+- **Updated** all cross-references between documentation files
+
+**Total**: ~600 lines of new documentation, improved organization and accessibility
+
 ## Version 2.1.0 - 2024
 
 ### 🔧 API Changes

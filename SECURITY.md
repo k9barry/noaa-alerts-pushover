@@ -49,12 +49,20 @@ If you discover a security vulnerability, please report it by opening a GitHub i
 ### Docker Security
 
 1. **Run as non-root user** ✅ Implemented
-   - The Dockerfile now includes a non-root user for enhanced security
+   - The Dockerfile includes a non-root user for enhanced security
    - Container runs as user `noaa` (UID 1000)
-   - See [DOCKER_NONROOT.md](DOCKER_NONROOT.md) for volume mount permission details
+   - See [INSTALL.md](INSTALL.md) Docker Security section for volume mount permission details
    ```dockerfile
    RUN useradd -m -u 1000 noaa && chown -R noaa:noaa /app
    USER noaa
+   ```
+   
+   **Volume mount permissions:**
+   ```bash
+   # Ensure mounted directories are writable by UID 1000
+   sudo chown -R 1000:1000 ./output ./data
+   # Or use permissive permissions
+   chmod 777 ./output ./data
    ```
 
 2. **Mount config files as read-only**
