@@ -10,6 +10,7 @@ import json
 import argparse
 import subprocess
 import shutil
+import logging
 
 def test_python_version():
     """Check Python version"""
@@ -220,6 +221,57 @@ def fix_database():
         return False
 
 
+def run_fetch_test(logger=None):
+    """Run fetch.py --nopush --debug to test the application"""
+    print("\nRunning test fetch (no push, debug mode)...")
+    if logger:
+        logger.info("Running test fetch with --nopush --debug flags")
+    
+    try:
+        # Run fetch.py with --nopush and --debug flags
+        result = subprocess.run(
+            [sys.executable, 'fetch.py', '--nopush', '--debug'],
+            capture_output=True,
+            text=True,
+            timeout=60
+        )
+        
+        # Print output to console
+        if result.stdout:
+            print(result.stdout)
+            if logger:
+                for line in result.stdout.splitlines():
+                    logger.info(f"FETCH: {line}")
+        
+        if result.stderr:
+            print(result.stderr, file=sys.stderr)
+            if logger:
+                for line in result.stderr.splitlines():
+                    logger.info(f"FETCH: {line}")
+        
+        if result.returncode == 0:
+            print("  ✓ Test fetch completed successfully")
+            if logger:
+                logger.info("Test fetch completed successfully")
+            return True
+        else:
+            print(f"  ⚠️  Test fetch exited with code {result.returncode}")
+            if logger:
+                logger.warning(f"Test fetch exited with code {result.returncode}")
+            return True  # Not a critical failure for setup validation
+            
+    except subprocess.TimeoutExpired:
+        print("  ⚠️  Test fetch timed out (60 seconds)")
+        if logger:
+            logger.warning("Test fetch timed out after 60 seconds")
+        return True  # Not a critical failure
+    except Exception as e:
+        print(f"  ❌ Failed to run test fetch: {e}")
+        if logger:
+            logger.error(f"Failed to run test fetch: {e}")
+        return False
+
+
 def main():
     """Run all tests"""
     parser = argparse.ArgumentParser(
@@ -248,6 +300,27 @@ Examples:
     # Determine if we should auto-fix
     auto_fix = args.fix
     interactive = args.interactive
+    
+    # Set up logging to both file and console
+    logger = None
+    if interactive or auto_fix:
+        # Configure logging for interactive/auto-fix mode
+        log_filename = 'setup_validation.log'
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s  %(message)s',
+            handlers=[
+                logging.FileHandler(log_filename)
+            ]
+        )
+        logger = logging.getLogger(__name__)
+        logger.info("=" * 60)
+        logger.info("NOAA Alerts Pushover - Setup Validation")
+        if auto_fix:
+            logger.info("Mode: Auto-fix enabled")
+        elif interactive:
+            logger.info("Mode: Interactive")
+        logger.info("=" * 60)
     
     print("=" * 60)
     print("NOAA Alerts Pushover - Setup Validation")
@@ -280,13 +353,29 @@ Examples:
     
     if all_passed:
         print("\n✓ All checks passed! You're ready to run the application.")
-        print("\nNext steps:")
-        print("  1. Review your config.txt and counties.json")
-        print("  2. Run: python fetch.py --nopush --debug")
-        print("  3. If successful, run: python fetch.py")
+        if logger:
+            logger.info("All checks passed!")
+        
+        # Run test fetch if in interactive mode
+        if interactive:
+            print("\n" + "=" * 60)
+            print("Running test fetch...")
+            print("=" * 60)
+            if logger:
+                logger.info("=" * 60)
+                logger.info("Running test fetch...")
+                logger.info("=" * 60)
+            run_fetch_test(logger)
+        else:
+            print("\nNext steps:")
+            print("  1. Review your config.txt and counties.json")
+            print("  2. Run: python fetch.py --nopush --debug")
+            print("  3. If successful, run: python fetch.py")
         return 0
     else:
         print("\n❌ Some checks failed. Please fix the issues above.")
+        if logger:
+            logger.error("Some checks failed")
         return 1
 
 if __name__ == '__main__':
