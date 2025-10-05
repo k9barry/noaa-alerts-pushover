@@ -74,7 +74,8 @@ requests==2.32.3
 
 **New Files**:
 - `Dockerfile` - Python 3.12-slim base image
-- `docker-compose.yml` - Includes loop mode configuration
+- `docker-compose.yml` - Uses scheduler mode by default
+- `scheduler.py` - Python schedule-based task scheduler
 - `.dockerignore` - Efficient builds
 - `entrypoint.sh` - Flexible run modes
 
@@ -87,14 +88,13 @@ requests==2.32.3
 
 **Example Usage**:
 ```bash
-# Continuous monitoring (default, 5 min intervals)
+# Continuous monitoring with scheduler (default)
 docker compose up -d
 
 # Single check
 docker compose run -e RUN_MODE=once noaa-alerts
 
-# Custom interval
-docker compose run -e RUN_MODE=loop -e CHECK_INTERVAL=120 noaa-alerts
+# Customize intervals in config.txt [schedule] section
 ```
 
 ### 5. Code Quality ✅

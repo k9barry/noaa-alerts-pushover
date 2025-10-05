@@ -141,10 +141,11 @@ services:
 
 #### Scheduled Running
 Options for continuous monitoring:
-1. Docker Compose with loop command
-2. Cron job scheduling
-3. systemd timers (Linux)
-4. Task Scheduler (Windows)
+1. Python scheduler (default - recommended)
+2. Docker Compose with scheduler mode
+3. systemd service for scheduler (Linux)
+
+The application includes a built-in scheduler using Python's `schedule` library for automated task execution.
 
 See [INSTALL.md](INSTALL.md) for details.
 
