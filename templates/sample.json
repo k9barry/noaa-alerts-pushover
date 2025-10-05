@@ -1,0 +1,74 @@
+{
+  "@context": [
+    "https://geojson.org/geojson-ld/geojson-context.jsonld",
+    {
+      "@version": "1.1",
+      "wx": "https://api.weather.gov/ontology#"
+    }
+  ],
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.5d98bead77e63e2bf1b31f7f151eacc6.001.1",
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.5d98bead77e63e2bf1b31f7f151eacc6.001.1",
+        "@type": "wx:Alert",
+        "id": "urn:oid:2.49.0.1.840.0.5d98bead77e63e2bf1b31f7f151eacc6.001.1",
+        "areaDesc": "Jefferson and West Douglas Counties Above 6000 Feet, Gilpin, Clear Creek, Northeast Park Counties Below 9000 Feet; Larimer and Boulder Counties Between 6000 and 9000 Feet",
+        "geocode": {
+          "FIPS6": [
+            "008013",
+            "008019",
+            "008035",
+            "008047",
+            "008059",
+            "008069",
+            "008093"
+          ],
+          "UGC": [
+            "COZ035",
+            "COZ036"
+          ]
+        },
+        "affectedZones": [
+          "https://api.weather.gov/zones/forecast/COZ035",
+          "https://api.weather.gov/zones/forecast/COZ036"
+        ],
+        "references": [],
+        "sent": "2015-12-21T14:49:00-07:00",
+        "effective": "2015-12-21T14:49:00-07:00",
+        "onset": "2015-12-21T18:00:00-07:00",
+        "expires": "2015-12-22T06:00:00-07:00",
+        "ends": "2015-12-22T06:00:00-07:00",
+        "status": "Actual",
+        "messageType": "Alert",
+        "category": "Met",
+        "severity": "Severe",
+        "certainty": "Likely",
+        "urgency": "Expected",
+        "event": "High Wind Warning",
+        "sender": "w-nws.webmaster@noaa.gov",
+        "senderName": "NWS Boulder (Northeastern Colorado)",
+        "headline": "High Wind Warning issued December 21 at 2:49PM MST until December 22 at 6:00AM MST by NWS Boulder",
+        "description": "...HIGH WIND WARNING IN EFFECT FROM 6 PM THIS EVENING TO 6 AM MST TUESDAY FOR THE FRONT RANGE FOOTHILLS...\nTHE NATIONAL WEATHER SERVICE IN DENVER HAS ISSUED A HIGH WIND WARNING FOR THE FRONT RANGE FOOTHILLS IN NORTHERN COLORADO... WHICH IS IN EFFECT FROM 6 PM THIS EVENING TO 6 AM MST TUESDAY. THE HIGH WIND WATCH IS NO LONGER IN EFFECT.\n* TIMING...STRONG AND GUSTY WEST WINDS WILL DEVELOP THIS EVENING AND THEN DECREASE TOWARD MORNING. STRONGEST WINDS ARE LIKELY TO OCCUR BETWEEN 9 PM AND 3 AM MST TONIGHT IN AREAS ABOVE 8000 FEET.\n* WINDS...SUSTAINED WINDS OF 30 TO 45 MPH ARE LIKELY WITH PEAK GUSTS UP TO 75 MPH. THE PEAK TO PEAK HIGHWAY AND I-70 FROM WEST OF IDAHO SPRINGS TO JUST BELOW THE EISENHOWER TUNNEL WILL BE ESPECIALLY SUSCEPTIBLE TO THESE HIGH WINDS.\n* IMPACTS...CONSIDERABLE BLOWING SNOW MAY SEVERELY REDUCE VISIBILITIES AT TIMES IN EXPOSED AREAS. SUDDEN AND STRONG WIND GUSTS MAY ALSO CAUSE YOU TO TEMPORARILY LOOSE CONTROL OF YOUR VEHICLE. BE PREPARED FOR DANGEROUS DRIVING CONDITIONS DUE TO THESE VERY STRONG WIND GUSTS AND BLOWING SNOW.",
+        "instruction": "REMEMBER...A HIGH WIND WARNING MEANS THAT STRONG AND POTENTIALLY DAMAGING WINDS ARE EITHER OCCURRING OR HIGHLY LIKELY. RESIDENTS SHOULD MOVE TRASH CANS...PATIO FURNITURE...AND ANY OTHER ITEMS EASILY TOSSED ABOUT BY HIGH WINDS INDOORS. MOTORISTS TRAVELING IN HIGH PROFILE AND LIGHT WEIGHT VEHICLES SHOULD CONSIDER DELAYING TRAVEL UNTIL THE WINDS SUBSIDE ON TUESDAY.",
+        "response": "Prepare",
+        "parameters": {
+          "AWIPSidentifier": ["NPWBOU"],
+          "WMOidentifier": ["WGUS85 KBOU 211449"],
+          "NWSheadline": [
+            "HIGH WIND WARNING IN EFFECT FROM 6 PM THIS EVENING TO 6 AM MST TUESDAY FOR THE FRONT RANGE FOOTHILLS"
+          ],
+          "BLOCKCHANNEL": ["EAS", "NWEM", "CMAS"],
+          "VTEC": ["/O.UPG.KBOU.HW.A.0002.151222T0100Z-151222T1300Z/", "/O.NEW.KBOU.HW.W.0006.151222T0100Z-151222T1300Z/"],
+          "eventEndingTime": ["2015-12-22T06:00:00-07:00"]
+        },
+        "uri": "https://www.weather.gov/alerts/CO-HW-W-0006"
+      }
+    }
+  ],
+  "title": "Current watches, warnings, and advisories for Colorado",
+  "updated": "2015-12-21T14:49:00-07:00"
+}
