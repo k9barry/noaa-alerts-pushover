@@ -136,9 +136,27 @@ logger.debug("Matched %d existing alerts." % existing_count)
 
 ### config.txt
 INI format with sections:
-- `[pushover]`: token, user
+- `[pushover]`: token, user (required)
 - `[events]`: ignored (comma-separated list of event types to skip)
-- `[schedule]`: fetch_interval, cleanup_interval, vacuum_interval (in minutes/hours)
+- `[schedule]`: fetch_interval (minutes), cleanup_interval (hours), vacuum_interval (hours)
+  - fetch_interval: How often to check for new alerts (default: 5 minutes)
+  - cleanup_interval: How often to remove expired HTML files (default: 24 hours)
+  - vacuum_interval: How often to run database maintenance (default: 168 hours/weekly)
+
+Example:
+```ini
+[pushover]
+token = YOUR_PUSHOVER_TOKEN
+user = YOUR_PUSHOVER_USER_KEY
+
+[events]
+ignored = Red Flag Warning,Heat Advisory
+
+[schedule]
+fetch_interval = 5
+cleanup_interval = 24
+vacuum_interval = 168
+```
 
 ### counties.json
 JSON array of county objects:
@@ -210,9 +228,26 @@ python test_setup.py
 The `test_setup.py` script validates:
 - Python version (3.12+)
 - Required module imports
-- Configuration file existence
+- Configuration file existence and structure
 - Counties file structure
 - Database connectivity
+
+**Enhanced with auto-fix capabilities:**
+```bash
+# Run validation checks only
+python test_setup.py
+
+# Auto-fix issues without prompting
+python test_setup.py --fix
+
+# Interactive mode - prompt before each fix
+python test_setup.py --interactive
+```
+
+Auto-fixes include:
+- Creating config.txt from config.txt.example
+- Initializing database with proper schema
+- Validating schedule section values in config.txt
 
 ### CI/CD
 GitHub Actions workflow in `.github/workflows/ci.yml`:
@@ -292,6 +327,12 @@ The `templates/detail.html` Jinja2 template generates alert detail pages with:
 - Affected area
 - Expiration time
 
+**Comprehensive customization guide**: See `templates/TEMPLATE_GUIDE.md` for:
+- All available template variables (alert dictionary, expires timestamp)
+- 7+ practical customization examples (styling, mobile layouts, conditional content)
+- Jinja2 syntax reference and best practices
+- Testing and troubleshooting instructions
+
 ## File Organization
 
 ```
@@ -300,7 +341,10 @@ noaa-alerts-pushover/
 │   ├── workflows/ci.yml
 │   └── copilot-instructions.md (this file)
 ├── templates/
-│   └── detail.html
+│   ├── detail.html             # Jinja2 template for alert HTML pages
+│   ├── sample.json             # Sample NOAA API GeoJSON response
+│   ├── README.md               # Templates directory documentation
+│   └── TEMPLATE_GUIDE.md       # Comprehensive template customization guide
 ├── data/              (gitignored, created at runtime)
 │   └── alerts.db
 ├── output/            (gitignored, created at runtime)
@@ -310,14 +354,21 @@ noaa-alerts-pushover/
 ├── models.py          (database models)
 ├── cleanup.py         (HTML cleanup - run by scheduler)
 ├── vacuum.py          (DB maintenance - run by scheduler)
-├── test_setup.py      (validation script)
+├── test_setup.py      (validation script with --fix and --interactive modes)
 ├── config.txt         (gitignored, user creates from example)
-├── config.txt.example (template with schedule section)
+├── config.txt.example (template with [schedule] section)
 ├── counties.json      (user edits)
 ├── requirements.txt   (Python dependencies including schedule)
-├── Dockerfile
-├── docker-compose.yml
-└── Documentation files (*.md)
+├── Dockerfile         (non-root user UID 1000)
+├── docker-compose.yml (scheduler mode by default)
+├── entrypoint.sh      (flexible run modes)
+└── Documentation files:
+    ├── README.md              # Project overview with modernization highlights
+    ├── INSTALL.md             # Combined installation guide (includes quick start)
+    ├── CHANGELOG.md           # Complete version history
+    ├── CODE_EXPLANATION.md    # Technical architecture
+    ├── CONTRIBUTING.md        # Contribution guidelines
+    └── SECURITY.md            # Security best practices
 ```
 
 ## Error Handling
@@ -336,14 +387,21 @@ noaa-alerts-pushover/
 
 ## Documentation
 
-Key documentation files:
-- **README.md**: Quick start and basic usage
-- **QUICKSTART.md**: 5-minute setup guide
-- **INSTALL.md**: Detailed installation instructions
+Key documentation files (consolidated and updated):
+- **README.md**: Project overview with modernization highlights, features, architecture, and quick start
+- **INSTALL.md**: Comprehensive installation guide combining quick start (5-minute setup) and detailed instructions
+- **templates/TEMPLATE_GUIDE.md**: Complete guide for customizing alert HTML templates (300+ lines, 7+ examples)
 - **CODE_EXPLANATION.md**: Technical architecture deep-dive
 - **CONTRIBUTING.md**: Contribution guidelines
 - **SECURITY.md**: Security best practices
-- **CHANGELOG.md**: Version history
+- **CHANGELOG.md**: Complete version history including recent documentation improvements
+
+**Removed files** (consolidated):
+- QUICKSTART.md - merged into INSTALL.md
+- CHANGES_SUMMARY.md - merged into CHANGELOG.md
+- DOCKER_NONROOT.md - incorporated into INSTALL.md
+- SUMMARY.md - incorporated into README.md
+- TEMPLATE_GUIDE.md - moved to templates/TEMPLATE_GUIDE.md
 
 ## Tips for Copilot
 

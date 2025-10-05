@@ -1,13 +1,148 @@
 # Installation Guide
 
-This guide provides detailed instructions for installing and running NOAA Alerts Pushover.
+This comprehensive guide will help you get NOAA Alerts Pushover up and running. Choose between a quick 5-minute setup or detailed installation instructions.
 
 ## Table of Contents
 
+- [Quick Start (5 Minutes)](#quick-start-5-minutes)
 - [Docker Installation (Recommended)](#docker-installation-recommended)
 - [Manual Installation](#manual-installation)
+- [Configuration Details](#configuration-details)
 - [Scheduling Options](#scheduling-options)
+- [Command-Line Options](#command-line-options)
 - [Troubleshooting](#troubleshooting)
+- [Maintenance](#maintenance)
+- [Security Notes](#security-notes)
+
+## Quick Start (5 Minutes)
+
+Get up and running with NOAA Alerts Pushover quickly!
+
+### Prerequisites
+
+Choose your preferred method:
+
+**Docker (Easiest)**
+- Docker 20.10+
+- Docker Compose 2.0+
+
+**Python (Manual)**
+- Python 3.12+
+- pip package manager
+
+### Setup Steps
+
+#### 1. Get the Code
+
+```bash
+git clone https://github.com/k9barry/noaa-alerts-pushover.git
+cd noaa-alerts-pushover
+```
+
+#### 2. Configure
+
+```bash
+# Copy the example configuration
+cp config.txt.example config.txt
+
+# Edit with your Pushover credentials
+nano config.txt  # or use your favorite editor
+```
+
+Add your [Pushover](https://pushover.net) credentials:
+```ini
+[pushover]
+token = your_app_token_here
+user = your_user_key_here
+
+[events]
+ignored = Red Flag Warning,Heat Advisory
+
+[schedule]
+# How often to check for new alerts (in minutes)
+fetch_interval = 5
+# How often to run cleanup.py to remove expired HTML files (in hours)
+cleanup_interval = 24
+# How often to run vacuum.py for database maintenance (in hours)
+vacuum_interval = 168
+```
+
+#### 3. Select Counties
+
+Edit `counties.json` to add the counties you want to monitor.
+
+Find your county codes at: http://www.nws.noaa.gov/emwin/winugc.htm
+
+Example:
+```json
+[
+    {
+        "fips": "012057",
+        "name": "Hillsborough County",
+        "state": "FL",
+        "ugc": "FL057"
+    }
+]
+```
+
+#### 4. Validate Setup (Optional but Recommended)
+
+```bash
+python3 test_setup.py
+
+# Auto-fix issues (create config.txt, initialize database)
+python3 test_setup.py --fix
+
+# Interactive mode (prompt before each fix)
+python3 test_setup.py --interactive
+```
+
+#### 5. Run
+
+**Docker (Recommended)**
+
+Continuous monitoring (default):
+```bash
+docker compose up -d
+```
+
+This runs the scheduler which checks for alerts every 5 minutes by default.
+
+Single check:
+```bash
+docker compose run -e RUN_MODE=once noaa-alerts
+```
+
+**Python (Manual)**
+
+Initialize database:
+```bash
+python3 models.py
+```
+
+Continuous monitoring:
+```bash
+python3 scheduler.py
+```
+
+Single check:
+```bash
+python3 fetch.py
+```
+
+Test without sending notifications:
+```bash
+python3 fetch.py --nopush
+```
+
+Debug mode:
+```bash
+python3 fetch.py --debug
+# or for scheduler
+python3 scheduler.py --debug
+```
+
+---
 
 ## Docker Installation (Recommended)
 
@@ -286,6 +421,62 @@ If you prefer to run fetch.py once per invocation, you can call it directly and 
 
 ## Configuration Details
 
+### Configuration File Structure
+
+The `config.txt` file uses INI format with three main sections:
+
+#### [pushover] Section
+
+**Required** - Your Pushover API credentials:
+```ini
+[pushover]
+token = YOUR_PUSHOVER_TOKEN
+user = YOUR_PUSHOVER_USER_KEY
+```
+
+Get your credentials at: https://pushover.net
+
+#### [events] Section
+
+**Optional** - Filter out alert types you don't want to receive:
+```ini
+[events]
+ignored = Red Flag Warning,Heat Advisory,Wind Advisory
+```
+
+Common events you might want to ignore:
+- Red Flag Warning
+- Heat Advisory
+- Wind Advisory
+- Small Craft Advisory
+- Beach Hazards Statement
+- Special Weather Statement
+
+#### [schedule] Section
+
+**Optional** - Configure how often tasks run (added in recent updates):
+```ini
+[schedule]
+# How often to check for new alerts (in minutes)
+fetch_interval = 5
+
+# How often to remove expired HTML files (in hours)
+cleanup_interval = 24
+
+# How often to run database maintenance (in hours, default is weekly)
+vacuum_interval = 168
+```
+
+**Default values** if not specified:
+- `fetch_interval`: 5 minutes (checks for new alerts)
+- `cleanup_interval`: 24 hours (daily cleanup of expired HTML files)
+- `vacuum_interval`: 168 hours (weekly database optimization)
+
+**Customization examples:**
+- Check alerts every 2 minutes during storm season: `fetch_interval = 2`
+- Run cleanup twice daily: `cleanup_interval = 12`
+- Run database maintenance monthly: `vacuum_interval = 720`
+
 ### County Codes
 
 County codes consist of:
@@ -296,20 +487,85 @@ County codes consist of:
 
 Find codes at: http://www.nws.noaa.gov/emwin/winugc.htm
 
-### Ignored Events
-
-Common events you might want to ignore:
-- Red Flag Warning
-- Heat Advisory
-- Wind Advisory
-- Small Craft Advisory
-- Beach Hazards Statement
-
-Add them comma-separated in `config.txt`:
-```ini
-[events]
-ignored = Red Flag Warning,Heat Advisory,Wind Advisory
+Example `counties.json`:
+```json
+[
+    {
+        "fips": "012057",
+        "name": "Hillsborough County",
+        "state": "FL",
+        "ugc": "FL057"
+    },
+    {
+        "fips": "012103",
+        "name": "Pinellas County",
+        "state": "FL",
+        "ugc": "FL103"
+    }
+]
 ```
+
+## Command-Line Options
+
+### fetch.py Options
+
+```bash
+# Standard run - check for alerts and send notifications
+python3 fetch.py
+
+# Test without sending push notifications
+python3 fetch.py --nopush
+
+# Clear all saved alerts from database
+python3 fetch.py --purge
+
+# Enable debug logging
+python3 fetch.py --debug
+
+# Combine options
+python3 fetch.py --nopush --debug
+```
+
+### Docker Commands
+
+```bash
+# View logs
+docker compose logs -f
+
+# Stop all containers
+docker compose down
+
+# Rebuild after changes
+docker compose build
+
+# Run once and exit
+docker compose run -e RUN_MODE=once noaa-alerts
+
+# Run with purge flag
+docker compose run --rm noaa-alerts python fetch.py --purge
+
+# Debug mode
+docker compose run --rm noaa-alerts python fetch.py --debug
+
+# Rebuild from scratch
+docker compose build --no-cache
+```
+
+### Quick Reference Table
+
+| Task | Command |
+|------|---------|
+| Test setup | `python3 test_setup.py` |
+| Auto-fix setup | `python3 test_setup.py --fix` |
+| Single check | `python3 fetch.py` |
+| Debug mode | `python3 fetch.py --debug` |
+| No push | `python3 fetch.py --nopush` |
+| Clear alerts | `python3 fetch.py --purge` |
+| Run scheduler | `python3 scheduler.py` |
+| Docker continuous | `docker compose up -d` |
+| Docker once | `docker compose run -e RUN_MODE=once noaa-alerts` |
+| View logs | `tail -f log.txt` |
+| Docker logs | `docker compose logs -f` |
 
 ## Troubleshooting
 
@@ -343,12 +599,61 @@ The application now automatically detects and handles cases where NOAA's API ret
 #### Permission Denied Errors (Linux)
 
 **For Docker:**
-The container runs as user `noaa` (UID 1000). If you see permission errors:
+
+The container runs as user `noaa` (UID 1000) for improved security. This follows Docker and Kubernetes security best practices by:
+- Running as a non-root user
+- Reducing attack surface
+- Limiting potential damage from container escape vulnerabilities
+
+If you see permission errors:
 ```bash
-# Ensure mounted directories are writable
+# Option 1: Set host directory owner to UID 1000
 sudo chown -R 1000:1000 ./output ./data
-# Or use permissive permissions
+
+# Option 2: Use permissive permissions
 chmod 777 ./output ./data
+
+# Option 3: If your host user is already UID 1000 (check with `id -u`), no changes are needed
+```
+
+**Verifying non-root execution:**
+```bash
+# Check the user inside the running container
+docker compose exec noaa-alerts whoami
+# Should output: noaa
+
+# Check the UID
+docker compose exec noaa-alerts id
+# Should output: uid=1000(noaa) gid=1000(noaa) groups=1000(noaa)
+```
+
+**Additional Docker Security Measures:**
+
+For enhanced security, consider these additional measures:
+```bash
+# Read-only root filesystem with writable volumes
+docker run --read-only \
+  --security-opt=no-new-privileges \
+  --cap-drop=ALL \
+  -v ./output:/app/output \
+  -v ./data:/app/data \
+  noaa-alerts
+```
+
+**Kubernetes deployment:**
+
+When deploying to Kubernetes, set the security context:
+```yaml
+apiVersion: v1
+kind: Pod
+spec:
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+  containers:
+  - name: noaa-alerts
+    image: your-image:latest
 ```
 
 **For manual installation:**
@@ -357,8 +662,6 @@ Ensure the application has write permissions:
 chmod +x fetch.py
 chmod 644 config.txt
 ```
-
-See [DOCKER_NONROOT.md](DOCKER_NONROOT.md) for more details on Docker permissions.
 
 ### Debugging
 
