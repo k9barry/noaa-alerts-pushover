@@ -1,0 +1,58 @@
+name: Create Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 2.2.0)'
+        required: true
+        type: string
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Validate version exists in CHANGELOG
+      run: |
+        if ! grep -q "## Version ${{ inputs.version }}" CHANGELOG.md; then
+          echo "Error: Version ${{ inputs.version }} not found in CHANGELOG.md"
+          exit 1
+        fi
+        echo "Version ${{ inputs.version }} found in CHANGELOG.md"
+    
+    - name: Extract release notes
+      id: extract_notes
+      run: |
+        # Extract the section for this version from CHANGELOG.md
+        awk '/## Version ${{ inputs.version }}/{flag=1; next} /## Version/{flag=0} flag' CHANGELOG.md > release_notes.md
+        
+        # Check if we got any content
+        if [ ! -s release_notes.md ]; then
+          echo "Error: Could not extract release notes for version ${{ inputs.version }}"
+          exit 1
+        fi
+        
+        echo "Release notes extracted successfully"
+    
+    - name: Create Git tag
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git tag -a "v${{ inputs.version }}" -m "Release version ${{ inputs.version }}"
+        git push origin "v${{ inputs.version }}"
+    
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v${{ inputs.version }}
+        name: Version ${{ inputs.version }}
+        body_path: release_notes.md
+        draft: false
+        prerelease: false

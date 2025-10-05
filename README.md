@@ -116,6 +116,7 @@ See [INSTALL.md](INSTALL.md) for permission setup details.
 - [Security](SECURITY.md) - Security best practices and considerations
 - [Changelog](CHANGELOG.md) - Version history and updates
 - [Contributing](CONTRIBUTING.md) - Contribution guidelines
+- [Creating Tags and Releases](docs/TAGGING.md) - Guide for maintainers on tagging versions
 
 ## Requirements
 
