@@ -79,10 +79,11 @@ requests==2.32.3
 - `entrypoint.sh` - Flexible run modes
 
 **Features**:
-- Three run modes: once, loop, cron
+- Two run modes: once, scheduler
 - Volume mounting for persistence
 - Environment variable configuration
 - Optimized image layers
+- Python schedule library for automated tasks
 
 **Example Usage**:
 ```bash
@@ -240,11 +241,12 @@ The modernization is fully backwards compatible:
 ## Key Features Added
 
 1. **Docker Support** - Run anywhere with Docker
-2. **Multiple Run Modes** - once, loop, or cron
+2. **Python Scheduler** - Built-in scheduling with configurable intervals
 3. **Setup Validation** - Check config before running
 4. **Auto-Directory Creation** - No manual setup needed
 5. **CI/CD Pipeline** - Automated testing
 6. **Comprehensive Docs** - 2,100+ lines of guides
+7. **Automatic Maintenance** - Scheduled cleanup and vacuum tasks
 
 ## Benefits
 

@@ -79,54 +79,39 @@ Docker provides the easiest and most consistent way to run NOAA Alerts Pushover.
 
 ### Running on a Schedule
 
-By default, the docker-compose.yml is configured for continuous monitoring using loop mode.
+By default, the docker-compose.yml is configured for continuous monitoring using the Python schedule library.
 
-#### Option 1: Use Loop Mode (Default)
+#### Option 1: Use Scheduler Mode (Default)
 
-The default docker-compose.yml runs in loop mode with checks every 5 minutes:
+The default docker-compose.yml runs in scheduler mode with configurable intervals:
 
 ```bash
 docker compose up -d
 ```
 
-To customize the interval, edit the `CHECK_INTERVAL` value in docker-compose.yml:
+The scheduler automatically runs:
+- **fetch.py** - Check for new alerts (default: every 5 minutes)
+- **cleanup.py** - Remove expired HTML files (default: every 24 hours)
+- **vacuum.py** - Database maintenance (default: every 168 hours/weekly)
 
-```yaml
-services:
-  noaa-alerts:
-    environment:
-      - RUN_MODE=loop
-      - CHECK_INTERVAL=300  # Check every 5 minutes (300 seconds)
-```
+To customize intervals, edit your `config.txt` file:
 
-Or override it when running:
-```bash
-docker compose run -e CHECK_INTERVAL=120 noaa-alerts
+```ini
+[schedule]
+fetch_interval = 5        # minutes
+cleanup_interval = 24     # hours
+vacuum_interval = 168     # hours (weekly)
 ```
 
 #### Option 2: Use Single Run Mode
 
-To run once and exit (for external schedulers):
+To run once and exit:
 
 ```bash
 docker compose run -e RUN_MODE=once noaa-alerts
 ```
 
-#### Option 3: Use External Scheduler
-
-Keep the default single-run behavior and schedule with:
-
-**Cron (Linux/Mac):**
-```bash
-# Run every 5 minutes
-*/5 * * * * cd /path/to/noaa-alerts-pushover && docker compose up
-```
-
-**Task Scheduler (Windows):**
-Create a scheduled task that runs:
-```
-docker compose -f C:\path\to\noaa-alerts-pushover\docker-compose.yml up
-```
+This runs fetch.py a single time, useful for testing or if you want to handle scheduling externally.
 
 ### Docker Commands
 
@@ -225,41 +210,47 @@ brew install python@3.12 git
 
 ### Running on a Schedule (Manual Installation)
 
-#### Linux/Mac - Using Cron
+#### Option 1: Use the Built-in Scheduler (Recommended)
 
-1. Edit your crontab:
-   ```bash
-   crontab -e
-   ```
+The easiest way to run continuously is to use the built-in Python scheduler:
 
-2. Add an entry to run every 5 minutes:
-   ```
-   */5 * * * * cd /path/to/noaa-alerts-pushover && /path/to/venv/bin/python fetch.py >> /path/to/cron.log 2>&1
-   ```
+```bash
+# Run the scheduler in the foreground
+python scheduler.py
 
-#### Windows - Using Task Scheduler
+# Or run in the background (Linux/Mac)
+nohup python scheduler.py > scheduler.log 2>&1 &
 
-1. Open Task Scheduler
-2. Create a new Basic Task
-3. Set the trigger to run every 5 minutes
-4. Set the action to run:
-   - Program: `C:\path\to\venv\Scripts\python.exe`
-   - Arguments: `fetch.py`
-   - Start in: `C:\path\to\noaa-alerts-pushover`
+# Or use screen/tmux to keep it running
+screen -dmS noaa-alerts python scheduler.py
+```
 
-#### Linux - Using systemd
+Configure scheduling intervals in your `config.txt`:
+
+```ini
+[schedule]
+fetch_interval = 5        # minutes
+cleanup_interval = 24     # hours
+vacuum_interval = 168     # hours
+```
+
+#### Option 2: Use systemd (Linux)
+
+Create a service that runs the scheduler:
 
 1. Create `/etc/systemd/system/noaa-alerts.service`:
    ```ini
    [Unit]
-   Description=NOAA Alerts Pushover
+   Description=NOAA Alerts Pushover Scheduler
    After=network.target
 
    [Service]
-   Type=oneshot
+   Type=simple
    User=youruser
    WorkingDirectory=/path/to/noaa-alerts-pushover
-   ExecStart=/path/to/venv/bin/python fetch.py
+   ExecStart=/path/to/venv/bin/python scheduler.py
+   Restart=always
+   RestartSec=10
    StandardOutput=journal
    StandardError=journal
 
@@ -267,25 +258,16 @@ brew install python@3.12 git
    WantedBy=multi-user.target
    ```
 
-2. Create `/etc/systemd/system/noaa-alerts.timer`:
-   ```ini
-   [Unit]
-   Description=Run NOAA Alerts check every 5 minutes
-   
-   [Timer]
-   OnBootSec=1min
-   OnUnitActiveSec=5min
-   
-   [Install]
-   WantedBy=timers.target
-   ```
-
-3. Enable and start:
+2. Enable and start:
    ```bash
    sudo systemctl daemon-reload
-   sudo systemctl enable noaa-alerts.timer
-   sudo systemctl start noaa-alerts.timer
+   sudo systemctl enable noaa-alerts.service
+   sudo systemctl start noaa-alerts.service
    ```
+
+#### Option 3: Single-Run Mode
+
+If you prefer to run fetch.py once per invocation, you can call it directly and handle scheduling externally. Note that you'll also need to separately schedule cleanup.py and vacuum.py for maintenance.
 
 ## Scheduling Options
 
@@ -410,7 +392,7 @@ If you encounter issues:
 
 ### Database Maintenance
 
-The database automatically cleans up old alerts, but you can manually maintain it:
+When using the scheduler (default), database maintenance and HTML cleanup run automatically on the configured schedule. If you need to run maintenance manually:
 
 **Clear all alerts:**
 ```bash
@@ -422,12 +404,12 @@ python fetch.py --purge
 python vacuum.py
 ```
 
-### Cleanup HTML Files
-
-Remove expired HTML alert files:
+**Cleanup expired HTML files:**
 ```bash
 python cleanup.py
 ```
+
+**Note:** The scheduler automatically runs cleanup.py and vacuum.py on the intervals specified in config.txt, so manual execution is typically not needed.
 
 ### Updating
 

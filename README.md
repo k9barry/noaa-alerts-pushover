@@ -124,7 +124,7 @@ ignored = Red Flag Warning,Heat Advisory
 
 ### Running on a Schedule
 
-The Docker Compose configuration runs in loop mode by default, checking every 5 minutes. For manual installations, you can set up a cron job. See [INSTALL.md](INSTALL.md) for details.
+The Docker Compose configuration uses Python's schedule library to run checks automatically. By default, it checks for alerts every 5 minutes, runs cleanup daily, and performs database maintenance weekly. You can customize these intervals in `config.txt` under the `[schedule]` section. See [INSTALL.md](INSTALL.md) for details.
 
 ## Customization
 

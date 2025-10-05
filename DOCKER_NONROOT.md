@@ -15,7 +15,7 @@ This Docker container now runs as a non-root user called `noaa` (UID 1000) for i
 1. **User Creation**: A user `noaa` with UID 1000 is created during build
 2. **Ownership**: All files in `/app` are owned by `noaa:noaa`
 3. **Database Init**: Database initialization now runs as the `noaa` user
-4. **Cron Logs**: Cron mode logs go to `/app/cron.log` (not `/var/log/cron.log`)
+4. **Scheduler**: The scheduler runs as the `noaa` user with logs in `/app/scheduler.log`
 
 ## Volume Mount Permissions
 
