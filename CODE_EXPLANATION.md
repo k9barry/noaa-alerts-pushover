@@ -241,6 +241,8 @@ class Alert(BaseModel):
 
 Utility script to remove expired HTML files from the output directory.
 
+**Note:** This script does **NOT** run automatically. It must be run manually or scheduled via cron.
+
 #### Logic:
 
 ```python
@@ -254,14 +256,128 @@ Utility script to remove expired HTML files from the output directory.
 3. Log deletions
 ```
 
+#### Manual Execution:
+
+```bash
+# Standard Python installation
+python cleanup.py
+
+# Docker installation
+docker compose run --rm noaa-alerts python cleanup.py
+```
+
+#### Automated Execution (Weekly Cron):
+
+**Linux/Mac - Add to crontab:**
+```bash
+# Run cleanup every Sunday at 2 AM
+0 2 * * 0 cd /path/to/noaa-alerts-pushover && /path/to/venv/bin/python cleanup.py >> /path/to/cleanup.log 2>&1
+```
+
+**Docker - Add to crontab:**
+```bash
+# Run cleanup every Sunday at 2 AM
+0 2 * * 0 cd /path/to/noaa-alerts-pushover && docker compose run --rm noaa-alerts python cleanup.py >> /path/to/cleanup.log 2>&1
+```
+
 ### vacuum.py
 
 Database maintenance utility to reclaim disk space.
+
+**Note:** This script does **NOT** run automatically. It must be run manually or scheduled via cron.
 
 ```python
 # Runs SQLite VACUUM command
 # Compacts database file
 # Reduces fragmentation
+```
+
+#### Manual Execution:
+
+```bash
+# Standard Python installation
+python vacuum.py
+
+# Docker installation
+docker compose run --rm noaa-alerts python vacuum.py
+```
+
+#### Automated Execution (Weekly Cron):
+
+**Linux/Mac - Add to crontab:**
+```bash
+# Run vacuum every Sunday at 3 AM (after cleanup)
+0 3 * * 0 cd /path/to/noaa-alerts-pushover && /path/to/venv/bin/python vacuum.py >> /path/to/vacuum.log 2>&1
+```
+
+**Docker - Add to crontab:**
+```bash
+# Run vacuum every Sunday at 3 AM (after cleanup)
+0 3 * * 0 cd /path/to/noaa-alerts-pushover && docker compose run --rm noaa-alerts python vacuum.py >> /path/to/vacuum.log 2>&1
+```
+
+#### Healthcheck Integration:
+
+Both scripts can be integrated with healthcheck services like [Healthchecks.io](https://healthchecks.io) to monitor successful execution:
+
+**With Healthcheck Service:**
+```bash
+# Cleanup with healthcheck ping
+0 2 * * 0 cd /path/to/noaa-alerts-pushover && /path/to/venv/bin/python cleanup.py && curl -fsS -m 10 --retry 5 https://hc-ping.com/YOUR-UUID-HERE > /dev/null
+
+# Vacuum with healthcheck ping
+0 3 * * 0 cd /path/to/noaa-alerts-pushover && /path/to/venv/bin/python vacuum.py && curl -fsS -m 10 --retry 5 https://hc-ping.com/YOUR-UUID-HERE > /dev/null
+```
+
+**Docker with Healthcheck Service:**
+```bash
+# Cleanup with healthcheck ping
+0 2 * * 0 cd /path/to/noaa-alerts-pushover && docker compose run --rm noaa-alerts python cleanup.py && curl -fsS -m 10 --retry 5 https://hc-ping.com/YOUR-UUID-HERE > /dev/null
+
+# Vacuum with healthcheck ping
+0 3 * * 0 cd /path/to/noaa-alerts-pushover && docker compose run --rm noaa-alerts python vacuum.py && curl -fsS -m 10 --retry 5 https://hc-ping.com/YOUR-UUID-HERE > /dev/null
+```
+
+**Combined Maintenance Script with Healthcheck:**
+
+For convenience, you can create a single maintenance script that runs both and pings a healthcheck:
+
+```bash
+#!/bin/bash
+# maintenance.sh - Run weekly maintenance tasks
+
+cd /path/to/noaa-alerts-pushover
+
+echo "$(date): Starting maintenance tasks..."
+
+# Run cleanup
+echo "$(date): Running cleanup.py..."
+python cleanup.py
+CLEANUP_STATUS=$?
+
+# Run vacuum
+echo "$(date): Running vacuum.py..."
+python vacuum.py
+VACUUM_STATUS=$?
+
+# Check if both succeeded
+if [ $CLEANUP_STATUS -eq 0 ] && [ $VACUUM_STATUS -eq 0 ]; then
+    echo "$(date): Maintenance completed successfully"
+    # Ping healthcheck service on success
+    curl -fsS -m 10 --retry 5 https://hc-ping.com/YOUR-UUID-HERE > /dev/null
+    exit 0
+else
+    echo "$(date): Maintenance failed - cleanup: $CLEANUP_STATUS, vacuum: $VACUUM_STATUS"
+    # Ping healthcheck service failure endpoint
+    curl -fsS -m 10 --retry 5 https://hc-ping.com/YOUR-UUID-HERE/fail > /dev/null
+    exit 1
+fi
+```
+
+Then schedule the maintenance script:
+```bash
+# Run maintenance every Sunday at 2 AM
+0 2 * * 0 /path/to/maintenance.sh >> /path/to/maintenance.log 2>&1
 ```
 
 ## Database Schema
