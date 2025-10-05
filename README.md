@@ -132,7 +132,7 @@ The Docker Compose configuration uses Python's schedule library to run checks au
 
 The HTML detail pages for alerts can be customized by editing `templates/detail.html`. This Jinja2 template controls how alerts are displayed.
 
-For comprehensive customization instructions, see [TEMPLATE_GUIDE.md](TEMPLATE_GUIDE.md), which includes:
+For comprehensive customization instructions, see [TEMPLATE_GUIDE.md](templates/TEMPLATE_GUIDE.md), which includes:
 - Available template variables
 - 7+ practical customization examples
 - Mobile-friendly layouts

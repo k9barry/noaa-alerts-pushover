@@ -205,7 +205,7 @@ Docker provides the easiest and most consistent way to run NOAA Alerts Pushover.
    ```
    
    > **Note**: If your host user has UID 1000 (check with `id -u`), no changes are needed.
-   > See [DOCKER_NONROOT.md](DOCKER_NONROOT.md) for more details.
+   > See the Docker Security section above for complete details.
 
 7. **Build and run the container:**
    ```bash
