@@ -33,13 +33,20 @@ This file provides context and guidelines for GitHub Copilot when working with t
    - Alert model with fields: alert_id, title, event, details, expires, url, api_url, fips_codes, ugc_codes, created
    - Database stored in `data/alerts.db` with WAL mode enabled
 
-3. **cleanup.py** - HTML sanitization utility
-   - Uses BeautifulSoup4 to clean HTML from NOAA alerts
+3. **scheduler.py** - Task scheduler
+   - Uses Python schedule library for automated task execution
+   - Runs fetch.py, cleanup.py, and vacuum.py on configurable intervals
+   - Configurable via config.txt [schedule] section
 
-4. **vacuum.py** - Database maintenance
+4. **cleanup.py** - HTML sanitization utility
+   - Removes expired HTML alert files from output directory
+   - Run automatically by scheduler or manually
+
+5. **vacuum.py** - Database maintenance
    - SQLite VACUUM operations for database optimization
+   - Run automatically by scheduler or manually
 
-5. **test_setup.py** - Setup validation script
+6. **test_setup.py** - Setup validation script
    - Validates Python version, dependencies, configuration, and database
 
 ### Data Flow
@@ -83,6 +90,7 @@ from models import Alert
 - **requests**: HTTP client for API calls
 - **jinja2**: Template engine for HTML generation
 - **beautifulsoup4**: HTML cleaning
+- **schedule**: Python job scheduling library
 
 ## Important Patterns and Conventions
 
@@ -130,6 +138,7 @@ logger.debug("Matched %d existing alerts." % existing_count)
 INI format with sections:
 - `[pushover]`: token, user
 - `[events]`: ignored (comma-separated list of event types to skip)
+- `[schedule]`: fetch_interval, cleanup_interval, vacuum_interval (in minutes/hours)
 
 ### counties.json
 JSON array of county objects:
@@ -234,8 +243,8 @@ GitHub Actions workflow in `.github/workflows/ci.yml`:
 
 ### Files
 - **Dockerfile**: Python 3.12-slim base
-- **docker-compose.yml**: Includes loop mode and management tools
-- **entrypoint.sh**: Flexible run modes (once, loop, cron)
+- **docker-compose.yml**: Uses scheduler mode by default
+- **entrypoint.sh**: Flexible run modes (once, scheduler)
 - **.dockerignore**: Excludes unnecessary files
 
 ### Volume Mounts
@@ -296,15 +305,16 @@ noaa-alerts-pushover/
 │   └── alerts.db
 ├── output/            (gitignored, created at runtime)
 │   └── *.html
-├── fetch.py           (main application)
+├── fetch.py           (main alert checking application)
+├── scheduler.py       (Python schedule-based task scheduler)
 ├── models.py          (database models)
-├── cleanup.py         (HTML sanitization)
-├── vacuum.py          (DB maintenance)
+├── cleanup.py         (HTML cleanup - run by scheduler)
+├── vacuum.py          (DB maintenance - run by scheduler)
 ├── test_setup.py      (validation script)
 ├── config.txt         (gitignored, user creates from example)
-├── config.txt.example (template)
+├── config.txt.example (template with schedule section)
 ├── counties.json      (user edits)
-├── requirements.txt   (Python dependencies)
+├── requirements.txt   (Python dependencies including schedule)
 ├── Dockerfile
 ├── docker-compose.yml
 └── Documentation files (*.md)
@@ -349,7 +359,7 @@ Key documentation files:
 1. Check if configuration changes are needed
 2. Update relevant documentation files
 3. Add validation to test_setup.py if appropriate
-4. Consider impact on both single-run and loop modes
+4. Consider impact on both single-run and scheduler modes
 5. Maintain minimal dependencies
 
 ### When Fixing Bugs

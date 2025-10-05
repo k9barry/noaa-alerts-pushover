@@ -4,3 +4,11 @@ user = YOUR_PUSHOVER_USER_KEY
 
 [events]
 ignored = Red Flag Warning,Heat Advisory
+
+[schedule]
+# How often to check for new alerts (in minutes)
+fetch_interval = 5
+# How often to run cleanup.py to remove expired HTML files (in hours)
+cleanup_interval = 24
+# How often to run vacuum.py for database maintenance (in hours)
+vacuum_interval = 168

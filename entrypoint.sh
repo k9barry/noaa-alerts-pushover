@@ -30,34 +30,18 @@ case "$MODE" in
     fi
     ;;
   
-  loop)
-    echo "Running in continuous mode with ${CHECK_INTERVAL:-300} second interval..."
+  scheduler)
+    echo "Running scheduler mode with Python schedule library..."
     if [ "$(id -u)" = "0" ]; then
-      exec gosu noaa sh -c "while true; do python fetch.py $* || echo 'Check failed, will retry...'; sleep ${CHECK_INTERVAL:-300}; done"
+      exec gosu noaa python scheduler.py "$@"
     else
-      while true; do
-        python fetch.py "$@" || echo "Check failed, will retry..."
-        sleep "${CHECK_INTERVAL:-300}"
-      done
+      exec python scheduler.py "$@"
     fi
-    ;;
-  
-  cron)
-    echo "Setting up cron job with schedule: ${CRON_SCHEDULE:-*/5 * * * *}"
-    if [ "$(id -u)" = "0" ]; then
-      # Write cron job to crontab as noaa user - log to /app for non-root user write access
-      gosu noaa sh -c "echo '${CRON_SCHEDULE:-*/5 * * * *} cd /app && python fetch.py $* >> /app/cron.log 2>&1' | crontab -"
-    else
-      # Write cron job to crontab - log to /app for non-root user write access
-      echo "${CRON_SCHEDULE:-*/5 * * * *} cd /app && python fetch.py $* >> /app/cron.log 2>&1" | crontab -
-    fi
-    # Start cron in foreground
-    exec cron -f
     ;;
   
   *)
     echo "Unknown mode: $MODE"
-    echo "Valid modes: once, loop, cron"
+    echo "Valid modes: once, scheduler"
     exit 1
     ;;
 esac

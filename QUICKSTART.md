@@ -70,20 +70,23 @@ This checks that everything is configured correctly.
 
 #### Docker (Recommended)
 
-**Continuous monitoring (default, every 5 minutes):**
+**Continuous monitoring (default):**
 ```bash
 docker compose up -d
 ```
+
+This runs the scheduler which checks for alerts every 5 minutes by default.
 
 **Single check:**
 ```bash
 docker compose run -e RUN_MODE=once noaa-alerts
 ```
 
-**Custom interval:**
-```bash
-# Check every 2 minutes (120 seconds)
-docker compose run -e RUN_MODE=loop -e CHECK_INTERVAL=120 noaa-alerts
+**Custom check interval:**
+Edit `config.txt` to customize how often checks run:
+```ini
+[schedule]
+fetch_interval = 2  # Check every 2 minutes
 ```
 
 #### Python (Manual)
@@ -91,6 +94,11 @@ docker compose run -e RUN_MODE=loop -e CHECK_INTERVAL=120 noaa-alerts
 **Initialize database:**
 ```bash
 python3 models.py
+```
+
+**Continuous monitoring:**
+```bash
+python3 scheduler.py
 ```
 
 **Single check:**
@@ -106,6 +114,8 @@ python3 fetch.py --nopush
 **Debug mode:**
 ```bash
 python3 fetch.py --debug
+# or for scheduler
+python3 scheduler.py --debug
 ```
 
 ## Usage Modes
@@ -119,18 +129,16 @@ python3 fetch.py
 ```
 
 ### Continuous Monitoring
-Check every N seconds continuously (default):
+Check automatically on a schedule (default):
 ```bash
+# Docker
 docker compose up -d
-# or setup a cron job
+
+# Manual installation
+python3 scheduler.py
 ```
 
-### Scheduled (Cron)
-Run on a schedule via cron:
-```bash
-# Every 5 minutes
-*/5 * * * * cd /path/to/noaa-alerts-pushover && python3 fetch.py
-```
+The scheduler runs fetch.py, cleanup.py, and vacuum.py on configurable intervals set in `config.txt`.
 
 ## Command-Line Options
 
@@ -209,9 +217,9 @@ docker compose build --no-cache
 
 ## What's Next?
 
-- **Automation**: Set up continuous monitoring with cron or Docker loop mode
-- **Customization**: Add ignored events to `config.txt`
-- **Monitoring**: Check `log.txt` regularly for any issues
+- **Automation**: Set up continuous monitoring with the scheduler
+- **Customization**: Add ignored events and adjust schedule intervals in `config.txt`
+- **Monitoring**: Check `log.txt` and `scheduler.log` regularly for any issues
 
 ## Documentation
 

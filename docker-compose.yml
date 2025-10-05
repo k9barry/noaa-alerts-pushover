@@ -11,19 +11,16 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - TZ=UTC
-      # Run modes: once, loop, cron
+      # Run modes: once, scheduler
       # once: Run once and exit
-      # loop: Run continuously with CHECK_INTERVAL seconds between checks (default)
-      # cron: Use cron scheduler with CRON_SCHEDULE
-      - RUN_MODE=loop
-      - CHECK_INTERVAL=300  # Check every 5 minutes (300 seconds)
-      # Example cron: */5 * * * * (every 5 minutes)
-      # - CRON_SCHEDULE=*/5 * * * *
+      # scheduler: Run continuously with Python schedule library (default)
+      #            Schedule intervals are configured in config.txt [schedule] section
+      - RUN_MODE=scheduler
     healthcheck:
       test: ["CMD", "/healthcheck.sh"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 10s
-    # Uncomment to pass additional arguments to fetch.py:
+    # Uncomment to pass additional arguments to scheduler.py or fetch.py:
     # command: ["--debug"]

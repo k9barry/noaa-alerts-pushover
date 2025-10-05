@@ -87,6 +87,18 @@ def test_config_file(auto_fix=False):
         if 'YOUR_' in user or 'TEST_' in user:
             print("  ⚠️  Warning: User key looks like a placeholder")
         
+        # Check schedule section (optional but recommended)
+        if config.has_section('schedule'):
+            try:
+                fetch_interval = config.getint('schedule', 'fetch_interval', fallback=5)
+                cleanup_interval = config.getint('schedule', 'cleanup_interval', fallback=24)
+                vacuum_interval = config.getint('schedule', 'vacuum_interval', fallback=168)
+                print(f"  ✓ Schedule config found: fetch={fetch_interval}m, cleanup={cleanup_interval}h, vacuum={vacuum_interval}h")
+            except ValueError as e:
+                print(f"  ⚠️  Warning: Invalid schedule values: {e}")
+        else:
+            print("  ℹ️  No [schedule] section found, using defaults (fetch=5m, cleanup=24h, vacuum=168h)")
+        
         print(f"  ✓ config.txt found and readable")
         return True
         

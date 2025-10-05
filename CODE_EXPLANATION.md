@@ -241,7 +241,7 @@ class Alert(BaseModel):
 
 Utility script to remove expired HTML files from the output directory.
 
-**Note:** This script does **NOT** run automatically. It must be run manually or scheduled via cron.
+**Note:** When using scheduler.py (default), this script runs automatically on the configured schedule. It can also be run manually if needed.
 
 #### Logic:
 
@@ -256,6 +256,15 @@ Utility script to remove expired HTML files from the output directory.
 3. Log deletions
 ```
 
+#### Automated Execution:
+
+Cleanup runs automatically when using the scheduler (default mode). Configure the interval in `config.txt`:
+
+```ini
+[schedule]
+cleanup_interval = 24  # hours (default: daily)
+```
+
 #### Manual Execution:
 
 ```bash
@@ -266,30 +275,25 @@ python cleanup.py
 docker compose run --rm noaa-alerts python cleanup.py
 ```
 
-#### Automated Execution (Weekly Cron):
-
-**Linux/Mac - Add to crontab:**
-```bash
-# Run cleanup every Sunday at 2 AM
-0 2 * * 0 cd /path/to/noaa-alerts-pushover && /path/to/venv/bin/python cleanup.py >> /path/to/cleanup.log 2>&1
-```
-
-**Docker - Add to crontab:**
-```bash
-# Run cleanup every Sunday at 2 AM
-0 2 * * 0 cd /path/to/noaa-alerts-pushover && docker compose run --rm noaa-alerts python cleanup.py >> /path/to/cleanup.log 2>&1
-```
-
 ### vacuum.py
 
 Database maintenance utility to reclaim disk space.
 
-**Note:** This script does **NOT** run automatically. It must be run manually or scheduled via cron.
+**Note:** When using scheduler.py (default), this script runs automatically on the configured schedule. It can also be run manually if needed.
 
 ```python
 # Runs SQLite VACUUM command
 # Compacts database file
 # Reduces fragmentation
+```
+
+#### Automated Execution:
+
+Vacuum runs automatically when using the scheduler (default mode). Configure the interval in `config.txt`:
+
+```ini
+[schedule]
+vacuum_interval = 168  # hours (default: weekly)
 ```
 
 #### Manual Execution:
@@ -302,83 +306,49 @@ python vacuum.py
 docker compose run --rm noaa-alerts python vacuum.py
 ```
 
-#### Automated Execution (Weekly Cron):
+### scheduler.py
 
-**Linux/Mac - Add to crontab:**
-```bash
-# Run vacuum every Sunday at 3 AM (after cleanup)
-0 3 * * 0 cd /path/to/noaa-alerts-pushover && /path/to/venv/bin/python vacuum.py >> /path/to/vacuum.log 2>&1
+Scheduler script that uses Python's `schedule` library to run fetch.py, cleanup.py, and vacuum.py on configurable intervals.
+
+**Note:** This is the recommended way to run the application continuously.
+
+#### Features:
+
+- **Configurable Intervals:** Set check frequencies in `config.txt`
+- **Automatic Maintenance:** Runs cleanup and vacuum automatically
+- **Integrated Logging:** All operations logged to `scheduler.log`
+- **Error Handling:** Continues running even if individual tasks fail
+
+#### Configuration:
+
+```ini
+[schedule]
+fetch_interval = 5        # Check for alerts every 5 minutes
+cleanup_interval = 24     # Clean up HTML files every 24 hours
+vacuum_interval = 168     # Vacuum database every 168 hours (weekly)
 ```
 
-**Docker - Add to crontab:**
-```bash
-# Run vacuum every Sunday at 3 AM (after cleanup)
-0 3 * * 0 cd /path/to/noaa-alerts-pushover && docker compose run --rm noaa-alerts python vacuum.py >> /path/to/vacuum.log 2>&1
-```
-
-#### Healthcheck Integration:
-
-Both scripts can be integrated with healthcheck services like [Healthchecks.io](https://healthchecks.io) to monitor successful execution:
-
-**With Healthcheck Service:**
-```bash
-# Cleanup with healthcheck ping
-0 2 * * 0 cd /path/to/noaa-alerts-pushover && /path/to/venv/bin/python cleanup.py && curl -fsS -m 10 --retry 5 https://hc-ping.com/YOUR-UUID-HERE > /dev/null
-
-# Vacuum with healthcheck ping
-0 3 * * 0 cd /path/to/noaa-alerts-pushover && /path/to/venv/bin/python vacuum.py && curl -fsS -m 10 --retry 5 https://hc-ping.com/YOUR-UUID-HERE > /dev/null
-```
-
-**Docker with Healthcheck Service:**
-```bash
-# Cleanup with healthcheck ping
-0 2 * * 0 cd /path/to/noaa-alerts-pushover && docker compose run --rm noaa-alerts python cleanup.py && curl -fsS -m 10 --retry 5 https://hc-ping.com/YOUR-UUID-HERE > /dev/null
-
-# Vacuum with healthcheck ping
-0 3 * * 0 cd /path/to/noaa-alerts-pushover && docker compose run --rm noaa-alerts python vacuum.py && curl -fsS -m 10 --retry 5 https://hc-ping.com/YOUR-UUID-HERE > /dev/null
-```
-
-**Combined Maintenance Script with Healthcheck:**
-
-For convenience, you can create a single maintenance script that runs both and pings a healthcheck:
+#### Running:
 
 ```bash
-#!/bin/bash
-# maintenance.sh - Run weekly maintenance tasks
+# Standard Python installation
+python scheduler.py
 
-cd /path/to/noaa-alerts-pushover
+# With debug logging
+python scheduler.py --debug
 
-echo "$(date): Starting maintenance tasks..."
+# Disable push notifications (for testing)
+python scheduler.py --nopush
 
-# Run cleanup
-echo "$(date): Running cleanup.py..."
-python cleanup.py
-CLEANUP_STATUS=$?
-
-# Run vacuum
-echo "$(date): Running vacuum.py..."
-python vacuum.py
-VACUUM_STATUS=$?
-
-# Check if both succeeded
-if [ $CLEANUP_STATUS -eq 0 ] && [ $VACUUM_STATUS -eq 0 ]; then
-    echo "$(date): Maintenance completed successfully"
-    # Ping healthcheck service on success
-    curl -fsS -m 10 --retry 5 https://hc-ping.com/YOUR-UUID-HERE > /dev/null
-    exit 0
-else
-    echo "$(date): Maintenance failed - cleanup: $CLEANUP_STATUS, vacuum: $VACUUM_STATUS"
-    # Ping healthcheck service failure endpoint
-    curl -fsS -m 10 --retry 5 https://hc-ping.com/YOUR-UUID-HERE/fail > /dev/null
-    exit 1
-fi
+# Docker (default mode)
+docker compose up -d
 ```
 
-Then schedule the maintenance script:
-```bash
-# Run maintenance every Sunday at 2 AM
-0 2 * * 0 /path/to/maintenance.sh >> /path/to/maintenance.log 2>&1
-```
+#### Logs:
+
+The scheduler maintains its own log file:
+- `scheduler.log` - Scheduler operations and task execution
+- `log.txt` - fetch.py operations (as usual)
 
 ## Database Schema
 
@@ -475,13 +445,16 @@ The `alert_id` field should be indexed for faster lookups. The Peewee ORM handle
 
 ```
 noaa-alerts-pushover/
-├── fetch.py              # Main application
+├── fetch.py              # Main alert checking application
+├── scheduler.py          # Scheduler using Python schedule library
 ├── models.py             # Database models
 ├── cleanup.py            # HTML cleanup utility
 ├── vacuum.py             # Database maintenance
+├── test_setup.py         # Setup validation script
 ├── requirements.txt      # Python dependencies
 ├── counties.json         # Counties to monitor
 ├── config.txt.example    # Configuration template
+├── entrypoint.sh         # Docker entrypoint script
 ├── Dockerfile            # Docker image definition
 ├── docker-compose.yml    # Docker Compose config
 ├── .dockerignore         # Docker build exclusions
@@ -496,7 +469,8 @@ noaa-alerts-pushover/
 ├── output/               # Generated HTML files (gitignored)
 ├── data/                 # Database directory (gitignored)
 │   └── alerts.db         # SQLite database
-└── log.txt               # Application log (gitignored)
+├── log.txt               # Application log (gitignored)
+└── scheduler.log         # Scheduler log (gitignored)
 ```
 
 ## Key Algorithms

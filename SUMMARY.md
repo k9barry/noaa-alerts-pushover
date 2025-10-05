@@ -74,26 +74,27 @@ requests==2.32.3
 
 **New Files**:
 - `Dockerfile` - Python 3.12-slim base image
-- `docker-compose.yml` - Includes loop mode configuration
+- `docker-compose.yml` - Uses scheduler mode by default
+- `scheduler.py` - Python schedule-based task scheduler
 - `.dockerignore` - Efficient builds
 - `entrypoint.sh` - Flexible run modes
 
 **Features**:
-- Three run modes: once, loop, cron
+- Two run modes: once, scheduler
 - Volume mounting for persistence
 - Environment variable configuration
 - Optimized image layers
+- Python schedule library for automated tasks
 
 **Example Usage**:
 ```bash
-# Continuous monitoring (default, 5 min intervals)
+# Continuous monitoring with scheduler (default)
 docker compose up -d
 
 # Single check
 docker compose run -e RUN_MODE=once noaa-alerts
 
-# Custom interval
-docker compose run -e RUN_MODE=loop -e CHECK_INTERVAL=120 noaa-alerts
+# Customize intervals in config.txt [schedule] section
 ```
 
 ### 5. Code Quality ✅
@@ -240,11 +241,12 @@ The modernization is fully backwards compatible:
 ## Key Features Added
 
 1. **Docker Support** - Run anywhere with Docker
-2. **Multiple Run Modes** - once, loop, or cron
+2. **Python Scheduler** - Built-in scheduling with configurable intervals
 3. **Setup Validation** - Check config before running
 4. **Auto-Directory Creation** - No manual setup needed
 5. **CI/CD Pipeline** - Automated testing
 6. **Comprehensive Docs** - 2,100+ lines of guides
+7. **Automatic Maintenance** - Scheduled cleanup and vacuum tasks
 
 ## Benefits
 
