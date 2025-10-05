@@ -126,10 +126,39 @@ ignored = Red Flag Warning,Heat Advisory
 
 The Docker Compose configuration runs in loop mode by default, checking every 5 minutes. For manual installations, you can set up a cron job. See [INSTALL.md](INSTALL.md) for details.
 
+## Customization
+
+### Alert Template Customization
+
+The HTML detail pages for alerts can be customized by editing `templates/detail.html`. This Jinja2 template controls how alerts are displayed.
+
+For comprehensive customization instructions, see [TEMPLATE_GUIDE.md](TEMPLATE_GUIDE.md), which includes:
+- Available template variables
+- 7+ practical customization examples
+- Mobile-friendly layouts
+- Conditional content display
+- Styling tips and best practices
+
+### Setup Validation Tool
+
+The `test_setup.py` script helps validate and fix common setup issues:
+
+```bash
+# Run validation checks
+python test_setup.py
+
+# Auto-fix issues (create config.txt, initialize database)
+python test_setup.py --fix
+
+# Interactive mode (prompt before each fix)
+python test_setup.py --interactive
+```
+
 ## Documentation
 
 - [Quick Start Guide](QUICKSTART.md) - Get started in 5 minutes
 - [Installation Guide](INSTALL.md) - Detailed setup instructions
+- [Template Customization Guide](TEMPLATE_GUIDE.md) - Customize alert HTML pages
 - [How It Works](CODE_EXPLANATION.md) - Technical overview of the codebase
 - [Security](SECURITY.md) - Security best practices and considerations
 - [Changelog](CHANGELOG.md) - Version history and updates

@@ -149,7 +149,12 @@ docker compose run -e RUN_MODE=loop -e CHECK_INTERVAL=120 noaa-alerts
 ### 8. Additional Files ✅
 
 - `config.txt.example` - Configuration template
-- `test_setup.py` - Setup validation script
+- `test_setup.py` - Setup validation script with auto-fix options
+  - `--fix` flag to automatically create config.txt and initialize database
+  - `--interactive` mode for prompted fixes
+- `TEMPLATE_GUIDE.md` - Comprehensive guide for customizing detail.html
+- `templates/sample.json` - Sample NOAA API data (replaces sample.xml)
+- `templates/README.md` - Templates directory documentation
 - Updated `.gitignore` - Exclude data/
 
 ## Statistics
@@ -273,7 +278,8 @@ noaa-alerts-pushover/
 │       └── ci.yml              # CI/CD pipeline
 ├── templates/
 │   ├── detail.html             # Alert template
-│   └── sample.xml              # Test data
+│   ├── sample.json             # Sample NOAA API data (GeoJSON)
+│   └── README.md               # Templates documentation
 ├── .dockerignore               # Docker efficiency
 ├── .gitignore                  # Git exclusions
 ├── CHANGELOG.md                # Version history
@@ -286,6 +292,7 @@ noaa-alerts-pushover/
 ├── README.md                   # Project overview
 ├── SECURITY.md                 # Security policy
 ├── SUMMARY.md                  # This file
+├── TEMPLATE_GUIDE.md           # Template customization guide
 ├── cleanup.py                  # HTML cleanup
 ├── config.txt.example          # Config template
 ├── counties.json               # Counties to monitor

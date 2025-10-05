@@ -7,6 +7,9 @@ Run this before starting the application to catch configuration issues
 import os
 import sys
 import json
+import argparse
+import subprocess
+import shutil
 
 def test_python_version():
     """Check Python version"""
@@ -36,15 +39,25 @@ def test_imports():
     
     return all_ok
 
-def test_config_file():
+def test_config_file(auto_fix=False):
     """Check if config.txt exists and is readable"""
     print("\nChecking configuration file...")
     config_path = 'config.txt'
     
     if not os.path.exists(config_path):
         print(f"  ❌ {config_path} not found")
-        print("     Create it from config.txt.example")
-        return False
+        if auto_fix:
+            # In interactive mode, prompt first
+            if '--interactive' in sys.argv or '-i' in sys.argv:
+                response = input("  ❓ Create config.txt from config.txt.example? [y/N]: ")
+                if response.lower() not in ['y', 'yes']:
+                    print("     Skipped. Create it manually from config.txt.example")
+                    return False
+            return fix_config_file()
+        else:
+            print("     Create it from config.txt.example")
+            print("     Or run: python test_setup.py --fix")
+            return False
     
     try:
         import configparser
@@ -136,7 +149,7 @@ def test_directories():
     
     return all_ok
 
-def test_database():
+def test_database(auto_fix=False):
     """Test database connection"""
     print("\nChecking database...")
     try:
@@ -148,8 +161,18 @@ def test_database():
         # Check if table exists
         if not Alert.table_exists():
             print("  ℹ️  Database table not initialized")
-            print("     Run: python models.py")
-            return True  # Not a critical error
+            if auto_fix:
+                # In interactive mode, prompt first
+                if '--interactive' in sys.argv or '-i' in sys.argv:
+                    response = input("  ❓ Initialize database now? [y/N]: ")
+                    if response.lower() not in ['y', 'yes']:
+                        print("     Skipped. Run: python models.py")
+                        return True
+                return fix_database()
+            else:
+                print("     Run: python models.py")
+                print("     Or run: python test_setup.py --fix")
+                return True  # Not a critical error
         
         print("  ✓ Database initialized")
         db.close()
@@ -159,19 +182,88 @@ def test_database():
         print(f"  ⚠️  Database check: {e}")
         return True  # Not critical for initial setup
 
+def fix_config_file():
+    """Create config.txt from config.txt.example"""
+    print("  🔧 Attempting to fix...")
+    config_example = 'config.txt.example'
+    config_path = 'config.txt'
+    
+    if not os.path.exists(config_example):
+        print(f"  ❌ {config_example} not found, cannot auto-fix")
+        return False
+    
+    try:
+        shutil.copy(config_example, config_path)
+        print(f"  ✓ Created {config_path} from {config_example}")
+        print("  ⚠️  IMPORTANT: Edit config.txt and add your Pushover credentials!")
+        print("     - Get your credentials from https://pushover.net")
+        return True
+    except Exception as e:
+        print(f"  ❌ Failed to create config.txt: {e}")
+        return False
+
+
+def fix_database():
+    """Initialize the database by running models.py"""
+    print("  🔧 Attempting to initialize database...")
+    
+    try:
+        # Import and run the database initialization
+        import models
+        if models.db.is_closed():
+            models.db.connect()
+        models.db.create_tables([models.Alert])
+        print("  ✓ Database initialized successfully")
+        return True
+    except Exception as e:
+        print(f"  ❌ Failed to initialize database: {e}")
+        return False
+
+
 def main():
     """Run all tests"""
+    parser = argparse.ArgumentParser(
+        description='Validate NOAA Alerts Pushover setup',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python test_setup.py              # Run validation checks
+  python test_setup.py --fix        # Auto-fix common issues
+  python test_setup.py --interactive # Interactive mode with prompts
+        """
+    )
+    parser.add_argument(
+        '--fix',
+        action='store_true',
+        help='Automatically fix common issues (create config.txt, initialize database)'
+    )
+    parser.add_argument(
+        '--interactive', '-i',
+        action='store_true',
+        help='Interactive mode: prompt before fixing each issue'
+    )
+    
+    args = parser.parse_args()
+    
+    # Determine if we should auto-fix
+    auto_fix = args.fix
+    interactive = args.interactive
+    
     print("=" * 60)
     print("NOAA Alerts Pushover - Setup Validation")
+    if auto_fix:
+        print("Mode: Auto-fix enabled")
+    elif interactive:
+        print("Mode: Interactive")
     print("=" * 60)
     
     results = []
     results.append(("Python Version", test_python_version()))
     results.append(("Required Modules", test_imports()))
-    results.append(("Configuration File", test_config_file()))
+    results.append(("Configuration File", test_config_file(auto_fix=auto_fix or interactive)))
     results.append(("Counties File", test_counties_file()))
     results.append(("Directories", test_directories()))
-    results.append(("Database", test_database()))
+    results.append(("Database", test_database(auto_fix=auto_fix or interactive)))
     
     print("\n" + "=" * 60)
     print("Summary:")
