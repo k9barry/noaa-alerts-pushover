@@ -10,6 +10,7 @@ Thank you for your interest in contributing! This document provides guidelines a
 - [Making Changes](#making-changes)
 - [Testing](#testing)
 - [Submitting Changes](#submitting-changes)
+- [Creating Releases](#creating-releases)
 - [Coding Standards](#coding-standards)
 
 ## Code of Conduct
@@ -183,6 +184,136 @@ When making changes, consider testing:
 2. Address any feedback or requested changes
 3. Once approved, your PR will be merged
 4. Your contribution will be included in the next release
+
+## Creating Releases
+
+### For Maintainers
+
+This section describes how to create a new release with proper tags based on the CHANGELOG.
+
+#### Prerequisites
+
+- Maintainer access to the repository
+- All changes for the release merged to master
+- CHANGELOG.md updated with the new version
+
+#### Release Process
+
+**Option 1: Using GitHub Actions (Recommended)**
+
+1. Ensure CHANGELOG.md has an entry for the new version:
+   ```markdown
+   ## Version X.Y.Z - YYYY
+   
+   ### Changes
+   - Feature 1
+   - Feature 2
+   ```
+
+2. Go to GitHub Actions tab
+3. Select "Create Release" workflow
+4. Click "Run workflow"
+5. Enter the version number (e.g., `2.2.0`)
+6. Click "Run workflow"
+
+The workflow will:
+- Validate the version exists in CHANGELOG.md
+- Extract release notes from CHANGELOG.md
+- Create a Git tag (e.g., `v2.2.0`)
+- Create a GitHub Release with the extracted notes
+
+**Option 2: Manual Tagging**
+
+If you prefer to create tags manually:
+
+1. **Ensure you're on the latest master**:
+   ```bash
+   git checkout master
+   git pull origin master
+   ```
+
+2. **Verify CHANGELOG.md** has the version entry
+
+3. **Create an annotated tag**:
+   ```bash
+   git tag -a v2.2.0 -m "Release version 2.2.0"
+   ```
+
+4. **Push the tag**:
+   ```bash
+   git push origin v2.2.0
+   ```
+
+5. **Create GitHub Release** (on GitHub web interface):
+   - Go to repository → Releases → Draft a new release
+   - Select the tag you just created
+   - Copy release notes from CHANGELOG.md
+   - Publish release
+
+#### Version Numbering
+
+Follow [Semantic Versioning](https://semver.org/):
+
+- **Major version (X.0.0)**: Breaking changes
+- **Minor version (0.X.0)**: New features, backward compatible
+- **Patch version (0.0.X)**: Bug fixes, backward compatible
+
+Examples:
+- `2.0.0` - Python 3 migration (breaking change)
+- `2.1.0` - Removed XML dependencies (new feature)
+- `2.2.0` - Documentation improvements (new feature)
+
+#### CHANGELOG Format
+
+When preparing a release, ensure CHANGELOG.md follows this format:
+
+```markdown
+## Version X.Y.Z - YYYY
+
+### Category
+
+Description of changes
+
+- Change 1
+- Change 2
+```
+
+Common categories:
+- 🚀 Major Changes
+- 🆕 New Features
+- 🐛 Bug Fixes
+- 📝 Documentation Improvements
+- 🔧 Breaking Changes
+- 📦 Dependency Updates
+- 🔒 Security Updates
+
+#### Creating Tags for Existing Versions
+
+If you need to create tags for versions already documented in CHANGELOG.md:
+
+1. **Identify the commit** for each version:
+   ```bash
+   git log --oneline --all | grep "Version X.Y.Z"
+   ```
+
+2. **Create tags for historical versions**:
+   ```bash
+   # For Version 2.0.0
+   git tag -a v2.0.0 <commit-sha> -m "Release version 2.0.0"
+   
+   # For Version 2.1.0
+   git tag -a v2.1.0 <commit-sha> -m "Release version 2.1.0"
+   
+   # For Version 2.2.0
+   git tag -a v2.2.0 <commit-sha> -m "Release version 2.2.0"
+   ```
+
+3. **Push all tags**:
+   ```bash
+   git push origin --tags
+   ```
+
+4. **Create GitHub Releases** for each tag manually through the web interface
 
 ## Coding Standards
 
