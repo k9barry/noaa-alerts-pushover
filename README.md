@@ -13,146 +13,78 @@ Sends out NOAA Severe Weather Alerts via [Pushover](http://www.pushover.net). An
 - 🔄 Automatic cleanup of expired alerts
 - 🛡️ Robust error handling for API failures and malformed responses
 
-## Quick Start with Docker (Recommended)
+## Quick Start
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/k9barry/noaa-alerts-pushover.git
-   cd noaa-alerts-pushover
-   ```
+Get up and running in 5 minutes:
 
-2. **Configure your settings:**
-   ```bash
-   cp config.txt.example config.txt
-   # Edit config.txt with your Pushover credentials
-   ```
+```bash
+# Clone and configure
+git clone https://github.com/k9barry/noaa-alerts-pushover.git
+cd noaa-alerts-pushover
+cp config.txt.example config.txt
+# Edit config.txt with your Pushover credentials
 
-3. **Edit counties.json** to add the counties you want to monitor. Find county codes on the [NOAA website](http://www.nws.noaa.gov/emwin/winugc.htm).
+# Edit counties.json to add counties you want to monitor
 
-4. **Validate your setup (optional but recommended):**
-   ```bash
-   python3 test_setup.py
-   ```
+# Run with Docker (recommended)
+docker compose up -d
 
-5. **Run with Docker Compose:**
-   ```bash
-   docker compose up -d
-   ```
+# Or run with Python
+pip install -r requirements.txt
+python3 models.py
+python3 fetch.py
+```
 
-The service will run continuously, checking for alerts every 5 minutes by default. For configuration options, see the [Installation Guide](INSTALL.md).
-
-## Manual Installation (Python)
-
-If you prefer to run without Docker:
-
-1. **Install Python 3.12+ and dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-2. **Configure your settings:**
-   ```bash
-   cp config.txt.example config.txt
-   # Edit config.txt with your Pushover credentials
-   ```
-
-3. **Edit counties.json** to monitor your desired counties.
-
-4. **Initialize the database:**
-   ```bash
-   python models.py
-   ```
-
-5. **Validate your setup:**
-   ```bash
-   python test_setup.py
-   ```
-
-6. **Run the application:**
-   ```bash
-   python fetch.py
-   ```
+For detailed installation instructions, configuration options, and troubleshooting, see the [Installation Guide](INSTALL.md)
 
 ## Configuration
 
-### Pushover Credentials
+The application uses two configuration files:
 
-Create a `config.txt` file with your Pushover API credentials:
-
+**`config.txt`** - Your Pushover API credentials and settings:
 ```ini
 [pushover]
-token = YOUR_PUSHOVER_TOKEN
+token = YOUR_PUSHOVER_TOKEN     # Get from pushover.net
 user = YOUR_PUSHOVER_USER_KEY
+
+[events]
+ignored = Red Flag Warning,Heat Advisory  # Optional: filter unwanted alerts
+
+[schedule]
+fetch_interval = 5      # Check for alerts every 5 minutes
+cleanup_interval = 24   # Clean expired files daily
+vacuum_interval = 168   # Database maintenance weekly
 ```
 
-*Get your credentials at the [Pushover website](http://www.pushover.net).*
-
-### Counties to Monitor
-
-Edit the `counties.json` file to add counties you wish to monitor:
-
+**`counties.json`** - Counties to monitor (find codes at [NOAA website](http://www.nws.noaa.gov/emwin/winugc.htm)):
 ```json
 [
-    {
-        "fips": "012057",
-        "name": "Hillsborough County",
-        "state": "FL",
-        "ugc": "FL057"
-    }
+    {"fips": "012057", "name": "Hillsborough County", "state": "FL", "ugc": "FL057"}
 ]
 ```
 
-Find county codes at the [NOAA website](http://www.nws.noaa.gov/emwin/winugc.htm).
-
-### Filtering Alerts (Optional)
-
-To ignore specific alert types, add them to your `config.txt`:
-
-```ini
-[events]
-ignored = Red Flag Warning,Heat Advisory
-```
+See [INSTALL.md](INSTALL.md) for complete configuration details
 
 ## Usage
 
-### Command-Line Options
+```bash
+# Standard run
+python fetch.py
 
-- **Standard run:** `python fetch.py`
-- **Clear all alerts:** `python fetch.py --purge`
-- **Disable push notifications:** `python fetch.py --nopush`
-- **Debug mode:** `python fetch.py --debug`
+# Test without notifications    # Debug mode
+python fetch.py --nopush         python fetch.py --debug
 
-### Running on a Schedule
+# Clear all alerts               # Continuous monitoring
+python fetch.py --purge          python scheduler.py
+```
 
-The Docker Compose configuration uses Python's schedule library to run checks automatically. By default, it checks for alerts every 5 minutes, runs cleanup daily, and performs database maintenance weekly. You can customize these intervals in `config.txt` under the `[schedule]` section. See [INSTALL.md](INSTALL.md) for details.
+The built-in scheduler runs checks automatically (default: every 5 minutes). Customize intervals in the `[schedule]` section of `config.txt`. See [INSTALL.md](INSTALL.md) for all options.
 
 ## Customization
 
-### Alert Template Customization
+**Alert Templates**: Customize `templates/detail.html` to change how alert HTML pages look. See [templates/TEMPLATE_GUIDE.md](templates/TEMPLATE_GUIDE.md) for 7+ examples and complete guide.
 
-The HTML detail pages for alerts can be customized by editing `templates/detail.html`. This Jinja2 template controls how alerts are displayed.
-
-For comprehensive customization instructions, see [TEMPLATE_GUIDE.md](templates/TEMPLATE_GUIDE.md), which includes:
-- Available template variables
-- 7+ practical customization examples
-- Mobile-friendly layouts
-- Conditional content display
-- Styling tips and best practices
-
-### Setup Validation Tool
-
-The `test_setup.py` script helps validate and fix common setup issues:
-
-```bash
-# Run validation checks
-python test_setup.py
-
-# Auto-fix issues (create config.txt, initialize database)
-python test_setup.py --fix
-
-# Interactive mode (prompt before each fix)
-python test_setup.py --interactive
-```
+**Setup Validation**: Run `python test_setup.py --fix` to automatically create config.txt and initialize the database
 
 ## Project Status
 

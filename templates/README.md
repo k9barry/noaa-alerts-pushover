@@ -11,7 +11,7 @@ This directory contains templates and sample data for the NOAA Alerts Pushover a
 
 **Usage**: This template is automatically used by `fetch.py` to create alert detail pages. The generated HTML files can be linked from push notifications for users to view full alert details.
 
-**Customization**: See [TEMPLATE_GUIDE.md](../TEMPLATE_GUIDE.md) in the root directory for detailed instructions on how to customize this template.
+**Customization**: See [TEMPLATE_GUIDE.md](TEMPLATE_GUIDE.md) in this directory for detailed instructions on how to customize this template.
 
 **Variables Available**:
 - `alert['headline']` - Main alert headline
@@ -78,6 +78,6 @@ For complete documentation of the NOAA Weather API data format:
 ## Support
 
 For questions about template customization:
-- See [TEMPLATE_GUIDE.md](../TEMPLATE_GUIDE.md)
+- See [TEMPLATE_GUIDE.md](TEMPLATE_GUIDE.md) in this directory
 - Check [CODE_EXPLANATION.md](../CODE_EXPLANATION.md) for architecture details
 - Open an issue on GitHub
