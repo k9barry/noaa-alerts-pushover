@@ -235,9 +235,11 @@ For complete instructions on manual release creation, see:
 2. Create tags manually with `git tag -a v2.X.Y -m "Release version 2.X.Y"`
 3. Always follow [Semantic Versioning](https://semver.org/): Major.Minor.Patch
 
-### Docker Hub Publishing
+### Container Registry Publishing
 
-The repository includes automated Docker Hub publishing via GitHub Actions.
+The repository includes automated container image publishing to multiple registries via GitHub Actions.
+
+#### Docker Hub Publishing
 
 **For complete setup instructions**, see [docs/DOCKER_HUB_SETUP.md](docs/DOCKER_HUB_SETUP.md)
 
@@ -252,10 +254,33 @@ The repository includes automated Docker Hub publishing via GitHub Actions.
   - `DOCKERHUB_TOKEN` - Docker Hub access token (not password)
 - **Multi-platform**: Images are built for `linux/amd64` and `linux/arm64`
 
-**To publish a new Docker image:**
+**To publish to Docker Hub:**
 1. Create and push a Git tag using the release workflow
 2. The docker-publish workflow automatically builds and pushes to Docker Hub
 3. Verify the image at https://hub.docker.com/r/DOCKERHUB_USERNAME/noaa-alerts-pushover
+
+#### GitHub Container Registry (GHCR) Publishing
+
+**For complete setup instructions**, see [docs/GHCR_SETUP.md](docs/GHCR_SETUP.md)
+
+**Quick Overview:**
+- **Workflow**: `.github/workflows/ghcr-publish.yml`
+- **Triggers**:
+  - Push to `master` branch → publishes `latest` tag
+  - Git tag push (e.g., `v2.2.0`) → publishes version tags (`2.2.0`, `2.2`, `2`)
+  - Manual workflow dispatch
+- **Requirements**: No additional setup required (uses built-in `GITHUB_TOKEN`)
+- **Multi-platform**: Images are built for `linux/amd64` and `linux/arm64`
+- **Advantages**: 
+  - No external credentials needed
+  - Automatic authentication
+  - Free for public repositories
+  - Integrated with GitHub
+
+**To publish to GHCR:**
+1. Create and push a Git tag using the release workflow
+2. The ghcr-publish workflow automatically builds and pushes to GHCR
+3. Verify the image in the repository's Packages tab
 
 ## Coding Standards
 
