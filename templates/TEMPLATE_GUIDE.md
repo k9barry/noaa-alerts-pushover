@@ -556,6 +556,15 @@ server {
 Alias /alerts "/path/to/noaa-alerts-pushover/output"
 ```
 
+**Option D: Docker with Separate Web Server Container**
+
+If you're running NOAA Alerts Pushover in Docker, you can use a separate container to serve the HTML files. See the [INSTALL.md Docker Setup section](../INSTALL.md#pushover-section) for complete examples with:
+- Nginx container with shared volumes
+- Traefik with automatic HTTPS/SSL
+- Apache container configuration
+
+This approach keeps the alert generation and web serving separated, which is ideal for Docker-based deployments.
+
 ### 3. Test the Setup
 
 1. Run the application: `python fetch.py --debug`

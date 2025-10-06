@@ -443,6 +443,303 @@ You'll need to:
 2. Configure it to serve files from the `output/` directory
 3. Ensure the server is accessible from the internet if you want to view alerts on mobile devices
 
+**Docker Setup with Separate Web Server Container:**
+
+If you're running NOAA Alerts Pushover in Docker and want to serve the HTML files with a separate web server container, you can use a shared volume. Here are complete examples:
+
+##### Option 1: Using Nginx Container
+
+Create a `docker-compose.yml` that includes both services:
+
+```yaml
+version: '3.8'
+
+services:
+  noaa-alerts:
+    build: .
+    container_name: noaa-alerts-pushover
+    restart: unless-stopped
+    volumes:
+      - ./config.txt:/app/config.txt:ro
+      - ./counties.json:/app/counties.json:ro
+      - alert-output:/app/output      # Shared volume
+      - ./data:/app/data
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TZ=UTC
+      - RUN_MODE=scheduler
+
+  nginx-alerts:
+    image: nginx:alpine
+    container_name: nginx-alerts-server
+    restart: unless-stopped
+    ports:
+      - "8080:80"  # Expose on port 8080
+    volumes:
+      - alert-output:/usr/share/nginx/html/alerts:ro  # Mount as read-only
+      - ./nginx-alerts.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - noaa-alerts
+
+volumes:
+  alert-output:  # Shared named volume
+```
+
+Create `nginx-alerts.conf`:
+
+```nginx
+server {
+    listen 80;
+    server_name localhost;
+
+    location /alerts {
+        alias /usr/share/nginx/html/alerts;
+        autoindex off;
+        
+        # Add cache headers for better performance
+        expires 5m;
+        add_header Cache-Control "public, must-revalidate";
+    }
+    
+    # Health check endpoint
+    location /health {
+        access_log off;
+        return 200 "healthy\n";
+        add_header Content-Type text/plain;
+    }
+}
+```
+
+Then set in your `config.txt`:
+```ini
+base_url = http://your-server-ip:8080/alerts
+# Or with a domain: base_url = https://example.com/alerts
+```
+
+##### Option 2: Using Traefik (with automatic HTTPS)
+
+For Traefik with automatic SSL certificates:
+
+```yaml
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:v2.10
+    container_name: traefik
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik.yml:/traefik.yml:ro
+      - ./acme.json:/acme.json
+    networks:
+      - web
+
+  noaa-alerts:
+    build: .
+    container_name: noaa-alerts-pushover
+    restart: unless-stopped
+    volumes:
+      - ./config.txt:/app/config.txt:ro
+      - ./counties.json:/app/counties.json:ro
+      - alert-output:/app/output
+      - ./data:/app/data
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TZ=UTC
+      - RUN_MODE=scheduler
+    networks:
+      - web
+
+  nginx-alerts:
+    image: nginx:alpine
+    container_name: nginx-alerts-server
+    restart: unless-stopped
+    volumes:
+      - alert-output:/usr/share/nginx/html/alerts:ro
+      - ./nginx-alerts.conf:/etc/nginx/conf.d/default.conf:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.alerts.rule=Host(`alerts.example.com`)"
+      - "traefik.http.routers.alerts.entrypoints=websecure"
+      - "traefik.http.routers.alerts.tls.certresolver=letsencrypt"
+      - "traefik.http.services.alerts.loadbalancer.server.port=80"
+    depends_on:
+      - noaa-alerts
+      - traefik
+    networks:
+      - web
+
+volumes:
+  alert-output:
+
+networks:
+  web:
+    external: true
+```
+
+Create `traefik.yml`:
+
+```yaml
+api:
+  dashboard: true
+
+entryPoints:
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+  websecure:
+    address: ":443"
+
+providers:
+  docker:
+    exposedByDefault: false
+
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: your-email@example.com
+      storage: /acme.json
+      httpChallenge:
+        entryPoint: web
+```
+
+Then set in your `config.txt`:
+```ini
+base_url = https://alerts.example.com/alerts
+```
+
+##### Option 3: Using Apache Container
+
+```yaml
+version: '3.8'
+
+services:
+  noaa-alerts:
+    build: .
+    container_name: noaa-alerts-pushover
+    restart: unless-stopped
+    volumes:
+      - ./config.txt:/app/config.txt:ro
+      - ./counties.json:/app/counties.json:ro
+      - alert-output:/app/output
+      - ./data:/app/data
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TZ=UTC
+      - RUN_MODE=scheduler
+
+  apache-alerts:
+    image: httpd:alpine
+    container_name: apache-alerts-server
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - alert-output:/usr/local/apache2/htdocs/alerts:ro
+      - ./apache-alerts.conf:/usr/local/apache2/conf/httpd.conf:ro
+    depends_on:
+      - noaa-alerts
+
+volumes:
+  alert-output:
+```
+
+Create `apache-alerts.conf`:
+
+```apache
+ServerRoot "/usr/local/apache2"
+Listen 80
+
+LoadModule mpm_event_module modules/mod_mpm_event.so
+LoadModule authz_core_module modules/mod_authz_core.so
+LoadModule dir_module modules/mod_dir.so
+LoadModule mime_module modules/mod_mime.so
+LoadModule log_config_module modules/mod_log_config.so
+LoadModule alias_module modules/mod_alias.so
+LoadModule unixd_module modules/mod_unixd.so
+
+<IfModule unixd_module>
+    User daemon
+    Group daemon
+</IfModule>
+
+ServerAdmin webmaster@localhost
+ServerName localhost
+
+<Directory />
+    AllowOverride none
+    Require all denied
+</Directory>
+
+DocumentRoot "/usr/local/apache2/htdocs"
+
+<Directory "/usr/local/apache2/htdocs/alerts">
+    Options -Indexes +FollowSymLinks
+    AllowOverride None
+    Require all granted
+</Directory>
+
+Alias /alerts "/usr/local/apache2/htdocs/alerts"
+
+ErrorLog /proc/self/fd/2
+TransferLog /proc/self/fd/1
+
+TypesConfig conf/mime.types
+AddType text/html .html
+```
+
+Then set in your `config.txt`:
+```ini
+base_url = http://your-server-ip:8080/alerts
+```
+
+**Starting the Multi-Container Setup:**
+
+```bash
+# Create the shared volume and network if needed
+docker volume create alert-output  # Only if not using docker-compose volumes
+docker network create web           # Only for Traefik setup
+
+# For Traefik, create acme.json file for SSL certificates
+touch acme.json && chmod 600 acme.json
+
+# Start all services
+docker compose up -d
+
+# Verify both containers are running
+docker compose ps
+
+# Check logs
+docker compose logs -f noaa-alerts
+docker compose logs -f nginx-alerts  # or apache-alerts or traefik
+
+# Test the web server
+curl http://localhost:8080/alerts/
+```
+
+**Important Notes:**
+
+1. **Volume Permissions**: The NOAA alerts container runs as user `noaa` (UID 1000). If you encounter permission issues, ensure the shared volume has appropriate permissions.
+
+2. **Security**: 
+   - The web server mounts the volume as read-only (`:ro`)
+   - Directory listings are disabled (`autoindex off` or `Options -Indexes`)
+   - Consider adding basic authentication if exposing publicly
+
+3. **Port Conflicts**: Change the port mapping (`8080:80`) if port 8080 is already in use on your host.
+
+4. **DNS/Domain**: For production with a domain name, update DNS records to point to your server's IP address.
+
+5. **Firewall**: Ensure your firewall allows traffic on the exposed ports (80, 443, or 8080).
+
 #### [events] Section
 
 **Optional** - Filter out alert types you don't want to receive:
