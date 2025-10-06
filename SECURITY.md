@@ -126,14 +126,11 @@ If you discover a security vulnerability, please report it by opening a GitHub i
 
 ### Known Security Considerations
 
-#### 1. NOAA API Endpoint
-- The NOAA weather alerts API uses HTTPS (`https://api.weather.gov/alerts`)
-- Alert data is public information
-- We validate all data received from the API:
-  - HTTP status codes are checked
-  - Content types are validated
-  - HTML error pages are detected and rejected
-  - JSON parsing is protected with try/catch blocks
+#### 1. API Endpoints
+- All external APIs use HTTPS (NOAA Weather API, Pushover API)
+- Alert data from NOAA is public information
+- All API responses are validated before processing (status codes, content types, JSON structure)
+- See [docs/CODE_EXPLANATION.md](docs/CODE_EXPLANATION.md) for technical details on API integration
 
 #### 2. HTML Output Files
 - Alert detail pages are generated and stored in `output/`

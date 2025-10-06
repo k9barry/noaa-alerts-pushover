@@ -11,32 +11,7 @@ This directory contains templates and sample data for the NOAA Alerts Pushover a
 
 **Usage**: This template is automatically used by `fetch.py` to create alert detail pages. The generated HTML files can be linked from push notifications for users to view full alert details.
 
-**Customization**: The template supports **configuration-based feature toggling**. Enable or disable features by editing the `[template]` section in `config.txt`:
-
-```ini
-[template]
-show_event_info = true           # Display event type and issuing office
-show_expiration = true            # Show expiration time
-conditional_instructions = true   # Only show instructions if present
-color_coding = true               # Color-code alerts by type
-show_map_link = true              # Include Google Maps link
-mobile_responsive = true          # Use mobile-friendly responsive design
-show_social_sharing = true        # Add social sharing buttons
-```
-
-All options default to `false`, giving you the basic template. Mix and match features as needed!
-
-For detailed information, see [TEMPLATE_GUIDE.md](TEMPLATE_GUIDE.md) in this directory.
-
-**Variables Available**:
-- `alert['headline']` - Main alert headline
-- `alert['event']` - Event type (e.g., "High Wind Warning")
-- `alert['issuer']` - Issuing NWS office
-- `alert['description']` - Full alert description
-- `alert['instructions']` - Safety instructions
-- `alert['area']` - Affected geographic area
-- `expires` - Alert expiration timestamp
-- `template_options` - Dictionary of enabled/disabled features
+**Customization**: The template supports configuration-based feature toggling. See [TEMPLATE_GUIDE.md](TEMPLATE_GUIDE.md) for complete customization options, available variables, and examples.
 
 ### sample.json
 **Type**: JSON (GeoJSON with CAP properties)
@@ -95,5 +70,5 @@ For complete documentation of the NOAA Weather API data format:
 
 For questions about template customization:
 - See [TEMPLATE_GUIDE.md](TEMPLATE_GUIDE.md) in this directory
-- Check [CODE_EXPLANATION.md](../CODE_EXPLANATION.md) for architecture details
+- Check [CODE_EXPLANATION.md](../docs/CODE_EXPLANATION.md) for architecture details
 - Open an issue on GitHub

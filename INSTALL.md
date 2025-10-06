@@ -248,24 +248,7 @@ docker compose run -e RUN_MODE=once noaa-alerts
 
 This runs fetch.py a single time, useful for testing or if you want to handle scheduling externally.
 
-### Docker Commands
-
-```bash
-# View logs
-docker compose logs -f
-
-# Stop all containers
-docker compose down
-
-# Rebuild after changes
-docker compose build
-
-# Run with purge flag
-docker compose run --rm noaa-alerts python fetch.py --purge
-
-# Debug mode
-docker compose run --rm noaa-alerts python fetch.py --debug
-```
+See the [Command-Line Options](#command-line-options) section below for all Docker commands and options.
 
 ## Manual Installation
 

@@ -15,70 +15,31 @@ Sends out NOAA Severe Weather Alerts via [Pushover](http://www.pushover.net). An
 
 ## Quick Start
 
-Get up and running in 5 minutes:
-
-```bash
-# Clone and configure
-git clone https://github.com/k9barry/noaa-alerts-pushover.git
-cd noaa-alerts-pushover
-cp config.txt.example config.txt
-# Edit config.txt with your Pushover credentials
-
-# Edit counties.json to add counties you want to monitor
-
-# Run with Docker (recommended)
-docker compose up -d
-
-# Or run with Python
-pip install -r requirements.txt
-python3 models.py
-python3 fetch.py
-```
-
-For detailed installation instructions, configuration options, and troubleshooting, see the [Installation Guide](INSTALL.md)
+See the [Installation Guide](INSTALL.md) for a 5-minute quick start or detailed installation instructions.
 
 ## Configuration
 
 The application uses two configuration files:
+- **`config.txt`** - Pushover API credentials, event filtering, and scheduling intervals
+- **`counties.json`** - Counties to monitor (find codes at [NOAA website](http://www.nws.noaa.gov/emwin/winugc.htm))
 
-**`config.txt`** - Your Pushover API credentials and settings:
-```ini
-[pushover]
-token = YOUR_PUSHOVER_TOKEN     # Get from pushover.net
-user = YOUR_PUSHOVER_USER_KEY
-
-[events]
-ignored = Red Flag Warning,Heat Advisory  # Optional: filter unwanted alerts
-
-[schedule]
-fetch_interval = 5      # Check for alerts every 5 minutes
-cleanup_interval = 24   # Clean expired files daily
-vacuum_interval = 168   # Database maintenance weekly
-```
-
-**`counties.json`** - Counties to monitor (find codes at [NOAA website](http://www.nws.noaa.gov/emwin/winugc.htm)):
-```json
-[
-    {"fips": "012057", "name": "Hillsborough County", "state": "FL", "ugc": "FL057"}
-]
-```
-
-See [INSTALL.md](INSTALL.md) for complete configuration details
+See [INSTALL.md](INSTALL.md) for complete configuration details and examples.
 
 ## Usage
 
+**Continuous monitoring (recommended):**
 ```bash
-# Standard run
-python fetch.py
-
-# Test without notifications    # Debug mode
-python fetch.py --nopush         python fetch.py --debug
-
-# Clear all alerts               # Continuous monitoring
-python fetch.py --purge          python scheduler.py
+python scheduler.py              # or: docker compose up -d
 ```
 
-The built-in scheduler runs checks automatically (default: every 5 minutes). Customize intervals in the `[schedule]` section of `config.txt`. See [INSTALL.md](INSTALL.md) for all options.
+**Single check:**
+```bash
+python fetch.py                  # Standard run
+python fetch.py --nopush         # Test without notifications
+python fetch.py --debug          # Debug mode
+```
+
+See [INSTALL.md](INSTALL.md) for all command-line options and scheduling configuration.
 
 ## Customization
 
@@ -100,13 +61,7 @@ This project has been fully modernized to Python 3.12+ with comprehensive docume
 - **Auto-fix Tools**: Setup validation script with automatic configuration repair
 
 ### 🔒 Docker Security
-The Docker container runs as non-root user `noaa` (UID 1000) following security best practices:
-- Reduced attack surface
-- Limits container escape vulnerability impact
-- Follows Docker and Kubernetes security recommendations
-- Compatible with read-only root filesystems
-
-See [INSTALL.md](INSTALL.md) for permission setup details.
+The Docker container runs as non-root user `noaa` (UID 1000) for enhanced security. See [INSTALL.md](INSTALL.md) for permission setup and [SECURITY.md](SECURITY.md) for security best practices.
 
 ## Documentation
 
@@ -137,58 +92,19 @@ See [requirements.txt](requirements.txt) for specific versions.
 
 ## How It Works
 
-### Architecture
+1. **Fetch** - Downloads alerts from NOAA Weather API (JSON/GeoJSON format)
+2. **Filter** - Matches alerts to your monitored counties (FIPS/UGC codes)
+3. **Check** - Verifies against SQLite database to prevent duplicate notifications
+4. **Generate** - Creates HTML detail page in `output/` directory
+5. **Notify** - Sends Pushover notification with link to detail page
+6. **Store** - Saves alert to database with expiration timestamp
 
-The application consists of several key components:
-
-1. **fetch.py** - Main application that fetches alerts from NOAA and sends notifications
-2. **scheduler.py** - Automated task scheduler with configurable intervals
-3. **models.py** - Database ORM layer using Peewee with SQLite
-4. **cleanup.py** - Removes expired HTML alert files
-5. **vacuum.py** - Database maintenance and optimization
-6. **test_setup.py** - Setup validation with auto-fix capabilities
-
-### Data Flow
-
-```
-NOAA API (GeoJSON) → fetch.py → Filter by Counties → Check Database
-                                                           ↓
-                                                      New Alert?
-                                                           ↓
-                                        Generate HTML + Send Pushover Notification
-```
-
-### Scheduling
-
-The built-in scheduler (Python `schedule` library) automatically runs:
+The built-in scheduler automatically runs:
 - **fetch.py** - Check for new alerts (default: every 5 minutes)
 - **cleanup.py** - Remove expired HTML files (default: every 24 hours)
 - **vacuum.py** - Database maintenance (default: weekly)
 
-All intervals are configurable in `config.txt` under the `[schedule]` section.
-
-### Database
-
-- **Engine**: SQLite with WAL (Write-Ahead Logging) mode
-- **Location**: `data/alerts.db`
-- **Purpose**: Prevents duplicate notifications by tracking sent alerts
-- **Maintenance**: Automatic cleanup and vacuum operations via scheduler
-
-### Alert Processing
-
-1. Fetches latest alerts from NOAA Weather API (JSON/GeoJSON format)
-2. Filters alerts matching your monitored counties (FIPS/UGC codes)
-3. Checks database to prevent duplicate notifications
-4. Generates HTML detail page in `output/` directory
-5. Sends Pushover notification with link to detail page
-6. Stores alert in database with expiration timestamp
-
-## Notes
-
-- The application saves alerts to a local SQLite database to prevent duplicate notifications
-- Expired alerts are automatically cleaned up by the scheduler
-- HTML detail pages are generated for each alert in the `output/` directory
-- County matching uses both FIPS6 and UGC code systems for comprehensive coverage
+For technical details and architecture diagrams, see [docs/CODE_EXPLANATION.md](docs/CODE_EXPLANATION.md).
 
 ## Performance & Requirements
 

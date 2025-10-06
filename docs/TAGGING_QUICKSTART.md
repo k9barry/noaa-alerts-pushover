@@ -42,7 +42,7 @@ Based on CHANGELOG.md:
 
 ## Full Documentation
 
-See [docs/TAGGING.md](docs/TAGGING.md) for complete documentation including:
+See [TAGGING.md](TAGGING.md) for complete documentation including:
 - Detailed workflow instructions
 - Manual tagging process
 - Troubleshooting guide
@@ -51,4 +51,4 @@ See [docs/TAGGING.md](docs/TAGGING.md) for complete documentation including:
 
 ## Questions?
 
-Check [CONTRIBUTING.md](CONTRIBUTING.md) section "Creating Releases" for full details.
+Check [CONTRIBUTING.md](../CONTRIBUTING.md) section "Creating Releases" for full details.
