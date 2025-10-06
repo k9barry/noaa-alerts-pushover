@@ -462,10 +462,18 @@ noaa-alerts-pushover/
 ├── README.md             # Project overview
 ├── INSTALL.md            # Installation guide
 ├── SECURITY.md           # Security documentation
-├── CODE_EXPLANATION.md   # This file
+├── CHANGELOG.md          # Version history
+├── CONTRIBUTING.md       # Contribution guidelines
 ├── LICENSE               # MIT license
+├── docs/
+│   ├── CODE_EXPLANATION.md    # This file - technical architecture
+│   ├── TAGGING.md             # Tag creation guide
+│   └── TAGGING_QUICKSTART.md  # Quick tagging reference
 ├── templates/
-│   └── detail.html       # Jinja2 template for alerts
+│   ├── detail.html        # Jinja2 template for alerts
+│   ├── sample.json        # Sample NOAA API response
+│   ├── README.md          # Templates directory documentation
+│   └── TEMPLATE_GUIDE.md  # Template customization guide
 ├── output/               # Generated HTML files (gitignored)
 ├── data/                 # Database directory (gitignored)
 │   └── alerts.db         # SQLite database
