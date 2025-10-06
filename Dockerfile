@@ -1,5 +1,14 @@
 FROM python:3.12-slim
 
+# Metadata labels for better Docker Hub display
+LABEL org.opencontainers.image.title="NOAA Alerts Pushover"
+LABEL org.opencontainers.image.description="Real-time NOAA severe weather alerts via Pushover push notifications"
+LABEL org.opencontainers.image.url="https://github.com/k9barry/noaa-alerts-pushover"
+LABEL org.opencontainers.image.source="https://github.com/k9barry/noaa-alerts-pushover"
+LABEL org.opencontainers.image.documentation="https://github.com/k9barry/noaa-alerts-pushover/blob/master/README.md"
+LABEL org.opencontainers.image.licenses="MIT"
+LABEL maintainer="k9barry"
+
 # Set working directory
 WORKDIR /app
 

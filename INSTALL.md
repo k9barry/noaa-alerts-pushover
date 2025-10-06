@@ -153,13 +153,31 @@ Docker provides the easiest and most consistent way to run NOAA Alerts Pushover.
 - Docker Engine 20.10+
 - Docker Compose 2.0+
 
-### Installation Steps
+### Installation Methods
+
+#### Option 1: Using Pre-built Docker Hub Image (Easiest)
+
+The application is available as a pre-built image on Docker Hub:
+
+```bash
+# Pull the latest version
+docker pull k9barry/noaa-alerts-pushover:latest
+
+# Or pull a specific version
+docker pull k9barry/noaa-alerts-pushover:v2.2.0
+```
+
+Then follow steps 2-7 below to set up your configuration and run the container.
+
+#### Option 2: Build from Source
 
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/k9barry/noaa-alerts-pushover.git
    cd noaa-alerts-pushover
    ```
+
+### Installation Steps
 
 2. **Create your configuration file:**
    ```bash
@@ -207,8 +225,18 @@ Docker provides the easiest and most consistent way to run NOAA Alerts Pushover.
    > **Note**: If your host user has UID 1000 (check with `id -u`), no changes are needed.
    > See the Docker Security section above for complete details.
 
-7. **Build and run the container:**
+7. **Run the container:**
+   
+   **If using Docker Hub image:**
    ```bash
+   # Edit docker-compose.yml to use the pre-built image:
+   # Replace "build: ." with "image: k9barry/noaa-alerts-pushover:latest"
+   docker compose up -d
+   ```
+   
+   **If building from source:**
+   ```bash
+   docker compose build
    docker compose up -d
    ```
 
