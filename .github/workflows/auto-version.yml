@@ -104,15 +104,15 @@ jobs:
           
           # Create new changelog entry
           cat > /tmp/new_entry.md << EOF
+          
           ## Version ${NEW_VERSION} - ${CURRENT_DATE}
           
           ### Changes
           - ${PR_TITLE} (#${PR_NUMBER}) by @${PR_AUTHOR}
-          
           EOF
           
-          # Insert new entry at the top of CHANGELOG (after title)
-          sed -i '1 r /tmp/new_entry.md' CHANGELOG.md
+          # Insert new entry at the top of CHANGELOG (after the title line)
+          sed -i '2 r /tmp/new_entry.md' CHANGELOG.md
           
           echo "CHANGELOG.md updated with version ${NEW_VERSION}"
       

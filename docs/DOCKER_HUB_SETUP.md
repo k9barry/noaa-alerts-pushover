@@ -105,6 +105,16 @@ The workflow runs automatically on:
 - **Push to master branch**: Creates `latest` tag
 - **Git tag push** (e.g., `v2.2.0`): Creates versioned tags
 - **Manual dispatch**: Via Actions tab
+- **PR merge** (automatic): Via auto-versioning workflow (see below)
+
+### Automatic Versioning (New!)
+
+When a PR is merged to master with appropriate labels (`major`, `minor`, or `patch`), the auto-versioning workflow:
+1. Creates a new Git tag automatically
+2. Triggers this Docker Hub workflow
+3. Publishes versioned images
+
+**See [AUTO_VERSIONING.md](AUTO_VERSIONING.md) for complete details.**
 
 ### Image Tags
 

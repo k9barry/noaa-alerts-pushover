@@ -1,0 +1,52 @@
+# Label configuration for automatic versioning
+# These labels control the version bump type when PRs are merged
+
+# Version bump labels
+- name: major
+  description: "Breaking changes - bumps major version (X.0.0)"
+  color: "d73a4a"
+
+- name: breaking
+  description: "Breaking changes - bumps major version (X.0.0)"
+  color: "d73a4a"
+
+- name: minor
+  description: "New features (backward compatible) - bumps minor version (0.X.0)"
+  color: "0e8a16"
+
+- name: feature
+  description: "New features (backward compatible) - bumps minor version (0.X.0)"
+  color: "0e8a16"
+
+- name: patch
+  description: "Bug fixes and minor changes - bumps patch version (0.0.X)"
+  color: "fbca04"
+
+- name: bugfix
+  description: "Bug fixes - bumps patch version (0.0.X)"
+  color: "fbca04"
+
+- name: fix
+  description: "Bug fixes - bumps patch version (0.0.X)"
+  color: "fbca04"
+
+# Additional helpful labels
+- name: documentation
+  description: "Documentation changes only"
+  color: "0075ca"
+
+- name: dependencies
+  description: "Dependency updates"
+  color: "0366d6"
+
+- name: skip-release
+  description: "Do not create a version (future enhancement)"
+  color: "ffffff"
+
+- name: security
+  description: "Security-related changes"
+  color: "ee0701"
+
+- name: enhancement
+  description: "Improvements to existing features"
+  color: "a2eeef"

@@ -6,9 +6,20 @@ This document explains how to create Git tags and GitHub releases for this proje
 
 Tags are created based on versions documented in `CHANGELOG.md`. Each version in the CHANGELOG should correspond to a Git tag in the format `vX.Y.Z` (e.g., `v2.2.0`).
 
-## Methods
+## Automatic Versioning (Recommended for Contributors)
 
-There are three ways to create tags:
+**New!** When you merge a PR to master, a version is automatically created based on labels:
+
+- Add label `major`, `minor`, or `patch` to your PR
+- On merge, the workflow automatically creates a new version
+- CHANGELOG.md is updated automatically
+- GitHub Release and Docker images are created
+
+**See [AUTO_VERSIONING.md](AUTO_VERSIONING.md) for complete details.**
+
+## Manual Release Methods
+
+For maintainers who need to create releases manually, there are three methods:
 
 ### 1. GitHub Actions Workflow (Recommended)
 
