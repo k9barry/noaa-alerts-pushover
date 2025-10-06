@@ -112,7 +112,7 @@ See [INSTALL.md](INSTALL.md) for permission setup details.
 
 - [Installation Guide](INSTALL.md) - Complete setup instructions with quick start section
 - [Template Customization Guide](templates/TEMPLATE_GUIDE.md) - Customize alert HTML pages
-- [How It Works](CODE_EXPLANATION.md) - Technical overview of the codebase
+- [How It Works](docs/CODE_EXPLANATION.md) - Technical overview of the codebase
 - [Security](SECURITY.md) - Security best practices and considerations
 - [Changelog](CHANGELOG.md) - Version history and updates
 - [Contributing](CONTRIBUTING.md) - Contribution guidelines

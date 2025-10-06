@@ -11,7 +11,22 @@ This directory contains templates and sample data for the NOAA Alerts Pushover a
 
 **Usage**: This template is automatically used by `fetch.py` to create alert detail pages. The generated HTML files can be linked from push notifications for users to view full alert details.
 
-**Customization**: See [TEMPLATE_GUIDE.md](TEMPLATE_GUIDE.md) in this directory for detailed instructions on how to customize this template.
+**Customization**: The template supports **configuration-based feature toggling**. Enable or disable features by editing the `[template]` section in `config.txt`:
+
+```ini
+[template]
+show_event_info = true           # Display event type and issuing office
+show_expiration = true            # Show expiration time
+conditional_instructions = true   # Only show instructions if present
+color_coding = true               # Color-code alerts by type
+show_map_link = true              # Include Google Maps link
+mobile_responsive = true          # Use mobile-friendly responsive design
+show_social_sharing = true        # Add social sharing buttons
+```
+
+All options default to `false`, giving you the basic template. Mix and match features as needed!
+
+For detailed information, see [TEMPLATE_GUIDE.md](TEMPLATE_GUIDE.md) in this directory.
 
 **Variables Available**:
 - `alert['headline']` - Main alert headline
@@ -21,6 +36,7 @@ This directory contains templates and sample data for the NOAA Alerts Pushover a
 - `alert['instructions']` - Safety instructions
 - `alert['area']` - Affected geographic area
 - `expires` - Alert expiration timestamp
+- `template_options` - Dictionary of enabled/disabled features
 
 ### sample.json
 **Type**: JSON (GeoJSON with CAP properties)

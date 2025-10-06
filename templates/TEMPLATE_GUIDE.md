@@ -4,10 +4,257 @@
 
 The `templates/detail.html` file is a Jinja2 template used to generate HTML pages for individual weather alerts. These HTML pages are created in the `output/` directory and can be linked from push notifications.
 
+## Quick Start: Configuration-Based Customization
+
+**New!** The template now supports configuration-based feature toggling. Instead of creating multiple template files, you can enable or disable features by editing `config.txt`:
+
+```ini
+[template]
+# Enable features you want (set to true or false)
+show_event_info = true           # Display event type and issuing office
+show_expiration = true            # Show expiration time
+conditional_instructions = true   # Only show instructions if present
+color_coding = true               # Color-code alerts by type
+show_map_link = true              # Include Google Maps link
+mobile_responsive = true          # Use mobile-friendly responsive design
+show_social_sharing = true        # Add social sharing buttons
+```
+
+All options default to `false` if not specified, giving you the basic template layout.
+
+### Available Features
+
+1. **show_event_info** - Adds event type and issuing office information
+2. **show_expiration** - Displays expiration time in a styled metadata section
+3. **conditional_instructions** - Only shows instructions when they exist
+4. **color_coding** - Applies color-coding based on event type (tornado, flood, wind)
+5. **show_map_link** - Includes a Google Maps link for the affected area
+6. **mobile_responsive** - Applies modern mobile-responsive design with better styling
+7. **show_social_sharing** - Adds Twitter and Facebook sharing buttons
+
+## Visual Examples with Sample Data
+
+Below are examples showing how different configurations affect the rendered HTML output using sample data from a High Wind Warning.
+
+**Sample Alert Data:**
+- **Event**: High Wind Warning
+- **Issued By**: NWS Boulder (Northeastern Colorado)
+- **Headline**: "High Wind Warning issued December 21 at 2:49PM MST until December 22 at 6:00AM MST by NWS Boulder"
+- **Area**: Jefferson and West Douglas Counties Above 6000 Feet, Gilpin, Clear Creek, Northeast Park Counties
+
+### Example 1: Default Configuration (All Features Disabled)
+
+**Configuration:**
+```ini
+[template]
+# All options default to false - no configuration needed
+```
+
+**Rendered Output:**
+```html
+<body>
+  <h1>High Wind Warning issued December 21 at 2:49PM MST until December 22 at 6:00AM MST by NWS Boulder</h1>
+
+  <p><strong>Description:</strong></p>
+  <p>...HIGH WIND WARNING IN EFFECT FROM 6 PM THIS EVENING TO 6 AM MST TUESDAY...</p>
+
+  <p><strong>Instructions:</strong></p>
+  <p>REMEMBER...A HIGH WIND WARNING MEANS THAT STRONG AND POTENTIALLY DAMAGING WINDS...</p>
+
+  <p><strong>Area Affected:</strong></p>
+  <p>Jefferson and West Douglas Counties Above 6000 Feet, Gilpin, Clear Creek...</p>
+</body>
+```
+
+**Output Size:** ~1,776 bytes  
+**Use Case:** Simple, minimal alert display
+
+---
+
+### Example 2: Informative Configuration
+
+**Configuration:**
+```ini
+[template]
+show_event_info = true
+show_expiration = true
+```
+
+**Rendered Output:**
+```html
+<body>
+  <h1>High Wind Warning issued December 21 at 2:49PM MST until December 22 at 6:00AM MST by NWS Boulder</h1>
+
+  <!-- Event Type and Issuer Information -->
+  <p><strong>Event Type:</strong> High Wind Warning</p>
+  <p><strong>Issued By:</strong> NWS Boulder (Northeastern Colorado)</p>
+
+  <!-- Expiration Time Display -->
+  <div class="alert-meta">
+    <p><strong>Expires:</strong> 2015-12-22T06:00:00-07:00</p>
+  </div>
+
+  <p><strong>Description:</strong></p>
+  <p>...HIGH WIND WARNING IN EFFECT FROM 6 PM THIS EVENING TO 6 AM MST TUESDAY...</p>
+
+  <p><strong>Instructions:</strong></p>
+  <p>REMEMBER...A HIGH WIND WARNING MEANS THAT STRONG AND POTENTIALLY DAMAGING WINDS...</p>
+
+  <p><strong>Area Affected:</strong></p>
+  <p>Jefferson and West Douglas Counties Above 6000 Feet, Gilpin, Clear Creek...</p>
+</body>
+```
+
+**Output Size:** ~2,230 bytes  
+**Use Case:** More context with event details and expiration time
+
+---
+
+### Example 3: Mobile-Optimized Configuration
+
+**Configuration:**
+```ini
+[template]
+show_event_info = true
+conditional_instructions = true
+show_map_link = true
+mobile_responsive = true
+```
+
+**Rendered Output:**
+```html
+<body>
+  <h1>High Wind Warning issued December 21...</h1>
+
+  <!-- Event information in styled section -->
+  <div class="alert-section">
+    <p><strong>Event Type:</strong> High Wind Warning</p>
+    <p><strong>Issued By:</strong> NWS Boulder (Northeastern Colorado)</p>
+  </div>
+
+  <!-- Description in styled section -->
+  <div class="alert-section">
+    <strong>Description:</strong>
+    <p>...HIGH WIND WARNING IN EFFECT FROM 6 PM THIS EVENING...</p>
+  </div>
+
+  <!-- Instructions (only shown if present) -->
+  <div class="alert-section">
+    <strong>Instructions:</strong>
+    <p>REMEMBER...A HIGH WIND WARNING MEANS THAT STRONG AND POTENTIALLY DAMAGING WINDS...</p>
+  </div>
+
+  <!-- Area with map link -->
+  <div class="alert-section">
+    <strong>Area Affected:</strong>
+    <p>Jefferson and West Douglas Counties Above 6000 Feet...</p>
+    <p><a href="https://www.google.com/maps/search/Jefferson%20and%20West%20Douglas%20Counties...">View on Map</a></p>
+  </div>
+</body>
+```
+
+**Styling Applied:**
+- Modern font family (system fonts)
+- Responsive padding and max-width (800px)
+- Styled alert sections with left border
+- Mobile-optimized font sizes
+- Responsive breakpoints for small screens
+
+**Output Size:** ~2,784 bytes  
+**Use Case:** Optimized for mobile devices with better touch targets and readability
+
+---
+
+### Example 4: Full Featured Configuration
+
+**Configuration:**
+```ini
+[template]
+show_event_info = true
+show_expiration = true
+conditional_instructions = true
+color_coding = true
+show_map_link = true
+mobile_responsive = true
+show_social_sharing = true
+```
+
+**Rendered Output:**
+```html
+<body class="high-wind-warning">
+  <h1>High Wind Warning issued December 21 at 2:49PM MST until December 22 at 6:00AM MST by NWS Boulder</h1>
+
+  <!-- Event information -->
+  <div class="alert-section">
+    <p><strong>Event Type:</strong> High Wind Warning</p>
+    <p><strong>Issued By:</strong> NWS Boulder (Northeastern Colorado)</p>
+  </div>
+
+  <!-- Expiration -->
+  <div class="alert-meta">
+    <p><strong>Expires:</strong> 2015-12-22T06:00:00-07:00</p>
+  </div>
+
+  <!-- Description -->
+  <div class="alert-section">
+    <strong>Description:</strong>
+    <p>...HIGH WIND WARNING IN EFFECT FROM 6 PM THIS EVENING TO 6 AM MST TUESDAY...</p>
+  </div>
+
+  <!-- Instructions (conditional) -->
+  <div class="alert-section">
+    <strong>Instructions:</strong>
+    <p>REMEMBER...A HIGH WIND WARNING MEANS THAT STRONG AND POTENTIALLY DAMAGING WINDS...</p>
+  </div>
+
+  <!-- Area with map link -->
+  <div class="alert-section">
+    <strong>Area Affected:</strong>
+    <p>Jefferson and West Douglas Counties Above 6000 Feet, Gilpin, Clear Creek...</p>
+    <p><a href="https://www.google.com/maps/search/...">View on Map</a></p>
+  </div>
+
+  <!-- Social sharing buttons -->
+  <div class="share-buttons">
+    <p><strong>Share this alert:</strong></p>
+    <a href="https://twitter.com/intent/tweet?text=High%20Wind%20Warning...&url=https%3A//www.weather.gov/alerts/CO-HW-W-0006" target="_blank">Share on Twitter</a>
+    <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A//www.weather.gov/alerts/CO-HW-W-0006" target="_blank">Share on Facebook</a>
+  </div>
+</body>
+```
+
+**All Features Applied:**
+- Event type and issuer information
+- Expiration time display
+- Conditional rendering (only shows instructions if present)
+- Color-coded background (amber for wind alerts)
+- Google Maps link
+- Mobile-responsive design
+- Social sharing buttons with proper URLs
+
+**Output Size:** ~4,207 bytes  
+**Use Case:** Maximum information and interactivity for comprehensive alert display
+
+---
+
+### Feature Comparison Table
+
+| Feature | Default | Informative | Mobile-Optimized | Full Featured |
+|---------|---------|-------------|------------------|---------------|
+| **show_event_info** | ❌ | ✅ | ✅ | ✅ |
+| **show_expiration** | ❌ | ✅ | ❌ | ✅ |
+| **conditional_instructions** | ❌ | ❌ | ✅ | ✅ |
+| **color_coding** | ❌ | ❌ | ❌ | ✅ |
+| **show_map_link** | ❌ | ❌ | ✅ | ✅ |
+| **mobile_responsive** | ❌ | ❌ | ✅ | ✅ |
+| **show_social_sharing** | ❌ | ❌ | ❌ | ✅ |
+| **Output Size** | ~1,776 bytes | ~2,230 bytes | ~2,784 bytes | ~4,207 bytes |
+
 ## Template Location
 
 - **File**: `templates/detail.html`
 - **Output**: Generated HTML files are saved to `output/` directory with filenames like `<alert_id>.html`
+- **Configuration**: Set features in `config.txt` under `[template]` section
 
 ## Available Variables
 

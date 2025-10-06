@@ -10,6 +10,45 @@
 
 <style type="text/css">
 
+{% if template_options.mobile_responsive %}
+/* Mobile-responsive styling */
+body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	line-height: 1.6;
+	padding: 20px;
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+h1 {
+	font-size: 1.5em;
+	color: #d32f2f;
+	border-bottom: 3px solid #d32f2f;
+	padding-bottom: 10px;
+}
+
+h2 {
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+.alert-section {
+	margin: 20px 0;
+	padding: 15px;
+	background-color: #f5f5f5;
+	border-left: 4px solid #d32f2f;
+}
+
+@media (max-width: 600px) {
+	body {
+		padding: 10px;
+	}
+	h1 {
+		font-size: 1.2em;
+	}
+}
+{% else %}
+/* Default styling */
 body {
 	font-family: sans-serif;
 }
@@ -23,22 +62,154 @@ h2 {
 	font-size: 1.2em;
 	font-weight: bold;
 }
+{% endif %}
+
+{% if template_options.color_coding %}
+/* Color-coding by event type */
+body.tornado { background-color: #ffe6e6; }
+body.flood { background-color: #e6f3ff; }
+body.wind { background-color: #fff4e6; }
+{% endif %}
+
+{% if template_options.show_expiration %}
+/* Expiration time styling */
+.alert-meta {
+	background-color: #e8e8e8;
+	padding: 10px;
+	margin: 10px 0;
+	border-left: 4px solid #666;
+	font-size: 0.9em;
+}
+{% endif %}
+
+{% if template_options.show_map_link %}
+/* Map link styling */
+a {
+	color: #0066cc;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+{% endif %}
+
+{% if template_options.show_social_sharing %}
+/* Social sharing buttons styling */
+.share-buttons {
+	margin: 20px 0;
+	padding: 15px;
+	background-color: #f9f9f9;
+	border: 1px solid #ddd;
+}
+
+.share-buttons a {
+	display: inline-block;
+	margin: 5px 10px 5px 0;
+	padding: 8px 15px;
+	background-color: #0066cc;
+	color: white;
+	text-decoration: none;
+	border-radius: 4px;
+}
+
+.share-buttons a:hover {
+	background-color: #0052a3;
+}
+{% endif %}
 
 </style>
 
 </head>
+{% if template_options.color_coding %}
+<body class="{{ alert['event']|lower|replace(' ', '-') }}">
+{% else %}
 <body>
+{% endif %}
 
 <h1>{{ alert['headline'] }}</h1>
 
+{% if template_options.show_event_info %}
+<!-- Event Type and Issuer Information -->
+{% if template_options.mobile_responsive %}
+<div class="alert-section">
+	<p><strong>Event Type:</strong> {{ alert['event'] }}</p>
+	<p><strong>Issued By:</strong> {{ alert['issuer'] }}</p>
+</div>
+{% else %}
+<p><strong>Event Type:</strong> {{ alert['event'] }}</p>
+<p><strong>Issued By:</strong> {{ alert['issuer'] }}</p>
+{% endif %}
+{% endif %}
+
+{% if template_options.show_expiration %}
+<!-- Expiration Time Display -->
+<div class="alert-meta">
+	<p><strong>Expires:</strong> {{ expires }}</p>
+</div>
+{% endif %}
+
+<!-- Description -->
+{% if template_options.mobile_responsive %}
+<div class="alert-section">
+	<strong>Description:</strong>
+	<p>{{ alert['description'] }}</p>
+</div>
+{% else %}
 <p><strong>Description:</strong></p>
 <p>{{ alert['description'] }}</p>
+{% endif %}
 
+<!-- Instructions -->
+{% if template_options.conditional_instructions %}
+{% if alert['instructions'] %}
+{% if template_options.mobile_responsive %}
+<div class="alert-section">
+	<strong>Instructions:</strong>
+	<p>{{ alert['instructions'] }}</p>
+</div>
+{% else %}
 <p><strong>Instructions:</strong></p>
 <p>{{ alert['instructions'] }}</p>
+{% endif %}
+{% endif %}
+{% else %}
+{% if template_options.mobile_responsive %}
+<div class="alert-section">
+	<strong>Instructions:</strong>
+	<p>{{ alert['instructions'] }}</p>
+</div>
+{% else %}
+<p><strong>Instructions:</strong></p>
+<p>{{ alert['instructions'] }}</p>
+{% endif %}
+{% endif %}
 
+<!-- Area Affected -->
+{% if template_options.mobile_responsive %}
+<div class="alert-section">
+	<strong>Area Affected:</strong>
+	<p>{{ alert['area'] }}</p>
+	{% if template_options.show_map_link %}
+	<p><a href="https://www.google.com/maps/search/{{ alert['area']|urlencode }}">View on Map</a></p>
+	{% endif %}
+</div>
+{% else %}
 <p><strong>Area Affected:</strong></p>
 <p>{{ alert['area'] }}</p>
+{% if template_options.show_map_link %}
+<p><a href="https://www.google.com/maps/search/{{ alert['area']|urlencode }}">View on Map</a></p>
+{% endif %}
+{% endif %}
+
+{% if template_options.show_social_sharing %}
+<!-- Social Sharing Buttons -->
+<div class="share-buttons">
+	<p><strong>Share this alert:</strong></p>
+	<a href="https://twitter.com/intent/tweet?text={{ alert['headline']|urlencode }}{% if alert_url %}&url={{ alert_url|urlencode }}{% endif %}" target="_blank" rel="noopener noreferrer">Share on Twitter</a>
+	<a href="https://www.facebook.com/sharer/sharer.php?u={{ alert_url|urlencode }}" target="_blank" rel="noopener noreferrer">Share on Facebook</a>
+</div>
+{% endif %}
 
 </body>
 </html>

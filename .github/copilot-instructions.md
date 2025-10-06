@@ -362,11 +362,14 @@ noaa-alerts-pushover/
 ├── Dockerfile         (non-root user UID 1000)
 ├── docker-compose.yml (scheduler mode by default)
 ├── entrypoint.sh      (flexible run modes)
+├── docs/                   # Documentation directory
+│   ├── CODE_EXPLANATION.md    # Technical architecture
+│   ├── TAGGING_QUICKSTART.md  # Quick guide for creating release tags
+│   └── TAGGING.md             # Detailed tagging documentation
 └── Documentation files:
     ├── README.md              # Project overview with modernization highlights
     ├── INSTALL.md             # Combined installation guide (includes quick start)
     ├── CHANGELOG.md           # Complete version history
-    ├── CODE_EXPLANATION.md    # Technical architecture
     ├── CONTRIBUTING.md        # Contribution guidelines
     └── SECURITY.md            # Security best practices
 ```
@@ -391,7 +394,8 @@ Key documentation files (consolidated and updated):
 - **README.md**: Project overview with modernization highlights, features, architecture, and quick start
 - **INSTALL.md**: Comprehensive installation guide combining quick start (5-minute setup) and detailed instructions
 - **templates/TEMPLATE_GUIDE.md**: Complete guide for customizing alert HTML templates (300+ lines, 7+ examples)
-- **CODE_EXPLANATION.md**: Technical architecture deep-dive
+- **docs/CODE_EXPLANATION.md**: Technical architecture deep-dive
+- **docs/TAGGING_QUICKSTART.md**: Quick guide for creating release tags
 - **CONTRIBUTING.md**: Contribution guidelines
 - **SECURITY.md**: Security best practices
 - **CHANGELOG.md**: Complete version history including recent documentation improvements
