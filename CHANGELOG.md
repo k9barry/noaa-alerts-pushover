@@ -1,6 +1,11 @@
 # Changelog
 
 
+## Version 2.3.2 - 2025-10-06
+
+### Changes
+- Add GitHub Container Registry publishing workflow with auto-versioning integration (#30) by @Copilot
+
 ## Version 2.3.1 - 2025-10-06
 
 ### Changes
