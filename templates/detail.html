@@ -206,8 +206,8 @@ a:hover {
 <!-- Social Sharing Buttons -->
 <div class="share-buttons">
 	<p><strong>Share this alert:</strong></p>
-	<a href="https://twitter.com/intent/tweet?text={{ alert['headline']|urlencode }}">Share on Twitter</a>
-	<a href="https://www.facebook.com/sharer/sharer.php?u=">Share on Facebook</a>
+	<a href="https://twitter.com/intent/tweet?text={{ alert['headline']|urlencode }}{% if alert_url %}&url={{ alert_url|urlencode }}{% endif %}" target="_blank" rel="noopener noreferrer">Share on Twitter</a>
+	<a href="https://www.facebook.com/sharer/sharer.php?u={{ alert_url|urlencode }}" target="_blank" rel="noopener noreferrer">Share on Facebook</a>
 </div>
 {% endif %}
 

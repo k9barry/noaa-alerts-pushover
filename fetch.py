@@ -356,6 +356,7 @@ if __name__ == '__main__':
             output = template.render({
                 'alert': details,
                 'expires': int(alert.expires_utc_ts),
+                'alert_url': alert.url,
                 'template_options': template_options
             })
             detail_filepath = os.path.join(OUTPUT_DIR, '%s.html' % alert.alert_id)
