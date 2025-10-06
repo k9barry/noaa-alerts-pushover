@@ -17,7 +17,12 @@ Sends out NOAA Severe Weather Alerts via [Pushover](http://www.pushover.net). An
 
 **Docker (recommended):**
 ```bash
+# From Docker Hub
 docker pull k9barry/noaa-alerts-pushover:latest
+
+# Or from GitHub Container Registry
+docker pull ghcr.io/k9barry/noaa-alerts-pushover:latest
+
 # Then configure and run - see INSTALL.md
 ```
 

@@ -175,24 +175,25 @@ If you need to merge a PR **without** creating a new version:
 4. **Test Docker images** after automatic release
 5. **Document breaking changes** clearly in PR description
 
-## Integration with Docker Hub
+## Integration with Container Registries
 
-The auto-versioning workflow integrates seamlessly with Docker Hub publishing:
+The auto-versioning workflow integrates seamlessly with container registry publishing:
 
 1. Auto-version creates tag `v2.3.0`
-2. Tag push triggers `.github/workflows/docker-publish.yml`
+2. Tag push triggers both:
+   - `.github/workflows/docker-publish.yml` (Docker Hub)
+   - `.github/workflows/ghcr-publish.yml` (GitHub Container Registry)
 3. Docker images are built for multiple platforms
 4. Images are tagged as:
-   - `k9barry/noaa-alerts-pushover:2.3.0` (full version)
-   - `k9barry/noaa-alerts-pushover:2.3` (major.minor)
-   - `k9barry/noaa-alerts-pushover:2` (major)
-   - `k9barry/noaa-alerts-pushover:latest`
+   - **Docker Hub**: `k9barry/noaa-alerts-pushover:2.3.0`, `2.3`, `2`, `latest`
+   - **GHCR**: `ghcr.io/k9barry/noaa-alerts-pushover:2.3.0`, `2.3`, `2`, `latest`
 
 ## Related Documentation
 
 - [CONTRIBUTING.md](../CONTRIBUTING.md) - Contribution guidelines
 - [docs/TAGGING.md](TAGGING.md) - Manual tagging documentation
 - [docs/DOCKER_HUB_SETUP.md](DOCKER_HUB_SETUP.md) - Docker Hub publishing
+- [docs/GHCR_SETUP.md](GHCR_SETUP.md) - GitHub Container Registry publishing
 - [CHANGELOG.md](../CHANGELOG.md) - Version history
 
 ## Questions?

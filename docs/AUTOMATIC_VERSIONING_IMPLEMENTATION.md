@@ -150,19 +150,23 @@ Guides contributors to:
 3. Get PR approved and merge
 4. **Result:** Version automatically bumps from 2.3.0 → 2.3.1 (defaults to patch)
 
-## Integration with Docker Hub
+## Integration with Container Registries
 
-The automatic versioning workflow integrates seamlessly with the existing Docker Hub publishing workflow:
+The automatic versioning workflow integrates seamlessly with container registry publishing workflows:
 
 1. **Auto-version workflow creates tag** (e.g., `v2.3.0`)
-2. **Tag push triggers docker-publish.yml** (via `push.tags` trigger)
+2. **Tag push triggers both publishing workflows** (via `push.tags` trigger):
+   - `.github/workflows/docker-publish.yml` (Docker Hub)
+   - `.github/workflows/ghcr-publish.yml` (GitHub Container Registry)
 3. **Docker metadata action generates tags**:
    - Full version: `2.3.0`
    - Major.minor: `2.3`
    - Major only: `2`
    - Latest: `latest` (if on master)
 4. **Multi-platform images built** (linux/amd64, linux/arm64)
-5. **Images pushed to Docker Hub** with all generated tags
+5. **Images pushed to registries** with all generated tags:
+   - Docker Hub: `k9barry/noaa-alerts-pushover:*`
+   - GHCR: `ghcr.io/k9barry/noaa-alerts-pushover:*`
 
 ## Workflow Diagram
 
@@ -181,11 +185,11 @@ PR Created → Add Label (major/minor/patch) → PR Merged
                                                   ↓
                             Create GitHub Release (v2.3.0)
                                                   ↓
-                      Tag push triggers docker-publish.yml
+                    Tag push triggers publishing workflows
                                                   ↓
                           Build multi-platform Docker images
                                                   ↓
-                    Push to Docker Hub with version tags
+            Push to Docker Hub and GHCR with version tags
                                                   ↓
                                                 Done!
 ```
@@ -297,6 +301,7 @@ Potential improvements:
 ### Workflows
 - `.github/workflows/auto-version.yml` - Main auto-versioning workflow
 - `.github/workflows/docker-publish.yml` - Docker Hub publishing (triggered by tags)
+- `.github/workflows/ghcr-publish.yml` - GitHub Container Registry publishing (triggered by tags)
 - `.github/workflows/release.yml` - Manual release creation (fallback)
 - `.github/workflows/sync-labels.yml` - Label synchronization
 
@@ -309,6 +314,7 @@ Potential improvements:
 - `docs/VERSIONING_QUICK_REFERENCE.md` - Quick reference
 - `docs/TAGGING.md` - Manual tagging guide
 - `docs/DOCKER_HUB_SETUP.md` - Docker Hub setup
+- `docs/GHCR_SETUP.md` - GitHub Container Registry setup
 - `CONTRIBUTING.md` - Contribution guidelines
 - `README.md` - Project overview
 
@@ -318,9 +324,10 @@ The automatic versioning system fully addresses the original problem statement b
 
 1. ✅ **Automatically creating new version tags** when PRs are merged to master
 2. ✅ **Controlling version bump type** (major/minor/patch) via PR labels
-3. ✅ **Triggering Docker Hub builds** automatically with new version tags
+3. ✅ **Triggering container registry builds** automatically with new version tags
 4. ✅ **Following semantic versioning** best practices
 5. ✅ **Providing comprehensive documentation** for contributors and maintainers
+6. ✅ **Publishing to multiple registries** (Docker Hub and GitHub Container Registry)
 
 The implementation is robust, well-documented, and ready for production use.
 
