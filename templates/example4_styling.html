@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta name="expires" content="{{ expires }}" />
+<meta name="viewport" content="initial-scale=1.0" />
+
+<title>{{ alert['event'] }}</title>
+
+<style type="text/css">
+
+body {
+	font-family: sans-serif;
+}
+
+h1 {
+	font-size: 1.4em;
+	font-weight: bold;
+}
+
+h2 {
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+body.tornado { background-color: #ffe6e6; }
+body.flood { background-color: #e6f3ff; }
+body.wind { background-color: #fff4e6; }
+
+</style>
+
+</head>
+<body class="{{ alert['event']|lower|replace(' ', '-') }}">
+
+<h1>{{ alert['headline'] }}</h1>
+
+<p><strong>Description:</strong></p>
+<p>{{ alert['description'] }}</p>
+
+<p><strong>Instructions:</strong></p>
+<p>{{ alert['instructions'] }}</p>
+
+<p><strong>Area Affected:</strong></p>
+<p>{{ alert['area'] }}</p>
+
+</body>
+</html>

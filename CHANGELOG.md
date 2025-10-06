@@ -105,7 +105,7 @@ This is a major update that modernizes the entire codebase and adds Docker suppo
 - **README.md**: Completely rewritten with modern features
 - **INSTALL.md**: Detailed installation guide for Docker and manual setup
 - **SECURITY.md**: Security best practices and vulnerability reporting
-- **CODE_EXPLANATION.md**: Technical deep dive into architecture and code flow
+- **docs/CODE_EXPLANATION.md**: Technical deep dive into architecture and code flow
 - **config.txt.example**: Template configuration file
 
 ### 📦 Dependency Updates
@@ -205,9 +205,11 @@ noaa-alerts-pushover/
 ├── README.md              # Overview and quick start
 ├── INSTALL.md             # Detailed installation guide
 ├── SECURITY.md            # Security best practices
-├── CODE_EXPLANATION.md    # Technical architecture
 ├── CHANGELOG.md           # This file
-└── config.txt.example     # Configuration template
+├── config.txt.example     # Configuration template
+└── docs/
+    ├── CODE_EXPLANATION.md    # Technical architecture
+    └── TAGGING_QUICKSTART.md  # Tag creation guide
 ```
 
 ### 🔒 Security Updates
@@ -268,7 +270,7 @@ noaa-alerts-pushover/
 ### 🤝 Contributing
 
 This version includes comprehensive documentation making it easier to contribute:
-- [CODE_EXPLANATION.md](CODE_EXPLANATION.md) for understanding the codebase
+- [CODE_EXPLANATION.md](docs/CODE_EXPLANATION.md) for understanding the codebase
 - [SECURITY.md](SECURITY.md) for security guidelines
 - [INSTALL.md](INSTALL.md) for development setup
 
@@ -304,4 +306,4 @@ For detailed installation and usage instructions, see [INSTALL.md](INSTALL.md).
 
 For security information, see [SECURITY.md](SECURITY.md).
 
-For technical details, see [CODE_EXPLANATION.md](CODE_EXPLANATION.md).
+For technical details, see [CODE_EXPLANATION.md](docs/CODE_EXPLANATION.md).

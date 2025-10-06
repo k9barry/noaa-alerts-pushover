@@ -5,6 +5,13 @@ user = YOUR_PUSHOVER_USER_KEY
 [events]
 ignored = Red Flag Warning,Heat Advisory
 
+[template]
+# Template file to use for generating alert HTML pages (relative to templates/ directory)
+# Options: detail.html (default), example1_event_issuer.html, example2_expiration.html,
+#          example3_conditional.html, example4_styling.html, example5_map.html,
+#          example6_mobile.html, example7_social.html, combined_all.html
+template_file = detail.html
+
 [schedule]
 # How often to check for new alerts (in minutes)
 fetch_interval = 5

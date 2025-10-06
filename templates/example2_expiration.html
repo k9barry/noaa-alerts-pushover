@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta name="expires" content="{{ expires }}" />
+<meta name="viewport" content="initial-scale=1.0" />
+
+<title>{{ alert['event'] }}</title>
+
+<style type="text/css">
+
+body {
+	font-family: sans-serif;
+}
+
+h1 {
+	font-size: 1.4em;
+	font-weight: bold;
+}
+
+h2 {
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+.alert-meta {
+	background-color: #f0f0f0;
+	padding: 10px;
+	margin: 10px 0;
+	border-left: 4px solid #333;
+}
+
+</style>
+
+</head>
+<body>
+
+<h1>{{ alert['headline'] }}</h1>
+
+<div class="alert-meta">
+	<p><strong>Expires:</strong> {{ expires }}</p>
+</div>
+
+<p><strong>Description:</strong></p>
+<p>{{ alert['description'] }}</p>
+
+<p><strong>Instructions:</strong></p>
+<p>{{ alert['instructions'] }}</p>
+
+<p><strong>Area Affected:</strong></p>
+<p>{{ alert['area'] }}</p>
+
+</body>
+</html>

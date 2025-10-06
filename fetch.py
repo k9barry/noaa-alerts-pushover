@@ -260,12 +260,6 @@ if __name__ == '__main__':
     logging.Formatter(fmt='%(asctime)s', datefmt='%Y-%m-%d,%H:%M:%S')
     logger = logging.getLogger(__name__)
 
-    # Set up the template engine
-    template_loader = jinja2.FileSystemLoader('./templates')
-    template_env = jinja2.Environment(loader=template_loader)
-    template_file = "detail.html"
-    template = template_env.get_template(template_file)
-
     # Make sure the requests library only logs errors
     logging.getLogger("requests").setLevel(logging.ERROR)
 
@@ -286,6 +280,18 @@ if __name__ == '__main__':
     config = configparser.ConfigParser()
     config_filepath = os.path.join(CUR_DIR, 'config.txt')
     config.read(config_filepath)
+
+    # Get the template file from config, defaulting to detail.html
+    try:
+        template_file = config.get('template', 'template_file')
+    except (configparser.NoSectionError, configparser.NoOptionError):
+        template_file = "detail.html"
+    
+    # Set up the template engine
+    template_loader = jinja2.FileSystemLoader('./templates')
+    template_env = jinja2.Environment(loader=template_loader)
+    template = template_env.get_template(template_file)
+    logger.info('Using template: %s' % template_file)
 
     # Get the list of events that we don't want to be alerted about
     try:

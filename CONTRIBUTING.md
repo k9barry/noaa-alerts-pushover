@@ -379,7 +379,7 @@ from models import Alert
 
 - **New Features**: Add to README.md and relevant guides
 - **Configuration**: Update config examples
-- **API Changes**: Update CODE_EXPLANATION.md
+- **API Changes**: Update docs/CODE_EXPLANATION.md
 - **Breaking Changes**: Highlight in CHANGELOG.md
 
 ### Documentation Style
@@ -441,7 +441,7 @@ If your contribution involves security:
 
 ### Resources
 
-- [CODE_EXPLANATION.md](CODE_EXPLANATION.md) - Technical architecture
+- [CODE_EXPLANATION.md](docs/CODE_EXPLANATION.md) - Technical architecture
 - [INSTALL.md](INSTALL.md) - Setup and troubleshooting
 - [SECURITY.md](SECURITY.md) - Security guidelines
 - [GitHub Issues](https://github.com/k9barry/noaa-alerts-pushover/issues) - Ask questions

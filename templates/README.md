@@ -79,5 +79,5 @@ For complete documentation of the NOAA Weather API data format:
 
 For questions about template customization:
 - See [TEMPLATE_GUIDE.md](TEMPLATE_GUIDE.md) in this directory
-- Check [CODE_EXPLANATION.md](../CODE_EXPLANATION.md) for architecture details
+- Check [CODE_EXPLANATION.md](../docs/CODE_EXPLANATION.md) for architecture details
 - Open an issue on GitHub
