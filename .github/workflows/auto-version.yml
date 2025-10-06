@@ -1,0 +1,161 @@
+name: Auto Version on PR Merge
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - master
+
+jobs:
+  auto-version:
+    # Only run if PR was merged (not just closed)
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Determine version bump type
+        id: bump_type
+        run: |
+          # Check PR labels for version bump type
+          LABELS="${{ join(github.event.pull_request.labels.*.name, ',') }}"
+          echo "PR Labels: $LABELS"
+          
+          BUMP_TYPE="patch"  # Default to patch
+          
+          if [[ "$LABELS" == *"major"* ]] || [[ "$LABELS" == *"breaking"* ]]; then
+            BUMP_TYPE="major"
+          elif [[ "$LABELS" == *"minor"* ]] || [[ "$LABELS" == *"feature"* ]]; then
+            BUMP_TYPE="minor"
+          elif [[ "$LABELS" == *"patch"* ]] || [[ "$LABELS" == *"bugfix"* ]] || [[ "$LABELS" == *"fix"* ]]; then
+            BUMP_TYPE="patch"
+          fi
+          
+          echo "bump_type=${BUMP_TYPE}" >> $GITHUB_OUTPUT
+          echo "Version bump type determined: ${BUMP_TYPE}"
+      
+      - name: Get latest version
+        id: get_version
+        run: |
+          # Try to get the latest tag
+          LATEST_TAG=$(git tag --sort=-v:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -1 || echo "")
+          
+          if [ -z "$LATEST_TAG" ]; then
+            # No tags exist, check CHANGELOG.md for latest version
+            LATEST_VERSION=$(grep -E "^## Version [0-9]+\.[0-9]+\.[0-9]+" CHANGELOG.md | head -1 | sed -E 's/^## Version ([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+            
+            if [ -z "$LATEST_VERSION" ]; then
+              # Default to 2.2.0 based on CHANGELOG
+              LATEST_VERSION="2.2.0"
+            fi
+            echo "No tags found, using version from CHANGELOG: ${LATEST_VERSION}"
+          else
+            # Remove 'v' prefix from tag
+            LATEST_VERSION="${LATEST_TAG#v}"
+            echo "Latest tag found: ${LATEST_TAG} (version: ${LATEST_VERSION})"
+          fi
+          
+          echo "current_version=${LATEST_VERSION}" >> $GITHUB_OUTPUT
+      
+      - name: Calculate new version
+        id: new_version
+        run: |
+          CURRENT_VERSION="${{ steps.get_version.outputs.current_version }}"
+          BUMP_TYPE="${{ steps.bump_type.outputs.bump_type }}"
+          
+          # Split version into components
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
+          
+          # Calculate new version based on bump type
+          case "$BUMP_TYPE" in
+            major)
+              MAJOR=$((MAJOR + 1))
+              MINOR=0
+              PATCH=0
+              ;;
+            minor)
+              MINOR=$((MINOR + 1))
+              PATCH=0
+              ;;
+            patch)
+              PATCH=$((PATCH + 1))
+              ;;
+          esac
+          
+          NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+          echo "new_version=${NEW_VERSION}" >> $GITHUB_OUTPUT
+          echo "Calculated new version: ${NEW_VERSION} (${BUMP_TYPE} bump from ${CURRENT_VERSION})"
+      
+      - name: Update CHANGELOG
+        run: |
+          NEW_VERSION="${{ steps.new_version.outputs.new_version }}"
+          CURRENT_DATE=$(date +%Y-%m-%d)
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          PR_AUTHOR="${{ github.event.pull_request.user.login }}"
+          
+          # Create new changelog entry
+          cat > /tmp/new_entry.md << EOF
+          ## Version ${NEW_VERSION} - ${CURRENT_DATE}
+          
+          ### Changes
+          - ${PR_TITLE} (#${PR_NUMBER}) by @${PR_AUTHOR}
+          
+          EOF
+          
+          # Insert new entry at the top of CHANGELOG (after title)
+          sed -i '1 r /tmp/new_entry.md' CHANGELOG.md
+          
+          echo "CHANGELOG.md updated with version ${NEW_VERSION}"
+      
+      - name: Commit CHANGELOG and create tag
+        run: |
+          NEW_VERSION="${{ steps.new_version.outputs.new_version }}"
+          BUMP_TYPE="${{ steps.bump_type.outputs.bump_type }}"
+          
+          # Configure git
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Commit CHANGELOG update
+          git add CHANGELOG.md
+          git commit -m "Release version ${NEW_VERSION}" -m "Auto-generated ${BUMP_TYPE} version bump from PR #${{ github.event.pull_request.number }}" -m "PR: ${{ github.event.pull_request.title }}"
+          
+          # Create annotated tag
+          git tag -a "v${NEW_VERSION}" -m "Release version ${NEW_VERSION}" -m "Auto-generated from PR merge." -m "Bump type: ${BUMP_TYPE}" -m "PR #${{ github.event.pull_request.number }}: ${{ github.event.pull_request.title }}"
+          
+          # Push changes and tag
+          git push origin master
+          git push origin "v${NEW_VERSION}"
+          
+          echo "Created and pushed tag v${NEW_VERSION}"
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.new_version.outputs.new_version }}
+          name: Version ${{ steps.new_version.outputs.new_version }}
+          body: |
+            ## Version ${{ steps.new_version.outputs.new_version }}
+            
+            Auto-generated release from PR merge.
+            
+            **PR:** #${{ github.event.pull_request.number }} - ${{ github.event.pull_request.title }}
+            **Author:** @${{ github.event.pull_request.user.login }}
+            **Bump Type:** ${{ steps.bump_type.outputs.bump_type }}
+            **Previous Version:** ${{ steps.get_version.outputs.current_version }}
+            
+            ### What's Changed
+            ${{ github.event.pull_request.body }}
+            
+            **Full Changelog**: https://github.com/${{ github.repository }}/compare/v${{ steps.get_version.outputs.current_version }}...v${{ steps.new_version.outputs.new_version }}
+          draft: false
+          prerelease: false

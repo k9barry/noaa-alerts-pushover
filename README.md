@@ -79,7 +79,8 @@ The Docker container runs as non-root user `noaa` (UID 1000) for enhanced securi
 - [Security](SECURITY.md) - Security best practices and considerations
 - [Changelog](CHANGELOG.md) - Version history and updates
 - [Contributing](CONTRIBUTING.md) - Contribution guidelines
-- [Creating Tags and Releases](docs/TAGGING.md) - Guide for maintainers on tagging versions
+- [Automatic Versioning](docs/AUTO_VERSIONING.md) - How PR merges automatically create releases
+- [Creating Tags and Releases](docs/TAGGING.md) - Guide for maintainers on manual tagging
 
 ## Requirements
 
@@ -129,7 +130,11 @@ For technical details and architecture diagrams, see [docs/CODE_EXPLANATION.md](
 
 ## Contributing
 
-Feedback and pull requests are welcome! Please read our [Security Policy](SECURITY.md) before contributing.
+Feedback and pull requests are welcome! 
+
+**Automatic Versioning**: When your PR is merged, a new version is automatically created based on labels you add (`major`, `minor`, or `patch`). See [docs/AUTO_VERSIONING.md](docs/AUTO_VERSIONING.md) for details.
+
+Please read our [Security Policy](SECURITY.md) before contributing.
 
 ## License
 
