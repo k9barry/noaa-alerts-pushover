@@ -157,11 +157,27 @@ For each tag, create a GitHub Release:
 4. Copy the relevant section from CHANGELOG.md as the release notes
 5. Click **Publish release**
 
+### Verify Docker Hub Image
+
+After creating a tag, the Docker Hub workflow automatically builds and publishes the image:
+
+```bash
+# Wait a few minutes for the workflow to complete, then test
+docker pull k9barry/noaa-alerts-pushover:v2.2.0
+docker pull k9barry/noaa-alerts-pushover:2.2
+docker pull k9barry/noaa-alerts-pushover:latest
+
+# Verify the image runs
+docker run --rm k9barry/noaa-alerts-pushover:v2.2.0 python --version
+```
+
+Check workflow status: **Actions** → **Build and Push to Docker Hub**
+
 ### Announce the Release
 
 - Update project README.md if needed
 - Notify users through appropriate channels
-- Update Docker Hub or other distribution platforms
+- Confirm Docker Hub image is available at https://hub.docker.com/r/k9barry/noaa-alerts-pushover
 
 ## Troubleshooting
 
@@ -233,6 +249,8 @@ If the version isn't in CHANGELOG.md:
 - [ ] Configuration examples up-to-date
 - [ ] Create the tag using preferred method
 - [ ] Create GitHub Release with notes
+- [ ] Verify Docker Hub image published successfully
+- [ ] Test Docker Hub image: `docker pull k9barry/noaa-alerts-pushover:vX.Y.Z`
 - [ ] Announce the release
 - [ ] Update any external documentation/websites
 

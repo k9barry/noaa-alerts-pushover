@@ -202,8 +202,11 @@ For complete instructions on creating releases, tags, and version management, se
 
 ### Docker Hub Publishing
 
-The repository includes automated Docker Hub publishing via GitHub Actions:
+The repository includes automated Docker Hub publishing via GitHub Actions.
 
+**For complete setup instructions**, see [docs/DOCKER_HUB_SETUP.md](docs/DOCKER_HUB_SETUP.md)
+
+**Quick Overview:**
 - **Workflow**: `.github/workflows/docker-publish.yml`
 - **Triggers**:
   - Push to `master` branch → publishes `latest` tag
