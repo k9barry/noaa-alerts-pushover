@@ -507,6 +507,75 @@ Jinja2 provides useful filters for text manipulation:
    - Use online validators like [W3C Validator](https://validator.w3.org/)
    - Test on multiple devices and browsers
 
+## Linking Templates to Pushover Notifications
+
+By default, Pushover notifications link to NOAA's official alert page. To have notifications link to your customized HTML templates instead, you need to:
+
+### 1. Configure Base URL
+
+Add a `base_url` to your `config.txt`:
+
+```ini
+[pushover]
+token = YOUR_PUSHOVER_TOKEN
+user = YOUR_PUSHOVER_USER_KEY
+base_url = https://example.com/alerts
+```
+
+### 2. Host Your HTML Files
+
+You need to make your `output/` directory accessible via the web. Options include:
+
+**Option A: Simple HTTP Server (Testing Only)**
+```bash
+cd output
+python -m http.server 8080
+# Access at http://localhost:8080
+```
+
+**Option B: Nginx (Production)**
+```nginx
+server {
+    listen 80;
+    server_name example.com;
+    
+    location /alerts {
+        alias /path/to/noaa-alerts-pushover/output;
+        autoindex off;
+    }
+}
+```
+
+**Option C: Apache (Production)**
+```apache
+<Directory "/path/to/noaa-alerts-pushover/output">
+    Options -Indexes
+    Require all granted
+</Directory>
+
+Alias /alerts "/path/to/noaa-alerts-pushover/output"
+```
+
+**Option D: Docker with Separate Web Server Container**
+
+If you're running NOAA Alerts Pushover in Docker, you can use a separate container to serve the HTML files. See the [INSTALL.md Docker Setup section](../INSTALL.md#pushover-section) for complete examples with:
+- Nginx container with shared volumes
+- Traefik with automatic HTTPS/SSL
+- Apache container configuration
+
+This approach keeps the alert generation and web serving separated, which is ideal for Docker-based deployments.
+
+### 3. Test the Setup
+
+1. Run the application: `python fetch.py --debug`
+2. Check the logs for the URL being used:
+   ```
+   Using custom base URL: https://example.com/alerts/abc123def.html
+   ```
+3. Click the URL in a Pushover notification to verify it loads your custom template
+
+**Note:** If `base_url` is not set, notifications will link to NOAA's page, and template customizations will only be visible when viewing HTML files directly from the `output/` directory.
+
 ## Best Practices
 
 1. **Keep it Simple**: Alert details should be easy to read quickly

@@ -45,6 +45,8 @@ See [INSTALL.md](INSTALL.md) for all command-line options and scheduling configu
 
 **Alert Templates**: Customize `templates/detail.html` to change how alert HTML pages look. See [templates/TEMPLATE_GUIDE.md](templates/TEMPLATE_GUIDE.md) for 7+ examples and complete guide.
 
+**Custom URLs**: Configure `base_url` in `config.txt` to link Pushover notifications to your own hosted HTML files instead of NOAA's pages. See [INSTALL.md](INSTALL.md) for details.
+
 **Setup Validation**: Run `python test_setup.py --fix` to automatically create config.txt and initialize the database
 
 ## Project Status
