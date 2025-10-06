@@ -4,10 +4,10 @@ This directory contains templates and sample data for the NOAA Alerts Pushover a
 
 ## Files
 
-### detail.html
+### detail.html (Default)
 **Type**: Jinja2 HTML Template
 
-**Purpose**: Generates individual HTML pages for weather alerts that are saved to the `output/` directory.
+**Purpose**: The default template that generates individual HTML pages for weather alerts that are saved to the `output/` directory.
 
 **Usage**: This template is automatically used by `fetch.py` to create alert detail pages. The generated HTML files can be linked from push notifications for users to view full alert details.
 
@@ -21,6 +21,52 @@ This directory contains templates and sample data for the NOAA Alerts Pushover a
 - `alert['instructions']` - Safety instructions
 - `alert['area']` - Affected geographic area
 - `expires` - Alert expiration timestamp
+
+### Example Templates
+
+Pre-configured templates demonstrating the customization examples from [TEMPLATE_GUIDE.md](TEMPLATE_GUIDE.md):
+
+#### example1_event_issuer.html
+Adds event type and issuing office information to the alert display.
+
+#### example2_expiration.html
+Includes an expiration time display in a styled alert metadata section.
+
+#### example3_conditional.html
+Only shows instructions if they exist (conditional rendering).
+
+#### example4_styling.html
+Adds color-coding based on alert type (tornado, flood, wind).
+
+#### example5_map.html
+Includes a "View on Map" link to Google Maps for the affected area.
+
+#### example6_mobile.html
+Mobile-friendly responsive layout with modern styling and media queries.
+
+#### example7_social.html
+Adds social sharing buttons for Twitter and Facebook.
+
+#### combined_all.html
+Combines all 7 examples into a single comprehensive template with:
+- Event type and issuer information
+- Expiration time display
+- Conditional instructions
+- Color-coding by event type
+- Map link for affected areas
+- Mobile-responsive design
+- Social sharing buttons
+
+### Selecting a Template
+
+To use a specific template, edit your `config.txt` file:
+
+```ini
+[template]
+template_file = example6_mobile.html
+```
+
+If no template is specified, the default `detail.html` will be used.
 
 ### sample.json
 **Type**: JSON (GeoJSON with CAP properties)

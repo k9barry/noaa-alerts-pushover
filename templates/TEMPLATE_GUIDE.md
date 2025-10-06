@@ -4,10 +4,33 @@
 
 The `templates/detail.html` file is a Jinja2 template used to generate HTML pages for individual weather alerts. These HTML pages are created in the `output/` directory and can be linked from push notifications.
 
+## Quick Start: Pre-built Templates
+
+**New!** This repository includes pre-built example templates you can use immediately:
+
+- `example1_event_issuer.html` - Shows event type and issuing office
+- `example2_expiration.html` - Displays expiration time
+- `example3_conditional.html` - Conditional instructions display
+- `example4_styling.html` - Color-coded by event type
+- `example5_map.html` - Includes map link
+- `example6_mobile.html` - Mobile-responsive design
+- `example7_social.html` - Social sharing buttons
+- `combined_all.html` - All features combined
+
+To use a pre-built template, add this to your `config.txt`:
+
+```ini
+[template]
+template_file = combined_all.html
+```
+
+See [README.md](README.md) in this directory for full template descriptions.
+
 ## Template Location
 
-- **File**: `templates/detail.html`
+- **File**: `templates/detail.html` (default)
 - **Output**: Generated HTML files are saved to `output/` directory with filenames like `<alert_id>.html`
+- **Configuration**: Set in `config.txt` under `[template]` section
 
 ## Available Variables
 
