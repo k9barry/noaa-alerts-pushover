@@ -1,5 +1,10 @@
 # Changelog
 
+
+## Version 2.3.0 - 2025-10-06
+
+### Changes
+- Add automatic semantic versioning on PR merge with label-based version control (#28) by @Copilot
 ## Version 2.2.0 - 2024
 
 ### 📝 Documentation Improvements
