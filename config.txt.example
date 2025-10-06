@@ -2,6 +2,12 @@
 token = YOUR_PUSHOVER_TOKEN
 user = YOUR_PUSHOVER_USER_KEY
 
+# Optional: Base URL for hosted HTML alert files
+# If set, Pushover notifications will link to your hosted HTML files (e.g., http://example.com/alerts)
+# If not set, notifications will link to NOAA's official alert page
+# Example: base_url = https://example.com/alerts
+# base_url =
+
 [events]
 ignored = Red Flag Warning,Heat Advisory
 

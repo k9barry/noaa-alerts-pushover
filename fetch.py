@@ -64,7 +64,7 @@ class Parser(object):
             "user": self.pushover_user,
             "message": message,
             "sound": "falling",
-            "url": 'http://wxalerts.org/alerts/%s.html' % id,
+            "url": url,
         }, timeout=30)
 
         if not request.ok:
@@ -314,6 +314,16 @@ if __name__ == '__main__':
     # Instantiate our parser object
     PUSHOVER_TOKEN = config.get('pushover', 'token')
     PUSHOVER_USER = config.get('pushover', 'user')
+    
+    # Get optional base URL for hosted HTML files
+    try:
+        BASE_URL = config.get('pushover', 'base_url')
+        # Remove trailing slash if present
+        if BASE_URL.endswith('/'):
+            BASE_URL = BASE_URL[:-1]
+    except (configparser.NoSectionError, configparser.NoOptionError):
+        BASE_URL = None
+    
     parser = Parser(PUSHOVER_TOKEN, PUSHOVER_USER, CUR_DIR)
 
     # Load the counties we want to monitor
@@ -368,10 +378,20 @@ if __name__ == '__main__':
             alert_msg = parser.create_alert_message(alert)
             alert_id = alert.alert_id
             logger.info('Alert to send: %s' % alert_title)
+            
+            # Determine the URL to use in the push notification
+            if BASE_URL:
+                # Use custom base URL to link to locally hosted HTML
+                push_url = '%s/%s.html' % (BASE_URL, alert_id)
+                logger.debug('Using custom base URL: %s' % push_url)
+            else:
+                # Fall back to NOAA's official alert URL
+                push_url = alert.url
+                logger.debug('Using NOAA URL: %s' % push_url)
 
             # Check the argument to see if we should be sending the push
             if not args['nopush']:
-                parser.send_pushover_alert(alert_id, alert_title, alert_msg, alert.url)
+                parser.send_pushover_alert(alert_id, alert_title, alert_msg, push_url)
             else:
                 logger.info('Sending pushes disabled by argument')
 

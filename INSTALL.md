@@ -415,9 +415,33 @@ The `config.txt` file uses INI format with three main sections:
 [pushover]
 token = YOUR_PUSHOVER_TOKEN
 user = YOUR_PUSHOVER_USER_KEY
+
+# Optional: Base URL for hosted HTML alert files
+# If set, Pushover notifications will link to your hosted HTML files
+# If not set, notifications will link to NOAA's official alert page
+# base_url = https://example.com/alerts
 ```
 
 Get your credentials at: https://pushover.net
+
+**Base URL Configuration:**
+
+The `base_url` option controls what URL is included in Pushover notifications:
+
+- **Not set (default):** Notifications link to NOAA's official alert page
+- **Set to your server:** Notifications link to your customized HTML files in the `output/` directory
+
+Example: If you're hosting the HTML files on your own web server, set:
+```ini
+base_url = https://example.com/alerts
+```
+
+This generates notification URLs like: `https://example.com/alerts/abc123def.html`
+
+You'll need to:
+1. Set up a web server (Apache, Nginx, etc.)
+2. Configure it to serve files from the `output/` directory
+3. Ensure the server is accessible from the internet if you want to view alerts on mobile devices
 
 #### [events] Section
 

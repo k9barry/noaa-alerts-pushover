@@ -171,11 +171,15 @@ The main application script that orchestrates the entire process.
 **`Parser.send_pushover_alert(id, title, message, url)`**
 ```python
 # Send notification via Pushover:
-1. Format request data
+1. Format request data with provided URL
 2. POST to Pushover API
 3. Handle response
 4. Log success/failure
 ```
+
+**Note:** The `url` parameter can be either:
+- A custom URL to hosted HTML files (if `base_url` is configured in config.txt)
+- NOAA's official alert URL (if `base_url` is not set)
 
 **`Parser.create_alert_title(alert)`**
 ```python
@@ -199,16 +203,23 @@ if __name__ == '__main__':
     3. Initialize template engine (Jinja2)
     4. Create output directory if needed
     5. Load configuration files
-    6. Initialize Parser object
-    7. Clean up expired alerts (or purge all)
-    8. Fetch current alerts from NOAA
-    9. Check for new matching alerts
-    10. For each match:
+    6. Read optional base_url from config
+    7. Initialize Parser object
+    8. Clean up expired alerts (or purge all)
+    9. Fetch current alerts from NOAA
+    10. Check for new matching alerts
+    11. For each match:
         - Fetch details
         - Generate HTML page
+        - Determine notification URL (base_url or NOAA URL)
         - Send notification
-    11. Exit
+    12. Exit
 ```
+
+**URL Configuration:**
+- If `base_url` is set in `config.txt` under `[pushover]`, notifications link to: `{base_url}/{alert_id}.html`
+- If `base_url` is not set, notifications link to NOAA's official alert page
+- This allows users to host their custom HTML templates and have them accessible via Pushover notifications
 
 ### models.py
 
