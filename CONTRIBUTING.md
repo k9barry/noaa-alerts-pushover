@@ -167,6 +167,29 @@ When making changes, consider testing:
    - Reference to related issues
    - Screenshots (if UI changes)
    - Test results
+   - **Version bump label** (see Automatic Versioning below)
+
+### Automatic Versioning
+
+When your PR is merged to master, a new version is **automatically created** based on labels:
+
+**Version Bump Labels** (add one to your PR):
+- `major` or `breaking` - Breaking changes (e.g., 2.2.0 → 3.0.0)
+- `minor` or `feature` - New features, backward compatible (e.g., 2.2.0 → 2.3.0)
+- `patch` or `bugfix` or `fix` - Bug fixes (e.g., 2.2.0 → 2.2.1)
+
+**If no label is added, the default is `patch`.**
+
+**What happens automatically:**
+1. Version number is calculated based on the label
+2. CHANGELOG.md is updated with your PR information
+3. Git tag is created (e.g., `v2.3.0`)
+4. GitHub Release is created
+5. Docker Hub images are built and published automatically
+
+**Example:**
+- PR titled "Add email notification support" with label `minor`
+- Merges → Auto-creates version 2.3.0 → Builds Docker images
 
 ### Pull Request Checklist
 
@@ -187,18 +210,30 @@ When making changes, consider testing:
 
 ## Creating Releases
 
-### For Maintainers
+### Automatic Versioning (Default Method)
 
-For complete instructions on creating releases, tags, and version management, see:
+**New PRs automatically create versions when merged!** Just add the appropriate label (`major`, `minor`, or `patch`) to your PR before merging.
+
+The workflow automatically:
+- ✅ Calculates the new version number
+- ✅ Updates CHANGELOG.md
+- ✅ Creates the Git tag
+- ✅ Creates a GitHub Release
+- ✅ Triggers Docker Hub image build
+
+See "Automatic Versioning" section above for details.
+
+### Manual Release Creation (For Maintainers)
+
+For complete instructions on manual release creation, see:
 - [docs/TAGGING_QUICKSTART.md](docs/TAGGING_QUICKSTART.md) - Quick guide for creating releases
 - [docs/TAGGING.md](docs/TAGGING.md) - Comprehensive tagging documentation
 
-**Quick Summary:**
+**Manual methods (when needed):**
 
-1. Update CHANGELOG.md with the new version
-2. Use GitHub Actions workflow "Create Release" (recommended), or
-3. Create tags manually with `git tag -a v2.X.Y -m "Release version 2.X.Y"`
-4. Follow [Semantic Versioning](https://semver.org/): Major.Minor.Patch
+1. Use GitHub Actions workflow "Create Release", or
+2. Create tags manually with `git tag -a v2.X.Y -m "Release version 2.X.Y"`
+3. Always follow [Semantic Versioning](https://semver.org/): Major.Minor.Patch
 
 ### Docker Hub Publishing
 
