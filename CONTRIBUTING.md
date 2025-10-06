@@ -200,6 +200,28 @@ For complete instructions on creating releases, tags, and version management, se
 3. Create tags manually with `git tag -a v2.X.Y -m "Release version 2.X.Y"`
 4. Follow [Semantic Versioning](https://semver.org/): Major.Minor.Patch
 
+### Docker Hub Publishing
+
+The repository includes automated Docker Hub publishing via GitHub Actions.
+
+**For complete setup instructions**, see [docs/DOCKER_HUB_SETUP.md](docs/DOCKER_HUB_SETUP.md)
+
+**Quick Overview:**
+- **Workflow**: `.github/workflows/docker-publish.yml`
+- **Triggers**:
+  - Push to `master` branch → publishes `latest` tag
+  - Git tag push (e.g., `v2.2.0`) → publishes version tags (`2.2.0`, `2.2`, `2`)
+  - Manual workflow dispatch
+- **Requirements**: Docker Hub credentials must be set as repository secrets:
+  - `DOCKERHUB_USERNAME` - Your Docker Hub username
+  - `DOCKERHUB_TOKEN` - Docker Hub access token (not password)
+- **Multi-platform**: Images are built for `linux/amd64` and `linux/arm64`
+
+**To publish a new Docker image:**
+1. Create and push a Git tag using the release workflow
+2. The docker-publish workflow automatically builds and pushes to Docker Hub
+3. Verify the image at https://hub.docker.com/r/DOCKERHUB_USERNAME/noaa-alerts-pushover
+
 ## Coding Standards
 
 ### Python Style
