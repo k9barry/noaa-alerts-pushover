@@ -4,33 +4,39 @@
 
 The `templates/detail.html` file is a Jinja2 template used to generate HTML pages for individual weather alerts. These HTML pages are created in the `output/` directory and can be linked from push notifications.
 
-## Quick Start: Pre-built Templates
+## Quick Start: Configuration-Based Customization
 
-**New!** This repository includes pre-built example templates you can use immediately:
-
-- `example1_event_issuer.html` - Shows event type and issuing office
-- `example2_expiration.html` - Displays expiration time
-- `example3_conditional.html` - Conditional instructions display
-- `example4_styling.html` - Color-coded by event type
-- `example5_map.html` - Includes map link
-- `example6_mobile.html` - Mobile-responsive design
-- `example7_social.html` - Social sharing buttons
-- `combined_all.html` - All features combined
-
-To use a pre-built template, add this to your `config.txt`:
+**New!** The template now supports configuration-based feature toggling. Instead of creating multiple template files, you can enable or disable features by editing `config.txt`:
 
 ```ini
 [template]
-template_file = combined_all.html
+# Enable features you want (set to true or false)
+show_event_info = true           # Display event type and issuing office
+show_expiration = true            # Show expiration time
+conditional_instructions = true   # Only show instructions if present
+color_coding = true               # Color-code alerts by type
+show_map_link = true              # Include Google Maps link
+mobile_responsive = true          # Use mobile-friendly responsive design
+show_social_sharing = true        # Add social sharing buttons
 ```
 
-See [README.md](README.md) in this directory for full template descriptions.
+All options default to `false` if not specified, giving you the basic template layout.
+
+### Available Features
+
+1. **show_event_info** - Adds event type and issuing office information
+2. **show_expiration** - Displays expiration time in a styled metadata section
+3. **conditional_instructions** - Only shows instructions when they exist
+4. **color_coding** - Applies color-coding based on event type (tornado, flood, wind)
+5. **show_map_link** - Includes a Google Maps link for the affected area
+6. **mobile_responsive** - Applies modern mobile-responsive design with better styling
+7. **show_social_sharing** - Adds Twitter and Facebook sharing buttons
 
 ## Template Location
 
-- **File**: `templates/detail.html` (default)
+- **File**: `templates/detail.html`
 - **Output**: Generated HTML files are saved to `output/` directory with filenames like `<alert_id>.html`
-- **Configuration**: Set in `config.txt` under `[template]` section
+- **Configuration**: Set features in `config.txt` under `[template]` section
 
 ## Available Variables
 

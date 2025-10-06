@@ -4,14 +4,29 @@ This directory contains templates and sample data for the NOAA Alerts Pushover a
 
 ## Files
 
-### detail.html (Default)
+### detail.html
 **Type**: Jinja2 HTML Template
 
-**Purpose**: The default template that generates individual HTML pages for weather alerts that are saved to the `output/` directory.
+**Purpose**: Generates individual HTML pages for weather alerts that are saved to the `output/` directory.
 
 **Usage**: This template is automatically used by `fetch.py` to create alert detail pages. The generated HTML files can be linked from push notifications for users to view full alert details.
 
-**Customization**: See [TEMPLATE_GUIDE.md](TEMPLATE_GUIDE.md) in this directory for detailed instructions on how to customize this template.
+**Customization**: The template supports **configuration-based feature toggling**. Enable or disable features by editing the `[template]` section in `config.txt`:
+
+```ini
+[template]
+show_event_info = true           # Display event type and issuing office
+show_expiration = true            # Show expiration time
+conditional_instructions = true   # Only show instructions if present
+color_coding = true               # Color-code alerts by type
+show_map_link = true              # Include Google Maps link
+mobile_responsive = true          # Use mobile-friendly responsive design
+show_social_sharing = true        # Add social sharing buttons
+```
+
+All options default to `false`, giving you the basic template. Mix and match features as needed!
+
+For detailed information, see [TEMPLATE_GUIDE.md](TEMPLATE_GUIDE.md) in this directory.
 
 **Variables Available**:
 - `alert['headline']` - Main alert headline
@@ -21,52 +36,7 @@ This directory contains templates and sample data for the NOAA Alerts Pushover a
 - `alert['instructions']` - Safety instructions
 - `alert['area']` - Affected geographic area
 - `expires` - Alert expiration timestamp
-
-### Example Templates
-
-Pre-configured templates demonstrating the customization examples from [TEMPLATE_GUIDE.md](TEMPLATE_GUIDE.md):
-
-#### example1_event_issuer.html
-Adds event type and issuing office information to the alert display.
-
-#### example2_expiration.html
-Includes an expiration time display in a styled alert metadata section.
-
-#### example3_conditional.html
-Only shows instructions if they exist (conditional rendering).
-
-#### example4_styling.html
-Adds color-coding based on alert type (tornado, flood, wind).
-
-#### example5_map.html
-Includes a "View on Map" link to Google Maps for the affected area.
-
-#### example6_mobile.html
-Mobile-friendly responsive layout with modern styling and media queries.
-
-#### example7_social.html
-Adds social sharing buttons for Twitter and Facebook.
-
-#### combined_all.html
-Combines all 7 examples into a single comprehensive template with:
-- Event type and issuer information
-- Expiration time display
-- Conditional instructions
-- Color-coding by event type
-- Map link for affected areas
-- Mobile-responsive design
-- Social sharing buttons
-
-### Selecting a Template
-
-To use a specific template, edit your `config.txt` file:
-
-```ini
-[template]
-template_file = example6_mobile.html
-```
-
-If no template is specified, the default `detail.html` will be used.
+- `template_options` - Dictionary of enabled/disabled features
 
 ### sample.json
 **Type**: JSON (GeoJSON with CAP properties)
@@ -125,5 +95,5 @@ For complete documentation of the NOAA Weather API data format:
 
 For questions about template customization:
 - See [TEMPLATE_GUIDE.md](TEMPLATE_GUIDE.md) in this directory
-- Check [CODE_EXPLANATION.md](../docs/CODE_EXPLANATION.md) for architecture details
+- Check [CODE_EXPLANATION.md](../CODE_EXPLANATION.md) for architecture details
 - Open an issue on GitHub

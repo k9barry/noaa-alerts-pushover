@@ -6,11 +6,29 @@ user = YOUR_PUSHOVER_USER_KEY
 ignored = Red Flag Warning,Heat Advisory
 
 [template]
-# Template file to use for generating alert HTML pages (relative to templates/ directory)
-# Options: detail.html (default), example1_event_issuer.html, example2_expiration.html,
-#          example3_conditional.html, example4_styling.html, example5_map.html,
-#          example6_mobile.html, example7_social.html, combined_all.html
-template_file = detail.html
+# Template customization options - enable/disable features in the alert HTML
+# Set to true or false (case-insensitive)
+
+# Show event type and issuing office information
+show_event_info = false
+
+# Display expiration time in a styled metadata section
+show_expiration = false
+
+# Use conditional logic to only show instructions when present
+conditional_instructions = false
+
+# Apply color-coding based on event type (tornado, flood, wind)
+color_coding = false
+
+# Include a Google Maps link for the affected area
+show_map_link = false
+
+# Use mobile-responsive design with modern styling
+mobile_responsive = false
+
+# Add social sharing buttons (Twitter, Facebook)
+show_social_sharing = false
 
 [schedule]
 # How often to check for new alerts (in minutes)

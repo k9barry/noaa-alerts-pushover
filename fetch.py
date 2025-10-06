@@ -281,17 +281,29 @@ if __name__ == '__main__':
     config_filepath = os.path.join(CUR_DIR, 'config.txt')
     config.read(config_filepath)
 
-    # Get the template file from config, defaulting to detail.html
-    try:
-        template_file = config.get('template', 'template_file')
-    except (configparser.NoSectionError, configparser.NoOptionError):
-        template_file = "detail.html"
+    # Get template customization options from config
+    template_options = {
+        'show_event_info': False,
+        'show_expiration': False,
+        'conditional_instructions': False,
+        'color_coding': False,
+        'show_map_link': False,
+        'mobile_responsive': False,
+        'show_social_sharing': False
+    }
+    
+    if config.has_section('template'):
+        for option in template_options.keys():
+            try:
+                template_options[option] = config.getboolean('template', option)
+            except (configparser.NoOptionError, ValueError):
+                pass  # Keep default value
     
     # Set up the template engine
     template_loader = jinja2.FileSystemLoader('./templates')
     template_env = jinja2.Environment(loader=template_loader)
+    template_file = "detail.html"
     template = template_env.get_template(template_file)
-    logger.info('Using template: %s' % template_file)
 
     # Get the list of events that we don't want to be alerted about
     try:
@@ -341,7 +353,11 @@ if __name__ == '__main__':
             details = parser.details_for_alert(alert)
 
             # Render the detail page
-            output = template.render({'alert': details , 'expires': int(alert.expires_utc_ts) })
+            output = template.render({
+                'alert': details,
+                'expires': int(alert.expires_utc_ts),
+                'template_options': template_options
+            })
             detail_filepath = os.path.join(OUTPUT_DIR, '%s.html' % alert.alert_id)
             with open(detail_filepath, 'w') as f:
                 f.write(output)
