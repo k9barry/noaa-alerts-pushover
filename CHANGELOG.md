@@ -1,6 +1,11 @@
 # Changelog
 
 
+## Version 3.0.0 - 2025-10-07
+
+### Changes
+- Add Docker first-run auto-configuration and consolidate release documentation (#34) by @Copilot
+
 ## Version 2.3.5 - 2025-10-07
 
 ### 🚀 Improvements
