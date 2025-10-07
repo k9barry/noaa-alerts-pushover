@@ -99,6 +99,16 @@ def test_config_file(auto_fix=False):
         else:
             print("  ℹ️  No [schedule] section found, using defaults (fetch=5m, cleanup=24h, vacuum=168h)")
         
+        # Check test_message option (optional)
+        try:
+            test_message = config.getboolean('pushover', 'test_message', fallback=False)
+            if test_message:
+                print("  ℹ️  Test messages enabled - will monitor MDC031 for NOAA test alerts")
+            else:
+                print("  ✓ Test messages disabled (recommended for production)")
+        except ValueError:
+            print("  ⚠️  Warning: test_message should be 'true' or 'false'")
+        
         print(f"  ✓ config.txt found and readable")
         return True
         

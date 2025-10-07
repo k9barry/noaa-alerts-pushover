@@ -10,8 +10,8 @@ docker pull k9barry/noaa-alerts-pushover:latest
 
 # Create configuration files
 mkdir -p data output
-wget https://raw.githubusercontent.com/k9barry/noaa-alerts-pushover/master/config.txt.example -O config.txt
-wget https://raw.githubusercontent.com/k9barry/noaa-alerts-pushover/master/counties.json
+wget https://raw.githubusercontent.com/k9barry/noaa-alerts-pushover/main/config.txt.example -O config.txt
+wget https://raw.githubusercontent.com/k9barry/noaa-alerts-pushover/main/counties.json
 
 # Edit config.txt with your Pushover credentials
 # Edit counties.json with your monitored counties
@@ -47,8 +47,8 @@ docker run -d \
 2. **counties.json** - List of counties to monitor
 
 Download templates:
-- [config.txt.example](https://raw.githubusercontent.com/k9barry/noaa-alerts-pushover/master/config.txt.example)
-- [counties.json](https://raw.githubusercontent.com/k9barry/noaa-alerts-pushover/master/counties.json)
+- [config.txt.example](https://raw.githubusercontent.com/k9barry/noaa-alerts-pushover/main/config.txt.example)
+- [counties.json](https://raw.githubusercontent.com/k9barry/noaa-alerts-pushover/main/counties.json)
 
 ### Environment Variables
 
@@ -121,7 +121,7 @@ sudo chown -R 1000:1000 ./output ./data
 
 ## Tags
 
-- `latest` - Latest stable release from master branch
+- `latest` - Latest stable release from main branch
 - `v2.2.0`, `v2.1.0`, etc. - Specific version tags
 - `2.2`, `2` - Major/minor version shortcuts
 
@@ -165,10 +165,10 @@ docker run --rm \
 ## Support and Documentation
 
 - **GitHub Repository**: https://github.com/k9barry/noaa-alerts-pushover
-- **Installation Guide**: [INSTALL.md](https://github.com/k9barry/noaa-alerts-pushover/blob/master/INSTALL.md)
-- **Security**: [SECURITY.md](https://github.com/k9barry/noaa-alerts-pushover/blob/master/SECURITY.md)
+- **Installation Guide**: [INSTALL.md](https://github.com/k9barry/noaa-alerts-pushover/blob/main/INSTALL.md)
+- **Security**: [SECURITY.md](https://github.com/k9barry/noaa-alerts-pushover/blob/main/SECURITY.md)
 - **Issues**: https://github.com/k9barry/noaa-alerts-pushover/issues
 
 ## License
 
-MIT License - See [LICENSE](https://github.com/k9barry/noaa-alerts-pushover/blob/master/LICENSE)
+MIT License - See [LICENSE](https://github.com/k9barry/noaa-alerts-pushover/blob/main/LICENSE)

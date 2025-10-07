@@ -40,7 +40,7 @@ This file provides a quick reference for setting up and using the Docker Hub aut
 - `k9barry/noaa-alerts-pushover:2.3.0` (full version)
 - `k9barry/noaa-alerts-pushover:2.3` (minor version)
 - `k9barry/noaa-alerts-pushover:2` (major version)
-- `k9barry/noaa-alerts-pushover:latest` (if on master)
+- `k9barry/noaa-alerts-pushover:latest` (if on main)
 
 ### Platforms
 - `linux/amd64` (Intel/AMD)

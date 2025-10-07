@@ -62,10 +62,10 @@ Images Available in Both Registries
 
 | Workflow | Trigger Event | Result |
 |----------|---------------|--------|
-| `auto-version.yml` | PR merged to master | Creates Git tag (v2.3.0) |
-| `docker-publish.yml` | Push to master | Publishes `latest` tag |
+| `auto-version.yml` | PR merged to main | Creates Git tag (v2.3.0) |
+| `docker-publish.yml` | Push to main | Publishes `latest` tag |
 | `docker-publish.yml` | Git tag push (v2.3.0) | Publishes version tags |
-| `ghcr-publish.yml` | Push to master | Publishes `latest` tag |
+| `ghcr-publish.yml` | Push to main | Publishes `latest` tag |
 | `ghcr-publish.yml` | Git tag push (v2.3.0) | Publishes version tags |
 
 ## Tag Pattern Matching
@@ -88,7 +88,7 @@ tags:
 2.3.0     # Full semantic version
 2.3       # Major.minor (tracks latest patch)
 2         # Major (tracks latest minor.patch)
-latest    # Latest on master branch
+latest    # Latest on main branch
 ```
 
 ## Version Tag Examples
@@ -117,7 +117,7 @@ Both publishing workflows support manual triggering:
 1. Go to Actions tab
 2. Select "Build and Push to Docker Hub"
 3. Click "Run workflow"
-4. Select branch (usually master)
+4. Select branch (usually main)
 5. Click "Run workflow"
 ```
 
@@ -127,7 +127,7 @@ Both publishing workflows support manual triggering:
 1. Go to Actions tab
 2. Select "Build and Push to GitHub Container Registry"
 3. Click "Run workflow"
-4. Select branch (usually master)
+4. Select branch (usually main)
 5. Click "Run workflow"
 ```
 

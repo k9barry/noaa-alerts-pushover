@@ -27,7 +27,7 @@ The repository includes automated publishing to GitHub Container Registry via Gi
 The workflow automatically runs when:
 
 1. **Push to Master Branch**
-   - Triggered on any commit to `master`
+   - Triggered on any commit to `main`
    - Publishes image with `latest` tag
    - Example: `ghcr.io/k9barry/noaa-alerts-pushover:latest`
 
@@ -37,7 +37,7 @@ The workflow automatically runs when:
      - Full version: `2.3.0`
      - Major.minor: `2.3`
      - Major only: `2`
-     - Latest: `latest` (if on master branch)
+     - Latest: `latest` (if on main branch)
    - Example tags:
      - `ghcr.io/k9barry/noaa-alerts-pushover:2.3.0`
      - `ghcr.io/k9barry/noaa-alerts-pushover:2.3`
@@ -52,7 +52,7 @@ The workflow automatically runs when:
 
 The GHCR workflow integrates seamlessly with the automatic versioning system:
 
-1. **PR merged to master** → auto-version.yml creates tag (e.g., `v2.3.0`)
+1. **PR merged to main** → auto-version.yml creates tag (e.g., `v2.3.0`)
 2. **Tag push** → ghcr-publish.yml automatically triggered
 3. **Multi-platform images built** for linux/amd64 and linux/arm64
 4. **Images pushed to GHCR** with all version tags
@@ -91,7 +91,7 @@ By default, GHCR packages inherit repository visibility. To change:
 1. Go to **Actions** tab on GitHub
 2. Select **Build and Push to GitHub Container Registry** workflow
 3. Click **Run workflow**
-4. Select branch: `master`
+4. Select branch: `main`
 5. Click **Run workflow**
 6. Monitor the workflow execution
 7. Check GHCR for the new image at Packages tab
@@ -100,10 +100,10 @@ By default, GHCR packages inherit repository visibility. To change:
 
 ```bash
 # Make a small change and push
-git checkout master
+git checkout main
 git pull
 # Make change, commit
-git push origin master
+git push origin main
 ```
 
 The workflow will automatically run and push with `latest` tag.

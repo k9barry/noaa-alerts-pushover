@@ -330,6 +330,25 @@ if __name__ == '__main__':
     counties_filepath = os.path.join(CUR_DIR, 'counties.json')
     with open(counties_filepath, 'r') as f:
         parser.counties = json.loads(f.read())
+    
+    # Check if test messages should be enabled
+    try:
+        test_message_enabled = config.getboolean('pushover', 'test_message', fallback=False)
+    except (configparser.NoSectionError, configparser.NoOptionError, ValueError):
+        test_message_enabled = False
+    
+    # Add test message county if enabled
+    if test_message_enabled:
+        test_county = {
+            "fips": "",
+            "name": "TEST MESSAGES",
+            "state": "NA",
+            "ugc": "MDC031"
+        }
+        # Only add if not already present
+        if not any(c.get('ugc') == 'MDC031' for c in parser.counties):
+            parser.counties.append(test_county)
+            logger.info("Test messages enabled - monitoring MDC031")
 
     # Assign the fips and ugc codes to watch for
     parser.fips_watch_list = [str(c['fips']) for c in parser.counties]

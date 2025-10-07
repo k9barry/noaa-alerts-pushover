@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [closed]
     branches:
-      - master
+      - main
 
 jobs:
   auto-version:
@@ -133,7 +133,7 @@ jobs:
           git tag -a "v${NEW_VERSION}" -m "Release version ${NEW_VERSION}" -m "Auto-generated from PR merge." -m "Bump type: ${BUMP_TYPE}" -m "PR #${{ github.event.pull_request.number }}: ${{ github.event.pull_request.title }}"
           
           # Push changes and tag
-          git push origin master
+          git push origin main
           git push origin "v${NEW_VERSION}"
           
           echo "Created and pushed tag v${NEW_VERSION}"

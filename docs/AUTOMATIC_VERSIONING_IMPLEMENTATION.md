@@ -9,7 +9,7 @@
 ## Solution Overview
 
 The solution implements a complete automatic versioning system that:
-1. Triggers on PR merge to master
+1. Triggers on PR merge to main
 2. Reads PR labels to determine version bump type
 3. Automatically creates version tags using semantic versioning
 4. Triggers Docker Hub image builds automatically
@@ -21,7 +21,7 @@ The solution implements a complete automatic versioning system that:
 
 **File:** `.github/workflows/auto-version.yml`
 
-**Trigger:** Pull request closed (merged to master)
+**Trigger:** Pull request closed (merged to main)
 
 **Process:**
 1. **Check if merged** - Only runs if PR was actually merged (not just closed)
@@ -162,7 +162,7 @@ The automatic versioning workflow integrates seamlessly with container registry 
    - Full version: `2.3.0`
    - Major.minor: `2.3`
    - Major only: `2`
-   - Latest: `latest` (if on master)
+   - Latest: `latest` (if on main)
 4. **Multi-platform images built** (linux/amd64, linux/arm64)
 5. **Images pushed to registries** with all generated tags:
    - Docker Hub: `k9barry/noaa-alerts-pushover:*`
@@ -322,7 +322,7 @@ Potential improvements:
 
 The automatic versioning system fully addresses the original problem statement by:
 
-1. ✅ **Automatically creating new version tags** when PRs are merged to master
+1. ✅ **Automatically creating new version tags** when PRs are merged to main
 2. ✅ **Controlling version bump type** (major/minor/patch) via PR labels
 3. ✅ **Triggering container registry builds** automatically with new version tags
 4. ✅ **Following semantic versioning** best practices

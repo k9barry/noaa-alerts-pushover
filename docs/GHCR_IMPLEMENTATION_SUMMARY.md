@@ -26,7 +26,7 @@ A complete GHCR publishing workflow has been implemented that:
 ### Workflow
 - **`.github/workflows/ghcr-publish.yml`** (52 lines)
   - Main workflow file for GHCR publishing
-  - Triggers on master branch pushes and tag pushes
+  - Triggers on main branch pushes and tag pushes
   - Uses docker/metadata-action for automatic tag generation
   - Builds multi-platform images
   - Pushes to ghcr.io with semantic version tags
@@ -81,7 +81,7 @@ A complete GHCR publishing workflow has been implemented that:
 
 ```
 1. Developer creates PR with version label (major/minor/patch)
-2. PR is merged to master
+2. PR is merged to main
 3. auto-version.yml workflow runs:
    - Calculates new version (e.g., 2.3.0)
    - Updates CHANGELOG.md
@@ -121,7 +121,7 @@ When tag `v2.3.0` is pushed, the following images are created:
 - Zero configuration overhead
 
 ### Identical to Docker Hub Workflow
-- Same trigger patterns (master branch, tags, manual)
+- Same trigger patterns (main branch, tags, manual)
 - Same build process (multi-platform, caching)
 - Same tag generation (semantic versioning)
 - Consistent user experience
