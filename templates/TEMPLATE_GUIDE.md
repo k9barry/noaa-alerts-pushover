@@ -91,7 +91,7 @@ show_expiration = true
 
   <!-- Expiration Time Display -->
   <div class="alert-meta">
-    <p><strong>Expires:</strong> 2015-12-22T06:00:00-07:00</p>
+    <p><strong>Expires:</strong> 2015-12-22 06:00:00</p>
   </div>
 
   <p><strong>Description:</strong></p>
@@ -192,7 +192,7 @@ show_social_sharing = true
 
   <!-- Expiration -->
   <div class="alert-meta">
-    <p><strong>Expires:</strong> 2015-12-22T06:00:00-07:00</p>
+    <p><strong>Expires:</strong> 2015-12-22 06:00:00</p>
   </div>
 
   <!-- Description -->
@@ -275,9 +275,16 @@ Contains detailed information about the weather alert:
 
 ### `expires` Variable
 
-- **Type**: string (ISO 8601 timestamp)
-- **Description**: When the alert expires
-- **Example**: "2015-12-22T06:00:00-07:00"
+- **Type**: string (formatted datetime)
+- **Description**: When the alert expires (human-readable format)
+- **Format**: YYYY-MM-DD HH:mm:ss (UTC)
+- **Example**: "2015-12-22 06:00:00"
+
+### `expires_timestamp` Variable
+
+- **Type**: integer (Unix timestamp)
+- **Description**: When the alert expires (used in meta tag for cleanup script)
+- **Example**: 1450771200
 
 ## Default Template Structure
 
