@@ -89,7 +89,6 @@ The Docker container runs as non-root user `noaa` (UID 1000) for enhanced securi
 - [Automatic Versioning](docs/AUTO_VERSIONING.md) - How PR merges automatically create releases
 - [Versioning Quick Reference](docs/VERSIONING_QUICK_REFERENCE.md) - Quick guide for version labels
 - [Workflow Diagram](docs/WORKFLOW_DIAGRAM.md) - Visual guide to automatic versioning
-- [Creating Tags and Releases](docs/TAGGING.md) - Guide for maintainers on manual tagging
 
 ## Requirements
 

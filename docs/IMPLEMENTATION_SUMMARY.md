@@ -82,7 +82,8 @@ No problem! The system defaults to a **patch** bump if no label is present.
 ### Updated Files
 - `CONTRIBUTING.md` - Added automatic versioning section
 - `README.md` - Added note about automatic versioning
-- `docs/TAGGING.md` - Updated to recommend auto-versioning
+- `docs/AUTO_VERSIONING.md` - Complete automatic versioning guide
+- `docs/VERSIONING_QUICK_REFERENCE.md` - Quick reference for contributors
 - `docs/DOCKER_HUB_SETUP.md` - Added auto-versioning trigger info
 
 ## Examples

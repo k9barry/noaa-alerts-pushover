@@ -83,7 +83,8 @@ Guides contributors to:
 **Updated Documentation:**
 - `CONTRIBUTING.md` - Added automatic versioning section
 - `README.md` - Added note about automatic versioning
-- `docs/TAGGING.md` - Updated to recommend auto-versioning
+- `docs/AUTO_VERSIONING.md` - Complete automatic versioning guide
+- `docs/VERSIONING_QUICK_REFERENCE.md` - Quick reference for contributors
 - `docs/DOCKER_HUB_SETUP.md` - Added auto-versioning trigger info
 
 ## Usage Examples
@@ -310,9 +311,9 @@ Potential improvements:
 - `.github/pull_request_template.md` - PR template
 
 ### Documentation
-- `docs/AUTO_VERSIONING.md` - Complete guide
-- `docs/VERSIONING_QUICK_REFERENCE.md` - Quick reference
-- `docs/TAGGING.md` - Manual tagging guide
+- `docs/AUTO_VERSIONING.md` - Complete automatic versioning guide
+- `docs/VERSIONING_QUICK_REFERENCE.md` - Quick reference for contributors
+- `docs/WORKFLOW_DIAGRAM.md` - Visual guide to versioning workflows
 - `docs/DOCKER_HUB_SETUP.md` - Docker Hub setup
 - `docs/GHCR_SETUP.md` - GitHub Container Registry setup
 - `CONTRIBUTING.md` - Contribution guidelines

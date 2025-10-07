@@ -477,9 +477,9 @@ noaa-alerts-pushover/
 ├── CONTRIBUTING.md       # Contribution guidelines
 ├── LICENSE               # MIT license
 ├── docs/
-│   ├── CODE_EXPLANATION.md    # This file - technical architecture
-│   ├── TAGGING.md             # Tag creation guide
-│   └── TAGGING_QUICKSTART.md  # Quick tagging reference
+│   ├── CODE_EXPLANATION.md         # This file - technical architecture
+│   ├── AUTO_VERSIONING.md          # Automatic versioning guide
+│   └── VERSIONING_QUICK_REFERENCE.md  # Quick versioning reference
 ├── templates/
 │   ├── detail.html        # Jinja2 template for alerts
 │   ├── sample.json        # Sample NOAA API response

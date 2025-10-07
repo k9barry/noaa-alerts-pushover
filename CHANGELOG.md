@@ -16,8 +16,8 @@
 
 ### 🧹 Cleanup
 - **Removed**: `create_tags.sh` script (no longer needed - use GitHub Actions workflow instead)
-- Updated `docs/TAGGING.md` to remove create_tags.sh references
-- Updated `docs/TAGGING_QUICKSTART.md` to focus on GitHub Actions workflow
+- **Removed**: `docs/TAGGING.md` and `docs/TAGGING_QUICKSTART.md` (consolidated into AUTO_VERSIONING.md)
+- Updated all documentation to reference AUTO_VERSIONING.md for release creation
 
 ## Version 2.3.4 - 2025-10-07
 
@@ -252,7 +252,7 @@ noaa-alerts-pushover/
 ├── config.txt.example     # Configuration template
 └── docs/
     ├── CODE_EXPLANATION.md    # Technical architecture
-    └── TAGGING_QUICKSTART.md  # Tag creation guide
+    └── AUTO_VERSIONING.md     # Automatic versioning guide
 ```
 
 ### 🔒 Security Updates
