@@ -19,7 +19,7 @@ Tags are created based on versions documented in `CHANGELOG.md`. Each version in
 
 ## Manual Release Methods
 
-For maintainers who need to create releases manually, there are three methods:
+For maintainers who need to create releases manually, there are two methods:
 
 ### 1. GitHub Actions Workflow (Recommended)
 
@@ -40,33 +40,7 @@ The workflow will:
 
 **Workflow file:** `.github/workflows/release.yml`
 
-### 2. Using the create_tags.sh Script
-
-A bash script for creating multiple tags locally:
-
-**Interactive mode** (prompts for each version):
-```bash
-./create_tags.sh
-```
-
-**Automatic mode** (creates all tags):
-```bash
-./create_tags.sh --auto
-```
-
-**Specific version only**:
-```bash
-./create_tags.sh --version 2.2.0
-```
-
-**Features:**
-- Extracts versions from CHANGELOG.md automatically
-- Checks for existing tags to avoid duplicates
-- Color-coded output for easy reading
-- Option to push tags after creation
-- Validates working directory state
-
-### 3. Manual Git Commands
+### 2. Manual Git Commands
 
 For direct control:
 
@@ -112,17 +86,6 @@ Based on CHANGELOG.md:
 ## Creating Tags for Historical Versions
 
 If you need to tag versions that are already in CHANGELOG.md but don't have tags:
-
-**Option 1: Use the script**
-```bash
-# Interactive - prompts for each version
-./create_tags.sh
-
-# Automatic - creates all missing tags
-./create_tags.sh --auto
-```
-
-**Option 2: Manual process**
 
 1. Find the commit for each version:
    ```bash
@@ -282,25 +245,7 @@ If the version isn't in CHANGELOG.md:
 4. Click "Run workflow"
 5. ✅ Done! Tag and release created automatically
 
-### Example 2: Create Multiple Tags with Script
-
-```bash
-# Review what versions will be tagged
-grep "## Version" CHANGELOG.md
-
-# Run script in interactive mode
-./create_tags.sh
-
-# Follow prompts:
-# - Create tag v2.0.0? (y/N) y
-# - Create tag v2.1.0? (y/N) y
-# - Create tag v2.2.0? (y/N) y
-# - Push tags to origin? (y/N) y
-
-# ✅ All tags created and pushed
-```
-
-### Example 3: Quick Tag for Current Version
+### Example 2: Quick Tag for Current Version
 
 ```bash
 # Create and push tag for latest version

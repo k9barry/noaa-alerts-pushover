@@ -12,22 +12,21 @@ This repository now has automated tools for creating Git tags based on CHANGELOG
 4. Enter version number (e.g., `2.2.0`)
 5. ✅ Done! Tag and release created automatically
 
-### Alternative: Using Script
+### Alternative: Manual Git Commands
 
 ```bash
-# Interactive - prompts for each version
-./create_tags.sh
+# Create an annotated tag
+git tag -a v2.2.0 -m "Release version 2.2.0"
 
-# Or automatic - creates all tags
-./create_tags.sh --auto
-
-# Or specific version only
-./create_tags.sh --version 2.2.0
+# Push the tag
+git push origin v2.2.0
 ```
+
+Then create the GitHub Release manually through the web interface.
 
 ### What Gets Created
 
-For version `2.2.0`, the tools will:
+For version `2.2.0`, the GitHub Actions workflow will:
 - ✅ Create Git tag `v2.2.0`
 - ✅ Extract release notes from CHANGELOG.md
 - ✅ Create GitHub Release with notes
