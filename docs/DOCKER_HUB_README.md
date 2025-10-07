@@ -8,15 +8,30 @@ Real-time NOAA severe weather alerts delivered via Pushover push notifications t
 # Pull the image
 docker pull k9barry/noaa-alerts-pushover:latest
 
-# Create configuration files
+# Create directories
 mkdir -p data output
+
+# Option 1: Let the container auto-create config files (recommended for first-time users)
+# The container will automatically create config.txt and counties.json from example files
+docker run -d \
+  --name noaa-alerts \
+  -v $(pwd)/config.txt:/app/config.txt \
+  -v $(pwd)/counties.json:/app/counties.json \
+  -v $(pwd)/output:/app/output \
+  -v $(pwd)/data:/app/data \
+  -e RUN_MODE=scheduler \
+  -e TZ=UTC \
+  --restart unless-stopped \
+  k9barry/noaa-alerts-pushover:latest
+
+# Option 2: Pre-create configuration files manually
 wget https://raw.githubusercontent.com/k9barry/noaa-alerts-pushover/main/config.txt.example -O config.txt
-wget https://raw.githubusercontent.com/k9barry/noaa-alerts-pushover/main/counties.json
+wget https://raw.githubusercontent.com/k9barry/noaa-alerts-pushover/main/counties.json.example -O counties.json
 
 # Edit config.txt with your Pushover credentials
 # Edit counties.json with your monitored counties
 
-# Run the container
+# Then run the container
 docker run -d \
   --name noaa-alerts \
   -v $(pwd)/config.txt:/app/config.txt:ro \
@@ -28,6 +43,8 @@ docker run -d \
   --restart unless-stopped \
   k9barry/noaa-alerts-pushover:latest
 ```
+
+**Important**: After first run, edit `config.txt` to add your Pushover credentials and `counties.json` to select your counties!
 
 ## Features
 
@@ -46,9 +63,11 @@ docker run -d \
 1. **config.txt** - Pushover API credentials and settings
 2. **counties.json** - List of counties to monitor
 
-Download templates:
+**Auto-Creation**: The container automatically creates these files from example templates if they don't exist on first run.
+
+Download templates manually (optional):
 - [config.txt.example](https://raw.githubusercontent.com/k9barry/noaa-alerts-pushover/main/config.txt.example)
-- [counties.json](https://raw.githubusercontent.com/k9barry/noaa-alerts-pushover/main/counties.json)
+- [counties.json.example](https://raw.githubusercontent.com/k9barry/noaa-alerts-pushover/main/counties.json.example)
 
 ### Environment Variables
 

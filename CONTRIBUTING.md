@@ -225,13 +225,13 @@ See "Automatic Versioning" section above for details.
 
 ### Manual Release Creation (For Maintainers)
 
-For complete instructions on manual release creation, see:
-- [docs/TAGGING_QUICKSTART.md](docs/TAGGING_QUICKSTART.md) - Quick guide for creating releases
-- [docs/TAGGING.md](docs/TAGGING.md) - Comprehensive tagging documentation
+For complete instructions on versioning and releases, see:
+- [docs/AUTO_VERSIONING.md](docs/AUTO_VERSIONING.md) - Complete automatic versioning guide
+- [docs/VERSIONING_QUICK_REFERENCE.md](docs/VERSIONING_QUICK_REFERENCE.md) - Quick reference
 
 **Manual methods (when needed):**
 
-1. Use GitHub Actions workflow "Create Release", or
+1. Use GitHub Actions workflow "Create Release" (`.github/workflows/release.yml`), or
 2. Create tags manually with `git tag -a v2.X.Y -m "Release version 2.X.Y"`
 3. Always follow [Semantic Versioning](https://semver.org/): Major.Minor.Patch
 
@@ -355,9 +355,9 @@ from models import Alert
 
 - **Root directory**: Keep only essential files (README.md, INSTALL.md, CHANGELOG.md, CONTRIBUTING.md, SECURITY.md, LICENSE)
 - **docs/ directory**: Place all other documentation files here
-  - Technical guides (CODE_EXPLANATION.md, TAGGING.md, etc.)
+  - Technical guides (CODE_EXPLANATION.md, AUTO_VERSIONING.md, etc.)
   - Setup guides (DOCKER_HUB_SETUP.md, GHCR_SETUP.md, etc.)
-  - Quick reference guides (DOCKER_HUB_QUICKSTART.md, GHCR_QUICKSTART.md, etc.)
+  - Quick reference guides (DOCKER_HUB_QUICKSTART.md, GHCR_QUICKSTART.md, VERSIONING_QUICK_REFERENCE.md, etc.)
   - Implementation summaries and workflow documentation
 
 ### Documentation Style

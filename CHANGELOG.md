@@ -1,6 +1,24 @@
 # Changelog
 
 
+## Version 2.3.5 - 2025-10-07
+
+### 🚀 Improvements
+- **Docker First-Run Auto-Configuration**: Container now automatically creates `config.txt` and `counties.json` from example files if they don't exist on first run
+- **New File**: `counties.json.example` - Template file for county configuration
+- **Enhanced Docker Experience**: Simplified first-time setup - no manual file creation required before running container
+
+### 📝 Documentation Updates
+- Updated `INSTALL.md` with auto-creation information for Docker setup
+- Updated `docs/DOCKER_HUB_README.md` with two setup options (auto-creation vs manual)
+- Updated `docker-compose.yml` with clarifying comment about auto-creation
+- Updated `entrypoint.sh` to handle missing configuration files gracefully
+
+### 🧹 Cleanup
+- **Removed**: `create_tags.sh` script (no longer needed - use GitHub Actions workflow instead)
+- **Removed**: `docs/TAGGING.md` and `docs/TAGGING_QUICKSTART.md` (consolidated into AUTO_VERSIONING.md)
+- Updated all documentation to reference AUTO_VERSIONING.md for release creation
+
 ## Version 2.3.4 - 2025-10-07
 
 ### Changes
@@ -234,7 +252,7 @@ noaa-alerts-pushover/
 ├── config.txt.example     # Configuration template
 └── docs/
     ├── CODE_EXPLANATION.md    # Technical architecture
-    └── TAGGING_QUICKSTART.md  # Tag creation guide
+    └── AUTO_VERSIONING.md     # Automatic versioning guide
 ```
 
 ### 🔒 Security Updates

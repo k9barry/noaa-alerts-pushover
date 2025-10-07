@@ -191,10 +191,11 @@ The auto-versioning workflow integrates seamlessly with container registry publi
 ## Related Documentation
 
 - [CONTRIBUTING.md](../CONTRIBUTING.md) - Contribution guidelines
-- [docs/TAGGING.md](TAGGING.md) - Manual tagging documentation
-- [docs/DOCKER_HUB_SETUP.md](DOCKER_HUB_SETUP.md) - Docker Hub publishing
-- [docs/GHCR_SETUP.md](GHCR_SETUP.md) - GitHub Container Registry publishing
+- [VERSIONING_QUICK_REFERENCE.md](VERSIONING_QUICK_REFERENCE.md) - Quick reference for contributors
+- [DOCKER_HUB_SETUP.md](DOCKER_HUB_SETUP.md) - Docker Hub publishing
+- [GHCR_SETUP.md](GHCR_SETUP.md) - GitHub Container Registry publishing
 - [CHANGELOG.md](../CHANGELOG.md) - Version history
+- [WORKFLOW_DIAGRAM.md](WORKFLOW_DIAGRAM.md) - Visual guide to versioning workflows
 
 ## Questions?
 

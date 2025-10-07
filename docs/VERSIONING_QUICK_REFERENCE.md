@@ -77,9 +77,9 @@ Given version **MAJOR.MINOR.PATCH** (e.g., 2.3.1):
 
 ## Complete Documentation
 
-- [AUTO_VERSIONING.md](AUTO_VERSIONING.md) - Complete guide
-- [TAGGING.md](TAGGING.md) - Manual release creation
+- [AUTO_VERSIONING.md](AUTO_VERSIONING.md) - Complete automatic versioning guide
 - [CONTRIBUTING.md](../CONTRIBUTING.md) - Contribution guidelines
+- [WORKFLOW_DIAGRAM.md](WORKFLOW_DIAGRAM.md) - Visual guide to versioning workflows
 
 ## Questions?
 

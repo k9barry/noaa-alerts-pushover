@@ -4,6 +4,8 @@ services:
     container_name: noaa-alerts-pushover
     restart: unless-stopped
     volumes:
+      # Note: If config.txt or counties.json don't exist, the container will
+      # automatically create them from .example files on first run
       - ./config.txt:/app/config.txt:ro
       - ./counties.json:/app/counties.json:ro
       - ./output:/app/output

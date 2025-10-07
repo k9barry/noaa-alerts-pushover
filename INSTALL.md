@@ -179,9 +179,13 @@ Then follow steps 2-7 below to set up your configuration and run the container.
 
 ### Installation Steps
 
-2. **Create your configuration file:**
+2. **Create your configuration files (optional):**
+   
+   The container will automatically create `config.txt` and `counties.json` from example files if they don't exist. However, you can create them manually first:
+   
    ```bash
    cp config.txt.example config.txt
+   cp counties.json.example counties.json
    ```
 
 3. **Edit `config.txt` with your Pushover credentials:**
