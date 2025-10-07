@@ -1,6 +1,11 @@
 # Changelog
 
 
+## Version 2.3.3 - 2025-10-07
+
+### Changes
+- Fix expires timestamp displaying as Unix timestamp instead of human-readable format (#31) by @Copilot
+
 ## Version 2.3.2 - 2025-10-06
 
 ### Changes
