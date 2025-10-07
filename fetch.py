@@ -328,6 +328,25 @@ if __name__ == '__main__':
 
     # Load the counties we want to monitor
     counties_filepath = os.path.join(CUR_DIR, 'counties.json')
+    
+    # Check if counties.json exists, if not create it with test_county data
+    if not os.path.exists(counties_filepath):
+        logger.info('counties.json not found, creating with test county data')
+        test_county = {
+            "fips": "",
+            "name": "TEST MESSAGES",
+            "state": "NA",
+            "ugc": "MDC031"
+        }
+        with open(counties_filepath, 'w') as f:
+            json.dump([test_county], f, indent=4)
+        # Set permissions for noaa user (UID 1000, GID 1000)
+        try:
+            os.chown(counties_filepath, 1000, 1000)
+            logger.info('Set counties.json ownership to noaa user (1000:1000)')
+        except (PermissionError, OSError) as e:
+            logger.warning(f'Could not set ownership for counties.json: {e}')
+    
     with open(counties_filepath, 'r') as f:
         parser.counties = json.loads(f.read())
     
