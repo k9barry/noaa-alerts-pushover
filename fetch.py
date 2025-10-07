@@ -8,6 +8,7 @@ import json
 import logging
 import os
 import requests
+import shutil
 import sys
 import urllib3
 
@@ -279,6 +280,24 @@ if __name__ == '__main__':
     # Load the configuration
     config = configparser.ConfigParser()
     config_filepath = os.path.join(CUR_DIR, 'config.txt')
+    
+    # Check if config.txt exists, if not create it from config.txt.example
+    if not os.path.exists(config_filepath):
+        config_example_path = os.path.join(CUR_DIR, 'config.txt.example')
+        if os.path.exists(config_example_path):
+            logger.info('config.txt not found, creating from config.txt.example')
+            shutil.copy(config_example_path, config_filepath)
+            # Set permissions for noaa user (UID 1000, GID 1000)
+            try:
+                os.chown(config_filepath, 1000, 1000)
+                logger.info('Set config.txt ownership to noaa user (1000:1000)')
+            except (PermissionError, OSError) as e:
+                logger.warning(f'Could not set ownership for config.txt: {e}')
+            logger.warning('config.txt created with example values - please edit with your Pushover credentials before use')
+        else:
+            logger.error('config.txt not found and config.txt.example is missing')
+            sys.exit(1)
+    
     config.read(config_filepath)
 
     # Get template customization options from config
