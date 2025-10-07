@@ -33,7 +33,7 @@ When you push a tag like `v2.3.0`, the following images are created:
 ghcr.io/k9barry/noaa-alerts-pushover:2.3.0   # Full version
 ghcr.io/k9barry/noaa-alerts-pushover:2.3     # Major.minor
 ghcr.io/k9barry/noaa-alerts-pushover:2       # Major only
-ghcr.io/k9barry/noaa-alerts-pushover:latest  # Latest (master branch)
+ghcr.io/k9barry/noaa-alerts-pushover:latest  # Latest (main branch)
 ```
 
 ## 🧪 Using Published Images

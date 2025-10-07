@@ -768,6 +768,33 @@ curl http://localhost:8080/alerts/
 
 5. **Firewall**: Ensure your firewall allows traffic on the exposed ports (80, 443, or 8080).
 
+**Test Message Configuration:**
+
+The `test_message` option enables receiving NOAA test messages and alerts. This is useful for:
+- Testing your setup without waiting for real alerts
+- Verifying notifications are working correctly
+- Ensuring your configuration is correct
+
+```ini
+[pushover]
+token = YOUR_PUSHOVER_TOKEN
+user = YOUR_PUSHOVER_USER_KEY
+
+# Enable test messages from NOAA (useful for testing)
+test_message = false  # Set to true to enable, false to disable (default)
+```
+
+**When enabled (`test_message = true`):**
+- Automatically monitors the MDC031 (Maryland Test Zone) for NOAA test messages
+- Test alerts are sent to this zone by NOAA for testing purposes
+- You'll receive notifications for any test alerts issued by NOAA
+
+**When disabled (`test_message = false`):**
+- Only monitors the counties you've specified in `counties.json`
+- Recommended for production use to avoid test notifications
+
+**Note:** You don't need to modify `counties.json` - the test zone is added automatically when enabled.
+
 #### [events] Section
 
 **Optional** - Filter out alert types you don't want to receive:

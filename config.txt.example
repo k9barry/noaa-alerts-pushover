@@ -8,6 +8,12 @@ user = YOUR_PUSHOVER_USER_KEY
 # Example: base_url = https://example.com/alerts
 # base_url =
 
+# Optional: Enable test messages from NOAA
+# Set to true to receive test messages and alerts from NOAA (useful for testing setup)
+# Set to false to disable test messages (recommended for production)
+# Default: false
+test_message = false
+
 [events]
 ignored = Red Flag Warning,Heat Advisory
 

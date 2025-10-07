@@ -8,7 +8,7 @@ Tags are created based on versions documented in `CHANGELOG.md`. Each version in
 
 ## Automatic Versioning (Recommended for Contributors)
 
-**New!** When you merge a PR to master, a version is automatically created based on labels:
+**New!** When you merge a PR to main, a version is automatically created based on labels:
 
 - Add label `major`, `minor`, or `patch` to your PR
 - On merge, the workflow automatically creates a new version
@@ -71,9 +71,9 @@ A bash script for creating multiple tags locally:
 For direct control:
 
 ```bash
-# 1. Ensure you're on the latest master
-git checkout master
-git pull origin master
+# 1. Ensure you're on the latest main
+git checkout main
+git pull origin main
 
 # 2. Create an annotated tag
 git tag -a v2.2.0 -m "Release version 2.2.0"
@@ -244,14 +244,14 @@ If the version isn't in CHANGELOG.md:
 4. **Test the release** before tagging (use `--nopush` or test in Docker)
 5. **Write clear release notes** that help users understand changes
 6. **Include migration instructions** for breaking changes
-7. **Tag from master branch** (or main release branch)
+7. **Tag from main branch** (or main release branch)
 8. **Don't force push** tags - delete and recreate if needed
 
 ## For Maintainers
 
 ### Release Checklist
 
-- [ ] All changes merged to master
+- [ ] All changes merged to main
 - [ ] CHANGELOG.md updated with version and changes
 - [ ] Version number follows semantic versioning
 - [ ] Documentation updated (README, INSTALL, etc.)

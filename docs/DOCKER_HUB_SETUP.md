@@ -63,7 +63,7 @@ This uses the secret, so it's dynamic and works for any maintainer.
 1. Go to **Actions** tab on GitHub
 2. Select **Build and Push to Docker Hub** workflow
 3. Click **Run workflow**
-4. Select branch: `master`
+4. Select branch: `main`
 5. Click **Run workflow**
 6. Monitor the workflow execution
 7. Check Docker Hub for the new image
@@ -72,10 +72,10 @@ This uses the secret, so it's dynamic and works for any maintainer.
 
 ```bash
 # Make a small change and push
-git checkout master
+git checkout main
 git pull
 # Make change, commit
-git push origin master
+git push origin main
 ```
 
 The workflow will automatically run and push with `latest` tag.
@@ -102,14 +102,14 @@ The workflow will build and push with version tags (`2.3.0`, `2.3`, `2`, `latest
 ### Triggers
 
 The workflow runs automatically on:
-- **Push to master branch**: Creates `latest` tag
+- **Push to main branch**: Creates `latest` tag
 - **Git tag push** (e.g., `v2.2.0`): Creates versioned tags
 - **Manual dispatch**: Via Actions tab
 - **PR merge** (automatic): Via auto-versioning workflow (see below)
 
 ### Automatic Versioning (New!)
 
-When a PR is merged to master with appropriate labels (`major`, `minor`, or `patch`), the auto-versioning workflow:
+When a PR is merged to main with appropriate labels (`major`, `minor`, or `patch`), the auto-versioning workflow:
 1. Creates a new Git tag automatically
 2. Triggers this Docker Hub workflow
 3. Publishes versioned images
@@ -122,7 +122,7 @@ For a tag like `v2.2.0`, the workflow creates:
 - `k9barry/noaa-alerts-pushover:2.2.0` (full version)
 - `k9barry/noaa-alerts-pushover:2.2` (major.minor)
 - `k9barry/noaa-alerts-pushover:2` (major only)
-- `k9barry/noaa-alerts-pushover:latest` (if on master branch)
+- `k9barry/noaa-alerts-pushover:latest` (if on main branch)
 
 ### Multi-platform Builds
 
@@ -178,7 +178,7 @@ Docker Hub provides:
 2. **Minimum Permissions**: Create tokens with only required permissions (Read & Write)
 3. **Rotate Tokens**: Periodically rotate access tokens
 4. **Audit Access**: Review who has access to repository secrets
-5. **Protected Branches**: Consider requiring reviews for master branch pushes
+5. **Protected Branches**: Consider requiring reviews for main branch pushes
 
 ## Maintenance
 

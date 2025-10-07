@@ -32,7 +32,7 @@ Step 3: Review & Merge
 │    and approved     │
 │                     │
 │   PR is merged to   │
-│    master branch    │
+│    main branch    │
 └──────────┬──────────┘
            │
            ▼
@@ -112,7 +112,7 @@ Step 11: Create Git Tag
 Step 12: Push to GitHub
 ┌─────────────────────┐
 │  git push origin    │
-│     master          │
+│     main          │
 │  git push origin    │
 │     vX.Y.Z          │
 └──────────┬──────────┘

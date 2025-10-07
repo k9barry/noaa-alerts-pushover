@@ -1,10 +1,10 @@
 # Automatic Versioning
 
-This project uses **automatic semantic versioning** when Pull Requests are merged to the master branch.
+This project uses **automatic semantic versioning** when Pull Requests are merged to the main branch.
 
 ## How It Works
 
-When a PR is merged to master:
+When a PR is merged to main:
 1. The auto-versioning workflow is triggered
 2. It reads the PR labels to determine the version bump type
 3. Calculates the new version number
@@ -77,7 +77,7 @@ Result: v2.3.1 (defaults to patch)
 ### Triggers
 - Event: Pull Request closed
 - Condition: PR was merged (not just closed)
-- Branch: master
+- Branch: main
 
 ### Process
 
@@ -130,7 +130,7 @@ If you need to create a version manually (bypassing the auto-versioning):
 If you need to merge a PR **without** creating a new version:
 
 1. Add the label `skip-release` or `no-version` to the PR, **OR**
-2. Merge to a different branch first, then cherry-pick to master
+2. Merge to a different branch first, then cherry-pick to main
 
 > **Note:** The `skip-release` functionality is not yet implemented. This is a placeholder for future enhancement.
 

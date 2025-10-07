@@ -2,7 +2,7 @@
 
 ## What Was Implemented
 
-This PR adds **automatic semantic versioning** to the repository. When a Pull Request is merged to master, a new version tag is automatically created based on labels, and Docker Hub images are automatically built and published.
+This PR adds **automatic semantic versioning** to the repository. When a Pull Request is merged to main, a new version tag is automatically created based on labels, and Docker Hub images are automatically built and published.
 
 ## Quick Answer to Your Question
 

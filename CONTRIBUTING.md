@@ -154,7 +154,7 @@ When making changes, consider testing:
 1. **Update your fork**:
    ```bash
    git fetch upstream
-   git rebase upstream/master
+   git rebase upstream/main
    ```
 
 2. **Push your changes**:
@@ -171,7 +171,7 @@ When making changes, consider testing:
 
 ### Automatic Versioning
 
-When your PR is merged to master, a new version is **automatically created** based on labels:
+When your PR is merged to main, a new version is **automatically created** based on labels:
 
 **Version Bump Labels** (add one to your PR):
 - `major` or `breaking` - Breaking changes (e.g., 2.2.0 → 3.0.0)
@@ -246,7 +246,7 @@ The repository includes automated container image publishing to multiple registr
 **Quick Overview:**
 - **Workflow**: `.github/workflows/docker-publish.yml`
 - **Triggers**:
-  - Push to `master` branch → publishes `latest` tag
+  - Push to `main` branch → publishes `latest` tag
   - Git tag push (e.g., `v2.2.0`) → publishes version tags (`2.2.0`, `2.2`, `2`)
   - Manual workflow dispatch
 - **Requirements**: Docker Hub credentials must be set as repository secrets:
@@ -266,7 +266,7 @@ The repository includes automated container image publishing to multiple registr
 **Quick Overview:**
 - **Workflow**: `.github/workflows/ghcr-publish.yml`
 - **Triggers**:
-  - Push to `master` branch → publishes `latest` tag
+  - Push to `main` branch → publishes `latest` tag
   - Git tag push (e.g., `v2.2.0`) → publishes version tags (`2.2.0`, `2.2`, `2`)
   - Manual workflow dispatch
 - **Requirements**: No additional setup required (uses built-in `GITHUB_TOKEN`)
@@ -348,6 +348,17 @@ from models import Alert
 - **Configuration**: Update config examples
 - **API Changes**: Update docs/CODE_EXPLANATION.md
 - **Breaking Changes**: Highlight in CHANGELOG.md
+
+### Documentation Organization
+
+**Important**: All detailed documentation files should be placed in the `docs/` folder to keep the repository root clean and organized.
+
+- **Root directory**: Keep only essential files (README.md, INSTALL.md, CHANGELOG.md, CONTRIBUTING.md, SECURITY.md, LICENSE)
+- **docs/ directory**: Place all other documentation files here
+  - Technical guides (CODE_EXPLANATION.md, TAGGING.md, etc.)
+  - Setup guides (DOCKER_HUB_SETUP.md, GHCR_SETUP.md, etc.)
+  - Quick reference guides (DOCKER_HUB_QUICKSTART.md, GHCR_QUICKSTART.md, etc.)
+  - Implementation summaries and workflow documentation
 
 ### Documentation Style
 

@@ -14,7 +14,7 @@
 ## Version 2.3.1 - 2025-10-06
 
 ### Changes
-- Fix Docker Hub workflow to remove unwanted master tag (#29) by @Copilot
+- Fix Docker Hub workflow to remove unwanted main tag (#29) by @Copilot
 
 ## Version 2.3.0 - 2025-10-06
 
