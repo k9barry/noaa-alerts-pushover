@@ -1,6 +1,11 @@
 # Changelog
 
 
+## Version 2.3.4 - 2025-10-07
+
+### Changes
+- Implement test_message config, migrate to main branch, and organize documentation (#32) by @Copilot
+
 ## Version 2.3.3 - 2025-10-07
 
 ### Changes
