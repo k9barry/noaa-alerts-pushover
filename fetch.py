@@ -362,10 +362,14 @@ if __name__ == '__main__':
             # Get the details about the alert from the API
             details = parser.details_for_alert(alert)
 
+            # Format expires timestamp as human-readable string for display
+            expires_formatted = arrow.get(alert.expires_utc_ts).format('YYYY-MM-DD HH:mm:ss')
+
             # Render the detail page
             output = template.render({
                 'alert': details,
-                'expires': int(alert.expires_utc_ts),
+                'expires': expires_formatted,
+                'expires_timestamp': int(alert.expires_utc_ts),
                 'alert_url': alert.url,
                 'template_options': template_options
             })
