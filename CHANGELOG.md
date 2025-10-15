@@ -1,6 +1,11 @@
 # Changelog
 
 
+## Version 3.0.2 - 2025-10-15
+
+### Changes
+- Bump requests from 2.32.3 to 2.32.4 (#36) by @dependabot[bot]
+
 ## Version 3.0.1 - 2025-10-15
 
 ### Changes
