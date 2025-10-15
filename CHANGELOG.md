@@ -1,6 +1,11 @@
 # Changelog
 
 
+## Version 3.0.1 - 2025-10-15
+
+### Changes
+- Bump jinja2 from 3.1.4 to 3.1.6 (#35) by @dependabot[bot]
+
 ## Version 3.0.0 - 2025-10-07
 
 ### Changes
