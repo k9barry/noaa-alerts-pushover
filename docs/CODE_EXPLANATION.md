@@ -568,7 +568,7 @@ if request.status_code != 200:
 ```
 
 #### Content Type Detection
-The application validates that responses contain expected data formats (JSON or XML) and not HTML error pages:
+The application validates that responses contain expected data formats (JSON) and not HTML error pages:
 
 ```python
 # Check for HTML responses
@@ -634,7 +634,7 @@ Invalid JSON returns `None` instead of crashing, allowing the application to con
 - Memory: ~50MB typical usage
 - Disk: Database grows slowly (~1KB per alert)
 - Network: ~100KB per fetch
-- CPU: Minimal (XML parsing)
+- CPU: Minimal (JSON parsing)
 
 ### Optimization Opportunities
 - Batch database inserts (currently one-by-one)
