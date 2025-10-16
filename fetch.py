@@ -152,7 +152,7 @@ class Parser(object):
 
 
     def fetch(self, run_timestamp):
-        """ Fetches the NOAA alerts XML feed and inserts into database """
+        """ Fetches the NOAA alerts JSON feed and inserts into database """
 
         logger.info('Fetching Alerts Feed')
         request = requests.get('https://api.weather.gov/alerts')
