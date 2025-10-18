@@ -1,6 +1,11 @@
 # Changelog
 
 
+## Version 3.0.4 - 2025-10-18
+
+### Changes
+- Add configurable NOAA API URL in config.txt (#44) by @Copilot
+
 ## Version 3.0.3 - 2025-10-18
 
 ### Changes
