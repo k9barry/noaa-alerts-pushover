@@ -445,7 +445,8 @@ Key documentation files (consolidated and updated):
 - NOAA API: https://www.weather.gov/documentation/services-web-api
 - CAP Standard: http://docs.oasis-open.org/emergency/cap/v1.2/
 - Pushover API: https://pushover.net/api
-- County Codes: http://www.nws.noaa.gov/emwin/winugc.htm
+- FIPS Codes: https://www.weather.gov/pimar/FIPSCodes
+- UGC Codes: https://www.weather.gov/ (find your state, then click "County List" or "Zone List")
 - Peewee ORM: http://docs.peewee-orm.com/
 
 ## Version Information

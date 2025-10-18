@@ -32,7 +32,7 @@ See the [Installation Guide](INSTALL.md) for a 5-minute quick start or detailed 
 
 The application uses two configuration files:
 - **`config.txt`** - Pushover API credentials, NOAA User-Agent (required by NWS), event filtering, test message options, and scheduling intervals
-- **`counties.json`** - Counties to monitor (find codes at [NOAA website](http://www.nws.noaa.gov/emwin/winugc.htm))
+- **`counties.json`** - Counties to monitor (find FIPS codes at [NOAA FIPS Codes](https://www.weather.gov/pimar/FIPSCodes) and UGC codes at [NWS State Pages](https://www.weather.gov/) - click your state, then "County List" or "Zone List")
 
 **New in 2.3+**: Enable `test_message = true` in config.txt to receive NOAA test alerts for validating your setup.
 
