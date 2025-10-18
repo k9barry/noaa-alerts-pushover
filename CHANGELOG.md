@@ -1,6 +1,11 @@
 # Changelog
 
 
+## Version 3.0.3 - 2025-10-18
+
+### Changes
+- Add configurable Pushover API URL parameter to config.txt (#43) by @Copilot
+
 ## Version 3.0.2 - 2025-10-15
 
 ### Changes
