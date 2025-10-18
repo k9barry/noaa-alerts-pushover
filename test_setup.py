@@ -121,6 +121,30 @@ def test_config_file(auto_fix=False):
         else:
             print("  ℹ️  No [noaa] section found, using default API URL (https://api.weather.gov/alerts)")
         
+        # Check User-Agent configuration (optional but recommended)
+        if config.has_section('user_agent'):
+            try:
+                app_name = config.get('user_agent', 'app_name', fallback='')
+                version = config.get('user_agent', 'version', fallback='')
+                contact = config.get('user_agent', 'contact', fallback='')
+                
+                if app_name and version and contact:
+                    user_agent = f"{app_name}/{version} ({contact})"
+                    print(f"  ✓ User-Agent configured: {user_agent}")
+                    
+                    # Warn if contact looks like placeholder
+                    if 'example.com' in contact or 'YOUR_' in contact.upper():
+                        print("  ⚠️  Warning: Contact looks like a placeholder - please update with your actual contact info")
+                else:
+                    print("  ⚠️  Warning: [user_agent] section incomplete - missing app_name, version, or contact")
+                    print("     NWS API requires User-Agent with contact information")
+            except Exception as e:
+                print(f"  ⚠️  Warning: Error reading User-Agent config: {e}")
+        else:
+            print("  ⚠️  Warning: No [user_agent] section found")
+            print("     NWS API requires User-Agent with contact information")
+            print("     Add [user_agent] section with app_name, version, and contact")
+        
         print(f"  ✓ config.txt found and readable")
         return True
         
