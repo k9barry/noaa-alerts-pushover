@@ -109,6 +109,16 @@ def test_config_file(auto_fix=False):
         except ValueError:
             print("  ⚠️  Warning: test_message should be 'true' or 'false'")
         
+        # Check NOAA API URL (optional)
+        if config.has_section('noaa'):
+            try:
+                noaa_api_url = config.get('noaa', 'api_url', fallback='https://api.weather.gov/alerts')
+                print(f"  ✓ NOAA API URL: {noaa_api_url}")
+            except Exception as e:
+                print(f"  ⚠️  Warning: Error reading NOAA API URL: {e}")
+        else:
+            print("  ℹ️  No [noaa] section found, using default API URL (https://api.weather.gov/alerts)")
+        
         print(f"  ✓ config.txt found and readable")
         return True
         

@@ -19,7 +19,7 @@ This directory contains templates and sample data for the NOAA Alerts Pushover a
 **Purpose**: Sample NOAA weather alert data in the current GeoJSON format used by the NOAA Weather API.
 
 **Usage**: This file serves as:
-1. **Reference** - Example of the data structure returned by `https://api.weather.gov/alerts`
+1. **Reference** - Example of the data structure returned by the NOAA Weather API (default: `https://api.weather.gov/alerts`, configurable in config.txt)
 2. **Testing** - Can be used for testing template modifications
 3. **Documentation** - Shows all available fields from the NOAA API
 

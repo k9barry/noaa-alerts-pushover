@@ -61,6 +61,7 @@ This document provides a technical overview of the NOAA Alerts Pushover applicat
 ```python
 # Load configuration
 config.txt → Parse pushover credentials
+          → Parse NOAA API URL (optional, defaults to https://api.weather.gov/alerts)
           → Parse ignored events
 
 counties.json → Load monitored counties
@@ -72,7 +73,7 @@ counties.json → Load monitored counties
 
 ```python
 # Request NOAA data
-GET https://api.weather.gov/alerts
+GET {configured NOAA API URL or https://api.weather.gov/alerts}
     → Receive GeoJSON feed
     → Parse all active alerts
     → Extract metadata for each alert:
@@ -388,7 +389,9 @@ The `alert_id` field should be indexed for faster lookups. The Peewee ORM handle
 
 ### NOAA Weather Alerts API
 
-**Base URL:** `https://api.weather.gov/alerts`
+**Base URL:** `https://api.weather.gov/alerts` (configurable via `api_url` in the `[noaa]` section of `config.txt`)
+
+The NOAA API endpoint URL can be customized in `config.txt`. This allows for testing with different endpoints or using a proxy/mirror if needed.
 
 **Format:** GeoJSON with CAP (Common Alerting Protocol) properties
 
