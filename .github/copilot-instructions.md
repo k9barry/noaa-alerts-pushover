@@ -136,7 +136,10 @@ logger.debug("Matched %d existing alerts." % existing_count)
 
 ### config.txt
 INI format with sections:
-- `[pushover]`: token, user (required)
+- `[pushover]`: token, user (required); api_url, base_url, test_message (optional)
+  - api_url: Pushover API endpoint URL (default: https://api.pushover.net/1/messages.json)
+  - base_url: Base URL for hosted HTML alert files
+  - test_message: Enable test messages from NOAA (true/false)
 - `[events]`: ignored (comma-separated list of event types to skip)
 - `[schedule]`: fetch_interval (minutes), cleanup_interval (hours), vacuum_interval (hours)
   - fetch_interval: How often to check for new alerts (default: 5 minutes)
@@ -148,6 +151,7 @@ Example:
 [pushover]
 token = YOUR_PUSHOVER_TOKEN
 user = YOUR_PUSHOVER_USER_KEY
+api_url = https://api.pushover.net/1/messages.json
 
 [events]
 ignored = Red Flag Warning,Heat Advisory
@@ -181,7 +185,7 @@ JSON array of county objects:
 - **Response**: JSON with GeoJSON features containing FIPS/UGC codes
 
 ### Pushover API
-- **Endpoint**: `https://api.pushover.net/1/messages.json`
+- **Endpoint**: `https://api.pushover.net/1/messages.json` (default, configurable via `api_url` in config.txt)
 - **Method**: POST
 - **Required Fields**: token, user, title, message
 - **Optional Fields**: url, url_title, priority

@@ -432,7 +432,9 @@ The `alert_id` field should be indexed for faster lookups. The Peewee ORM handle
 
 ### Pushover API
 
-**Base URL:** `https://api.pushover.net/1/messages.json`
+**Base URL:** `https://api.pushover.net/1/messages.json` (default, configurable)
+
+The API endpoint URL can be customized in `config.txt` using the `api_url` parameter in the `[pushover]` section. This allows for using custom Pushover-compatible API endpoints if needed.
 
 **Method:** POST
 
