@@ -1,6 +1,11 @@
 # Changelog
 
 
+## Version 3.0.5 - 2025-10-18
+
+### Changes
+- [WIP] Ensure User-Agent compliance for weather.gov API (#46) by @Copilot
+
 ## Version 3.0.4 - 2025-10-18
 
 ### Changes
