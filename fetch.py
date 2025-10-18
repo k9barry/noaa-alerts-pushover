@@ -21,10 +21,11 @@ class Parser(object):
     """ A convenience object to hold our functionality """
 
 
-    def __init__(self, pushover_token, pushover_user, pushover_api_url, directory):
+    def __init__(self, pushover_token, pushover_user, pushover_api_url, noaa_api_url, directory):
         self.pushover_token = pushover_token
         self.pushover_user = pushover_user
         self.pushover_api_url = pushover_api_url
+        self.noaa_api_url = noaa_api_url
         self.current_dir = directory
         self.counties = None
         self.fips_watch_list = None
@@ -155,7 +156,7 @@ class Parser(object):
         """ Fetches the NOAA alerts JSON feed and inserts into database """
 
         logger.info('Fetching Alerts Feed')
-        request = requests.get('https://api.weather.gov/alerts')
+        request = requests.get(self.noaa_api_url)
         if request.status_code != 200:
             logger.error(f"Failed to fetch alerts feed: HTTP {request.status_code}")
             return
@@ -330,7 +331,13 @@ if __name__ == '__main__':
     except (configparser.NoSectionError, configparser.NoOptionError):
         BASE_URL = None
     
-    parser = Parser(PUSHOVER_TOKEN, PUSHOVER_USER, PUSHOVER_API_URL, CUR_DIR)
+    # Get NOAA API URL (defaults to standard endpoint)
+    try:
+        NOAA_API_URL = config.get('noaa', 'api_url')
+    except (configparser.NoSectionError, configparser.NoOptionError):
+        NOAA_API_URL = 'https://api.weather.gov/alerts'
+    
+    parser = Parser(PUSHOVER_TOKEN, PUSHOVER_USER, PUSHOVER_API_URL, NOAA_API_URL, CUR_DIR)
 
     # Load the counties we want to monitor
     counties_filepath = os.path.join(CUR_DIR, 'counties.json')
