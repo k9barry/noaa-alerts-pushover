@@ -79,7 +79,14 @@ vacuum_interval = 168
 
 Edit `counties.json` to add the counties you want to monitor.
 
-Find your county codes at: http://www.nws.noaa.gov/emwin/winugc.htm
+**Finding County Codes:**
+
+- **FIPS codes**: Visit https://www.weather.gov/pimar/FIPSCodes
+- **UGC codes**: 
+  1. Go to https://www.weather.gov/
+  2. Find your state and click "County List" for county codes or "Zone List" for forecast zone codes
+  3. County codes follow pattern `SSC###` (e.g., `INC095` for Madison County, Indiana)
+  4. Zone codes follow pattern `SSZ###` (e.g., `INZ050` for a forecast zone)
 
 Example:
 ```json
@@ -894,7 +901,31 @@ County codes consist of:
 - **Name:** County name
 - **State:** Two-letter state code
 
-Find codes at: http://www.nws.noaa.gov/emwin/winugc.htm
+**How to Find Your County Codes:**
+
+**For FIPS codes:**
+- Visit https://www.weather.gov/pimar/FIPSCodes
+
+**For UGC codes:**
+1. Access the NWS website at https://www.weather.gov/
+2. Navigate to the correct list:
+   - For county codes: Find your state and click the "County List" link
+   - For zone codes: Find your state and click the "Zone List" link
+3. Find your code:
+   - UGC County codes follow the pattern `SSC###`, where:
+     - `SS` is the two-letter state abbreviation (e.g., IN for Indiana)
+     - `C` indicates it is a county code
+     - `###` is the three-digit FIPS code for the county
+   - UGC Zone codes follow the pattern `SSZ###`, where:
+     - `SS` is the two-letter state abbreviation
+     - `Z` indicates it is a forecast zone code
+     - `###` is the three-digit forecast zone number
+
+**Example: Finding codes for Pendleton, Indiana**
+- Determine your county: Pendleton is in Madison County, Indiana
+- Go to the NWS County Coverage page for Indiana: https://www.weather.gov/nwr/county_coverage?State=IN
+- Find Madison County in the list
+- The full UGC County code would be `INC095`
 
 Example `counties.json`:
 ```json
