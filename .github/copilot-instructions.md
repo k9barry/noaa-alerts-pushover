@@ -140,6 +140,8 @@ INI format with sections:
   - api_url: Pushover API endpoint URL (default: https://api.pushover.net/1/messages.json)
   - base_url: Base URL for hosted HTML alert files
   - test_message: Enable test messages from NOAA (true/false)
+- `[noaa]`: api_url (optional)
+  - api_url: NOAA Weather API endpoint URL (default: https://api.weather.gov/alerts)
 - `[events]`: ignored (comma-separated list of event types to skip)
 - `[schedule]`: fetch_interval (minutes), cleanup_interval (hours), vacuum_interval (hours)
   - fetch_interval: How often to check for new alerts (default: 5 minutes)
@@ -152,6 +154,9 @@ Example:
 token = YOUR_PUSHOVER_TOKEN
 user = YOUR_PUSHOVER_USER_KEY
 api_url = https://api.pushover.net/1/messages.json
+
+[noaa]
+api_url = https://api.weather.gov/alerts
 
 [events]
 ignored = Red Flag Warning,Heat Advisory
@@ -178,7 +183,7 @@ JSON array of county objects:
 ## API Integrations
 
 ### NOAA Weather Alerts API
-- **Base URL**: `https://api.weather.gov/alerts`
+- **Base URL**: `https://api.weather.gov/alerts` (configurable via `api_url` in `[noaa]` section of config.txt)
 - **Format**: GeoJSON with CAP properties
 - **Rate Limiting**: Be respectful, implement delays if needed
 - **SSL**: Verify certificates (currently disabled with urllib3 warning suppression)

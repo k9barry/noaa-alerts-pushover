@@ -19,6 +19,12 @@ user = YOUR_PUSHOVER_USER_KEY
 # Default: false
 test_message = false
 
+[noaa]
+# NOAA Weather API endpoint URL
+# Default: https://api.weather.gov/alerts
+# Only change this if you're using a custom endpoint or testing with a different API
+api_url = https://api.weather.gov/alerts
+
 [events]
 ignored = Red Flag Warning,Heat Advisory
 
