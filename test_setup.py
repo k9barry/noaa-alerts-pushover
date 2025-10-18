@@ -112,8 +112,10 @@ def test_config_file(auto_fix=False):
         # Check NOAA API URL (optional)
         if config.has_section('noaa'):
             try:
-                noaa_api_url = config.get('noaa', 'api_url', fallback='https://api.weather.gov/alerts')
+                noaa_api_url = config.get('noaa', 'api_url')
                 print(f"  ✓ NOAA API URL: {noaa_api_url}")
+            except configparser.NoOptionError:
+                print("  ℹ️  [noaa] section exists but no api_url specified, using default (https://api.weather.gov/alerts)")
             except Exception as e:
                 print(f"  ⚠️  Warning: Error reading NOAA API URL: {e}")
         else:
