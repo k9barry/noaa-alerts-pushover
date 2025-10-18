@@ -1,6 +1,11 @@
 # Changelog
 
 
+## Version 3.0.6 - 2025-10-18
+
+### Changes
+- Fix incorrect FIPS and UGC code references in documentation (#47) by @Copilot
+
 ## Version 3.0.5 - 2025-10-18
 
 ### Changes
