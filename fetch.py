@@ -21,9 +21,10 @@ class Parser(object):
     """ A convenience object to hold our functionality """
 
 
-    def __init__(self, pushover_token, pushover_user, directory):
+    def __init__(self, pushover_token, pushover_user, pushover_api_url, directory):
         self.pushover_token = pushover_token
         self.pushover_user = pushover_user
+        self.pushover_api_url = pushover_api_url
         self.current_dir = directory
         self.counties = None
         self.fips_watch_list = None
@@ -57,8 +58,7 @@ class Parser(object):
 
     def send_pushover_alert(self, id, title, message, url):
         """ Sends an alert via Pushover API """
-        api_url = 'https://api.pushover.net/1/messages.json'
-        request = requests.post(api_url, data={
+        request = requests.post(self.pushover_api_url, data={
             "title": title,
             "token": self.pushover_token,
             "user": self.pushover_user,
@@ -315,6 +315,12 @@ if __name__ == '__main__':
     PUSHOVER_TOKEN = config.get('pushover', 'token')
     PUSHOVER_USER = config.get('pushover', 'user')
     
+    # Get optional Pushover API URL (defaults to standard endpoint)
+    try:
+        PUSHOVER_API_URL = config.get('pushover', 'api_url')
+    except (configparser.NoSectionError, configparser.NoOptionError):
+        PUSHOVER_API_URL = 'https://api.pushover.net/1/messages.json'
+    
     # Get optional base URL for hosted HTML files
     try:
         BASE_URL = config.get('pushover', 'base_url')
@@ -324,7 +330,7 @@ if __name__ == '__main__':
     except (configparser.NoSectionError, configparser.NoOptionError):
         BASE_URL = None
     
-    parser = Parser(PUSHOVER_TOKEN, PUSHOVER_USER, CUR_DIR)
+    parser = Parser(PUSHOVER_TOKEN, PUSHOVER_USER, PUSHOVER_API_URL, CUR_DIR)
 
     # Load the counties we want to monitor
     counties_filepath = os.path.join(CUR_DIR, 'counties.json')

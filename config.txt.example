@@ -2,6 +2,11 @@
 token = YOUR_PUSHOVER_TOKEN
 user = YOUR_PUSHOVER_USER_KEY
 
+# Optional: Pushover API URL endpoint
+# Default: https://api.pushover.net/1/messages.json
+# Only change this if you're using a custom Pushover-compatible API endpoint
+# api_url = https://api.pushover.net/1/messages.json
+
 # Optional: Base URL for hosted HTML alert files
 # If set, Pushover notifications will link to your hosted HTML files (e.g., http://example.com/alerts)
 # If not set, notifications will link to NOAA's official alert page
