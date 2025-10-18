@@ -25,6 +25,16 @@ test_message = false
 # Only change this if you're using a custom endpoint or testing with a different API
 api_url = https://api.weather.gov/alerts
 
+[user_agent]
+# User-Agent header for NOAA API requests (required by NWS API)
+# Format: ApplicationName/Version (contact_email or contact_url)
+# The NWS requires this to identify clients and contact users about API changes
+# Example: MyWeatherApp/1.0 (myemail@example.com)
+# Example: MyWeatherApp/1.0 (https://www.example.com/contact)
+app_name = NOAA-Alerts-Pushover
+version = 3.0
+contact = your_email@example.com
+
 [events]
 ignored = Red Flag Warning,Heat Advisory
 

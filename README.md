@@ -31,10 +31,12 @@ See the [Installation Guide](INSTALL.md) for a 5-minute quick start or detailed 
 ## Configuration
 
 The application uses two configuration files:
-- **`config.txt`** - Pushover API credentials, event filtering, test message options, and scheduling intervals
+- **`config.txt`** - Pushover API credentials, NOAA User-Agent (required by NWS), event filtering, test message options, and scheduling intervals
 - **`counties.json`** - Counties to monitor (find codes at [NOAA website](http://www.nws.noaa.gov/emwin/winugc.htm))
 
 **New in 2.3+**: Enable `test_message = true` in config.txt to receive NOAA test alerts for validating your setup.
+
+**Important**: The NWS API requires a User-Agent header with contact information. Configure the `[user_agent]` section in config.txt with your application name, version, and contact email or URL.
 
 See [INSTALL.md](INSTALL.md) for complete configuration details and examples.
 

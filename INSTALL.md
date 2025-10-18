@@ -49,11 +49,17 @@ cp config.txt.example config.txt
 nano config.txt  # or use your favorite editor
 ```
 
-Add your [Pushover](https://pushover.net) credentials:
+Add your [Pushover](https://pushover.net) credentials and User-Agent information:
 ```ini
 [pushover]
 token = your_app_token_here
 user = your_user_key_here
+
+[user_agent]
+# Required by NWS API - provide your contact information
+app_name = NOAA-Alerts-Pushover
+version = 3.0
+contact = your_email@example.com
 
 [events]
 ignored = Red Flag Warning,Heat Advisory
@@ -66,6 +72,8 @@ cleanup_interval = 24
 # How often to run vacuum.py for database maintenance (in hours)
 vacuum_interval = 168
 ```
+
+**Important**: Replace `your_email@example.com` in the `[user_agent]` section with your actual email or website URL. The NWS API requires this to contact you about API changes or issues.
 
 #### 3. Select Counties
 
@@ -438,7 +446,14 @@ If you prefer to run fetch.py once per invocation, you can call it directly and 
 
 ### Configuration File Structure
 
-The `config.txt` file uses INI format with three main sections:
+The `config.txt` file uses INI format with the following sections:
+
+- `[pushover]` - **Required** - Pushover API credentials and options
+- `[user_agent]` - **Required** - User-Agent header for NOAA API compliance
+- `[noaa]` - **Optional** - NOAA API endpoint URL (uses default if not specified)
+- `[events]` - **Optional** - Event types to ignore/filter out
+- `[schedule]` - **Optional** - Task scheduling intervals
+- `[template]` - **Optional** - HTML template customization options
 
 #### [pushover] Section
 
@@ -798,6 +813,37 @@ test_message = false  # Set to true to enable, false to disable (default)
 - Recommended for production use to avoid test notifications
 
 **Note:** You don't need to modify `counties.json` - the test zone is added automatically when enabled.
+
+#### [user_agent] Section
+
+**Required** - User-Agent header for NOAA API requests:
+
+The National Weather Service (NWS) API requires a User-Agent header that identifies your application and provides contact information. This allows NWS to:
+- Understand API usage patterns
+- Contact you about API changes, outages, or potential issues
+- Troubleshoot problems if needed
+
+```ini
+[user_agent]
+# Required by NWS API - provide your contact information
+app_name = NOAA-Alerts-Pushover
+version = 3.0
+contact = your_email@example.com  # or https://www.example.com/contact
+```
+
+**Configuration Options:**
+- `app_name`: Your application name (default: `NOAA-Alerts-Pushover`)
+- `version`: Application version (default: `3.0`)
+- `contact`: Email address or website URL where NWS can reach you
+
+**Important:** Replace `your_email@example.com` with your actual email address or a URL where you can be contacted.
+
+**Examples of valid User-Agent formats:**
+- `NOAA-Alerts-Pushover/3.0 (john.doe@example.com)`
+- `MyWeatherApp/1.0 (https://www.example.com/contact)`
+- `HomeWeatherMonitor/2.1 (homeowner@gmail.com)`
+
+**If not configured:** The application will use a default User-Agent with the GitHub repository URL, but it's strongly recommended to provide your own contact information for NWS compliance.
 
 #### [events] Section
 
