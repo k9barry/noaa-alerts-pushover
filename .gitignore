@@ -57,6 +57,7 @@ docs/_build/
 target/
 
 config.txt
+counties.json
 log.txt
 alerts.db
 output/
