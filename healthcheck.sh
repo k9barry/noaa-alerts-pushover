@@ -15,6 +15,7 @@ python --version > /dev/null 2>&1 || exit 1
 
 # Check if database directory exists
 [ -d /app/data ] || exit 1
+[ -d /app/output ] || exit 1
 
 # Try to import the database module to ensure it's accessible
 python -c "from models import db; db.connect(); db.close()" || exit 1
