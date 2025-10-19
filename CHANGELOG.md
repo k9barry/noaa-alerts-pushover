@@ -1,6 +1,11 @@
 # Changelog
 
 
+## Version 3.0.7 - 2025-10-19
+
+### Changes
+- Stop tracking counties.json (#48) by @Copilot
+
 ## Version 3.0.6 - 2025-10-18
 
 ### Changes
