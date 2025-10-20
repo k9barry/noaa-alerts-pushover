@@ -145,6 +145,28 @@ def test_config_file(auto_fix=False):
             print("     NWS API requires User-Agent with contact information")
             print("     Add [user_agent] section with app_name, version, and contact")
         
+        # Check template configuration (optional)
+        if config.has_section('template'):
+            try:
+                template_options = ['show_event_info', 'show_expiration', 'conditional_instructions', 
+                                   'color_coding', 'show_map_link', 'mobile_responsive', 'show_social_sharing']
+                enabled_count = 0
+                for option in template_options:
+                    if config.getboolean('template', option, fallback=False):
+                        enabled_count += 1
+                
+                if enabled_count > 0:
+                    print(f"  ✓ Template customization: {enabled_count} option(s) enabled")
+                else:
+                    print("  ℹ️  Template customization: all options disabled (using defaults)")
+            except ValueError as e:
+                print(f"  ⚠️  Warning: Invalid template option values: {e}")
+                print("     Template options should be 'true' or 'false'")
+            except Exception as e:
+                print(f"  ⚠️  Warning: Error reading template config: {e}")
+        else:
+            print("  ℹ️  No [template] section found, using default HTML template")
+        
         print(f"  ✓ config.txt found and readable")
         return True
         

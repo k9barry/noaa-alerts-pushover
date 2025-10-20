@@ -1,6 +1,6 @@
 #!/bin/sh
 # Entrypoint script for Docker container
-# This script provides flexible run modes for the container
+# This container runs in scheduler mode only
 
 set -e
 
@@ -38,36 +38,31 @@ if [ "$(id -u)" = "0" ]; then
   echo "Switching to noaa user..."
   echo "Initializing database..."
   gosu noaa python models.py || echo "Database initialization failed or already exists"
+  
+  # Run setup validation
+  echo ""
+  echo "============================================================"
+  echo "Running setup validation..."
+  echo "============================================================"
+  gosu noaa python test_setup.py || echo "⚠️  Setup validation completed with warnings"
+  echo ""
 else
   echo "Initializing database..."
   python models.py || echo "Database initialization failed or already exists"
+  
+  # Run setup validation
+  echo ""
+  echo "============================================================"
+  echo "Running setup validation..."
+  echo "============================================================"
+  python test_setup.py || echo "⚠️  Setup validation completed with warnings"
+  echo ""
 fi
 
-# Default mode is single run
-MODE="${RUN_MODE:-once}"
-
-case "$MODE" in
-  once)
-    echo "Running in single-run mode..."
-    if [ "$(id -u)" = "0" ]; then
-      exec gosu noaa python fetch.py "$@"
-    else
-      exec python fetch.py "$@"
-    fi
-    ;;
-  
-  scheduler)
-    echo "Running scheduler mode with Python schedule library..."
-    if [ "$(id -u)" = "0" ]; then
-      exec gosu noaa python scheduler.py "$@"
-    else
-      exec python scheduler.py "$@"
-    fi
-    ;;
-  
-  *)
-    echo "Unknown mode: $MODE"
-    echo "Valid modes: once, scheduler"
-    exit 1
-    ;;
-esac
+# Run scheduler mode
+echo "Starting scheduler mode with Python schedule library..."
+if [ "$(id -u)" = "0" ]; then
+  exec gosu noaa python scheduler.py "$@"
+else
+  exec python scheduler.py "$@"
+fi

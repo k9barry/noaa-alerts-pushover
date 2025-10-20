@@ -13,11 +13,8 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - TZ=UTC
-      # Run modes: once, scheduler
-      # once: Run once and exit
-      # scheduler: Run continuously with Python schedule library (default)
-      #            Schedule intervals are configured in config.txt [schedule] section
-      - RUN_MODE=scheduler
+      # Container runs in scheduler mode only
+      # Schedule intervals are configured in config.txt [schedule] section
     healthcheck:
       test: ["CMD", "/healthcheck.sh"]
       interval: 30s

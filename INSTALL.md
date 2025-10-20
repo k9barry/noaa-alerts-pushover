@@ -116,17 +116,12 @@ python3 test_setup.py --interactive
 
 **Docker (Recommended)**
 
-Continuous monitoring (default):
+Continuous monitoring (runs scheduler):
 ```bash
 docker compose up -d
 ```
 
 This runs the scheduler which checks for alerts every 5 minutes by default.
-
-Single check:
-```bash
-docker compose run -e RUN_MODE=once noaa-alerts
-```
 
 **Python (Manual)**
 
@@ -284,16 +279,6 @@ fetch_interval = 5        # minutes
 cleanup_interval = 24     # hours
 vacuum_interval = 168     # hours (weekly)
 ```
-
-#### Option 2: Use Single Run Mode
-
-To run once and exit:
-
-```bash
-docker compose run -e RUN_MODE=once noaa-alerts
-```
-
-This runs fetch.py a single time, useful for testing or if you want to handle scheduling externally.
 
 See the [Command-Line Options](#command-line-options) section below for all Docker commands and options.
 
@@ -521,7 +506,6 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - TZ=UTC
-      - RUN_MODE=scheduler
 
   nginx-alerts:
     image: nginx:alpine
@@ -604,7 +588,6 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - TZ=UTC
-      - RUN_MODE=scheduler
     networks:
       - web
 
@@ -688,7 +671,6 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - TZ=UTC
-      - RUN_MODE=scheduler
 
   apache-alerts:
     image: httpd:alpine
@@ -978,9 +960,6 @@ docker compose down
 # Rebuild after changes
 docker compose build
 
-# Run once and exit
-docker compose run -e RUN_MODE=once noaa-alerts
-
 # Run with purge flag
 docker compose run --rm noaa-alerts python fetch.py --purge
 
@@ -1002,8 +981,7 @@ docker compose build --no-cache
 | No push | `python3 fetch.py --nopush` |
 | Clear alerts | `python3 fetch.py --purge` |
 | Run scheduler | `python3 scheduler.py` |
-| Docker continuous | `docker compose up -d` |
-| Docker once | `docker compose run -e RUN_MODE=once noaa-alerts` |
+| Docker run | `docker compose up -d` |
 | View logs | `tail -f log.txt` |
 | Docker logs | `docker compose logs -f` |
 

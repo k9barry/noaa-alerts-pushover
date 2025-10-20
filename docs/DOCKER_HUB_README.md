@@ -19,7 +19,6 @@ docker run -d \
   -v $(pwd)/counties.json:/app/counties.json \
   -v $(pwd)/output:/app/output \
   -v $(pwd)/data:/app/data \
-  -e RUN_MODE=scheduler \
   -e TZ=UTC \
   --restart unless-stopped \
   k9barry/noaa-alerts-pushover:latest
@@ -38,7 +37,6 @@ docker run -d \
   -v $(pwd)/counties.json:/app/counties.json:ro \
   -v $(pwd)/output:/app/output \
   -v $(pwd)/data:/app/data \
-  -e RUN_MODE=scheduler \
   -e TZ=UTC \
   --restart unless-stopped \
   k9barry/noaa-alerts-pushover:latest
@@ -71,8 +69,9 @@ Download templates manually (optional):
 
 ### Environment Variables
 
-- `RUN_MODE`: Set to `scheduler` for continuous monitoring (recommended) or `once` for single run
 - `TZ`: Timezone for logs (default: UTC)
+
+**Note**: Container runs in scheduler mode only for continuous monitoring.
 
 ### Volumes
 
@@ -110,7 +109,6 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - TZ=UTC
-      - RUN_MODE=scheduler
     healthcheck:
       test: ["CMD", "/healthcheck.sh"]
       interval: 30s
@@ -152,23 +150,9 @@ sudo chown -R 1000:1000 ./output ./data
 
 ## Usage Examples
 
-### Single Run Mode
-
-Test the setup without continuous monitoring:
-
-```bash
-docker run --rm \
-  -v $(pwd)/config.txt:/app/config.txt:ro \
-  -v $(pwd)/counties.json:/app/counties.json:ro \
-  -v $(pwd)/output:/app/output \
-  -v $(pwd)/data:/app/data \
-  -e RUN_MODE=once \
-  k9barry/noaa-alerts-pushover:latest
-```
-
 ### Debug Mode
 
-Enable debug logging:
+Enable debug logging with the scheduler:
 
 ```bash
 docker run --rm \
@@ -176,9 +160,13 @@ docker run --rm \
   -v $(pwd)/counties.json:/app/counties.json:ro \
   -v $(pwd)/output:/app/output \
   -v $(pwd)/data:/app/data \
-  -e RUN_MODE=once \
   k9barry/noaa-alerts-pushover:latest \
   --debug --nopush
+```
+
+**Note**: For single-run testing without the Docker container, use the Python scripts directly:
+```bash
+python3 fetch.py --nopush --debug
 ```
 
 ## Support and Documentation
