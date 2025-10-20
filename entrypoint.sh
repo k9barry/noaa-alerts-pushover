@@ -41,9 +41,9 @@ if [ "$(id -u)" = "0" ]; then
   
   # Run setup validation
   echo ""
-  echo "=" * 60
+  echo "============================================================"
   echo "Running setup validation..."
-  echo "=" * 60
+  echo "============================================================"
   gosu noaa python test_setup.py || echo "⚠️  Setup validation completed with warnings"
   echo ""
 else
@@ -52,9 +52,9 @@ else
   
   # Run setup validation
   echo ""
-  echo "=" * 60
+  echo "============================================================"
   echo "Running setup validation..."
-  echo "=" * 60
+  echo "============================================================"
   python test_setup.py || echo "⚠️  Setup validation completed with warnings"
   echo ""
 fi
