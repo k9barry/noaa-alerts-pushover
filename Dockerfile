@@ -56,8 +56,6 @@ RUN chown -R noaa:noaa /app
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
-ENV RUN_MODE=once
-ENV CHECK_INTERVAL=300
 
 # Use entrypoint script
 ENTRYPOINT ["/entrypoint.sh"]
