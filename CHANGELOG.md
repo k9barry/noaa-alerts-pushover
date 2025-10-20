@@ -1,6 +1,11 @@
 # Changelog
 
 
+## Version 3.0.8 - 2025-10-20
+
+### Changes
+- Code clean-up: Remove RUN_MODE, fix security issues, modernize code (#50) by @Copilot
+
 ## Version 3.0.7 - 2025-10-19
 
 ### Changes
