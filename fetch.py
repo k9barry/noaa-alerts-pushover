@@ -9,15 +9,11 @@ import logging
 import os
 import requests
 import sys
-import urllib3
 
 from models import Alert
 
-# Disable SSL warnings (not recommended for production)
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-
-class Parser(object):
+class Parser:
     """ A convenience object to hold our functionality """
 
 
@@ -128,7 +124,7 @@ class Parser(object):
         headers = {}
         if self.user_agent:
             headers['User-Agent'] = self.user_agent
-        request = requests.get(alert.api_url, headers=headers)
+        request = requests.get(alert.api_url, headers=headers, timeout=30)
         # Check for HTML or wrong content type
         if (
             'text/html' in request.headers.get('Content-Type', '')
@@ -163,7 +159,7 @@ class Parser(object):
         headers = {}
         if self.user_agent:
             headers['User-Agent'] = self.user_agent
-        request = requests.get(self.noaa_api_url, headers=headers)
+        request = requests.get(self.noaa_api_url, headers=headers, timeout=30)
         if request.status_code != 200:
             logger.error(f"Failed to fetch alerts feed: HTTP {request.status_code}")
             return
