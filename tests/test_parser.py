@@ -59,7 +59,7 @@ class TestValidation:
             'fips': '012057',
             'name': 'Hillsborough County',
             'state': 'FL',
-            'ugc': 'FL057'
+            'ugc': 'FLC057'
         }
         assert validate_county(county) is True
     
@@ -69,7 +69,7 @@ class TestValidation:
             'fips': '',
             'name': 'Test County',
             'state': 'TX',
-            'ugc': 'TX123'
+            'ugc': 'TXC123'
         }
         assert validate_county(county) is True
     
@@ -79,7 +79,7 @@ class TestValidation:
             'fips': '12057',  # Only 5 digits, should be 6
             'name': 'Test County',
             'state': 'FL',
-            'ugc': 'FL057'
+            'ugc': 'FLC057'
         }
         with pytest.raises(ConfigurationError, match="Invalid FIPS code"):
             validate_county(county)
