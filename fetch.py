@@ -78,7 +78,7 @@ def rate_limit(min_interval=1.0):
 
 def validate_county(county):
     """Validate county code formats"""
-    fips_pattern = r'^\d{5}$'  # 5 digits
+    fips_pattern = r'^\d{6}$'  # 5 digits
     ugc_pattern = r'^[A-Z]{2}[CZ]\d{3}$'  # 2 state + C=county or Z=zone + 3 digits fips 
     
     fips = county.get('fips', '')
