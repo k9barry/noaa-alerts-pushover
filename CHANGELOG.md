@@ -1,6 +1,36 @@
 # Changelog
 
 
+## Version 3.1.0 - 2025-10-21
+
+### Added
+- **Environment Variable Support**: Credentials can now be set via `PUSHOVER_TOKEN` and `PUSHOVER_USER` environment variables for better Docker/container security (#XX)
+- **Retry Logic**: Automatic retry with exponential backoff for API requests (3 retries, backoff factor 1, handles HTTP 429, 500, 502, 503, 504) (#XX)
+- **Rate Limiting**: API calls are now rate-limited (2s interval for NOAA, 1s for Pushover) to prevent quota violations (#XX)
+- **Input Validation**: FIPS codes (6 digits) and UGC codes (2 letters + 3 digits) are validated on load to catch configuration errors early (#XX)
+- **Custom Exception Hierarchy**: Added `NOAAAlertError`, `APIConnectionError`, `InvalidAlertDataError`, `ConfigurationError` for better error handling (#XX)
+- **Testing Framework**: Pytest-based test suite with 13+ unit and integration tests (#XX)
+  - Unit tests for Parser class methods
+  - Integration tests with mocked API responses
+  - Database fixtures for testing
+  - CI/CD integration with GitHub Actions
+- **Test Dependencies**: Added pytest (8.3.4), pytest-cov (6.0.0), responses (0.25.0) to requirements.txt (#XX)
+
+### Changed
+- **Error Handling**: Individual alert failures no longer stop processing of other alerts (#XX)
+- **API Resilience**: Better handling of transient network failures with automatic retries (#XX)
+- **Logging**: Module-level logger for better test compatibility (#XX)
+
+### Improved
+- **Documentation**: Updated README.md, INSTALL.md, SECURITY.md with new features (#XX)
+- **CI/CD**: Added pytest execution to GitHub Actions workflow (#XX)
+- **Security**: Environment variables take precedence over config.txt for credential management (#XX)
+
+### Developer
+- Created `tests/` directory with comprehensive test coverage
+- Added pytest.ini for test configuration
+- Updated .gitignore to exclude .pytest_cache/
+
 ## Version 3.0.8 - 2025-10-20
 
 ### Changes

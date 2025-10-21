@@ -23,9 +23,15 @@ If you discover a security vulnerability, please report it by opening a GitHub i
    - The `.gitignore` file excludes this by default
    - Always use `config.txt.example` as a template
 
-2. **Use environment variables for sensitive data (Docker)**
-   - Consider modifying the application to read from environment variables
+2. **Use environment variables for sensitive data (Docker)** ✅ Implemented
+   - The application supports `PUSHOVER_TOKEN` and `PUSHOVER_USER` environment variables
+   - Environment variables take precedence over config.txt values
    - Store secrets in Docker secrets or your orchestration platform
+   - Example:
+   ```bash
+   docker run -e PUSHOVER_TOKEN="..." -e PUSHOVER_USER="..." \
+     k9barry/noaa-alerts-pushover:latest
+   ```
 
 3. **File permissions**
    ```bash
@@ -98,20 +104,27 @@ If you discover a security vulnerability, please report it by opening a GitHub i
 
 ### Application Security
 
-1. **Input validation**
+1. **Input validation** ✅ Enhanced
    - County codes are validated against configured lists
+   - **FIPS codes validated** with regex pattern `^\d{6}$` (6 digits)
+   - **UGC codes validated** with regex pattern `^[A-Z]{2}\d{3}$` (2 letters + 3 digits)
    - JSON parsing uses Python's built-in json module for safety
    - API responses validated for correct content type before processing
 
-2. **Error handling and resilience**
+2. **Error handling and resilience** ✅ Enhanced
+   - **Custom exception hierarchy**: `NOAAAlertError`, `APIConnectionError`, `InvalidAlertDataError`, `ConfigurationError`
+   - **Automatic retry logic**: 3 retries with exponential backoff for transient failures (HTTP 429, 500, 502, 503, 504)
+   - **Rate limiting**: API calls limited to prevent quota violations (2s for NOAA, 1s for Pushover)
    - HTTP status codes validated before processing responses
    - HTML response detection prevents processing of error pages
-   - JSON parsing errors caught and logged safely
+   - JSON parsing errors caught and logged safely with specific exception types
    - Malformed API responses don't crash the application
    - Individual alert failures don't prevent processing of other alerts
 
 3. **Dependency management**
    - All dependencies are pinned to specific versions
+   - **Testing framework**: pytest with 13+ unit and integration tests
+   - **Test coverage**: CI/CD pipeline runs tests on every commit
    - Regularly update dependencies:
    ```bash
    pip list --outdated
@@ -141,22 +154,29 @@ If you discover a security vulnerability, please report it by opening a GitHub i
 - We use well-maintained, popular libraries
 - Dependencies are kept up-to-date
 - Current dependencies:
-  - **requests**: HTTP library (industry standard)
+  - **requests**: HTTP library with retry support (industry standard)
   - **peewee**: ORM (SQL injection protection)
   - **Jinja2**: Template engine (XSS protection)
   - **arrow**: Date/time handling
   - **beautifulsoup4**: HTML parsing
+  - **schedule**: Task scheduling
+  - **pytest**: Testing framework (development)
+  - **pytest-cov**: Test coverage (development)
+  - **responses**: HTTP mocking for tests (development)
 
 ## Security Checklist for Deployment
 
 - [ ] `config.txt` is not committed to version control
 - [ ] `config.txt` has restrictive file permissions (600)
+- [ ] **Consider using environment variables for credentials** (especially in Docker)
 - [ ] Docker containers are kept up-to-date
 - [ ] Dependencies are regularly updated
+- [ ] **Run tests before deployment**: `python -m pytest tests/`
 - [ ] Logs are reviewed periodically
 - [ ] Database directory has proper permissions (700)
 - [ ] Application runs with minimal required privileges
 - [ ] Network access is restricted to required APIs only
+- [ ] **County codes validated** (FIPS 6 digits, UGC 2 letters + 3 digits)
 
 ## Vulnerability Disclosure Timeline
 

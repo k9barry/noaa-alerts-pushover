@@ -338,7 +338,6 @@ class Parser:
                     title=title,
                     event=event,
                     details=detail,
-                    description=description,
                     expires=expires,
                     expires_utc_ts=expires_utc_ts,
                     url=url,
