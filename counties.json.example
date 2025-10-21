@@ -3,30 +3,30 @@
         "fips": "012057",
         "name": "Hillsborough County",
         "state": "FL",
-        "ugc": "FL057"
+        "ugc": "FLC057"
     },
     {
         "fips": "008005",
         "name": "Arapahoe County",
         "state": "CO",
-        "ugc": "CO005"
+        "ugc": "COC005"
     },
     {
         "fips": "008035",
         "name": "Douglas County",
         "state": "CO",
-        "ugc": "CO035"
+        "ugc": "COC035"
     },
     {
         "fips": "029071",
         "name": "Franklin County",
         "state": "MO",
-        "ugc": "MO071"
+        "ugc": "MOC071"
     },
     {
         "fips": "047065",
         "name": "Hamilton County",
         "state": "TN",
-        "ugc": "TN065"
+        "ugc": "TNC065"
     }
 ]
