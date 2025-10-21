@@ -1,0 +1,19 @@
+{
+  "type": "Feature",
+  "properties": {
+    "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.test123",
+    "headline": "Test Tornado Warning issued for Test County",
+    "event": "Tornado Warning",
+    "senderName": "NWS Test Office",
+    "description": "A tornado warning has been issued for the test area.",
+    "instruction": "Take shelter immediately in a basement or interior room.",
+    "areaDesc": "Test County",
+    "expires": "2025-10-21T15:00:00-05:00",
+    "uri": "https://api.weather.gov/alerts/test123",
+    "@id": "https://api.weather.gov/alerts/test123",
+    "geocode": {
+      "FIPS6": ["012057"],
+      "UGC": ["FL057"]
+    }
+  }
+}

@@ -12,6 +12,11 @@ Sends out NOAA Severe Weather Alerts via [Pushover](http://www.pushover.net). An
 - 💾 SQLite database to prevent duplicate notifications
 - 🔄 Automatic cleanup of expired alerts
 - 🛡️ Robust error handling for API failures and malformed responses
+- 🔐 Environment variable support for credentials (Docker-friendly)
+- 🔁 Automatic retry logic with exponential backoff
+- ⏱️ Rate limiting to respect API quotas
+- ✅ Input validation for county codes (FIPS/UGC)
+- 🧪 Comprehensive test suite with pytest
 
 ## Quick Start
 
@@ -70,9 +75,12 @@ This project has been fully modernized to Python 3.12+ with comprehensive docume
 
 ### ✅ Modernization Highlights
 - **Python 3 Migration**: Updated from Python 2 to Python 3.12+ with modern syntax
-- **Security Improvements**: SSL verification, request timeouts, robust error handling
+- **Security Improvements**: SSL verification, request timeouts, robust error handling, environment variable support
 - **Docker Support**: Full containerization with non-root user (UID 1000) for enhanced security
 - **Built-in Scheduler**: Python schedule library for automated task execution
+- **API Resilience**: Retry logic with exponential backoff, rate limiting, custom exception hierarchy
+- **Input Validation**: FIPS/UGC code format validation to catch configuration errors early
+- **Testing Framework**: Pytest-based test suite with 13+ unit and integration tests
 - **Comprehensive Documentation**: 2,000+ lines across 7 detailed guides
 - **CI/CD Pipeline**: Automated testing with GitHub Actions
 - **Auto-fix Tools**: Setup validation script with automatic configuration repair
@@ -105,7 +113,11 @@ The Docker container runs as non-root user `noaa` (UID 1000) for enhanced securi
 - **beautifulsoup4** - HTML parsing for cleanup tasks
 - **Jinja2** - Template engine for alert pages
 - **peewee** - ORM for SQLite database
-- **requests** - HTTP client for API calls
+- **requests** - HTTP client for API calls with retry support
+- **schedule** - Task scheduling for automated runs
+- **pytest** - Testing framework (development)
+- **pytest-cov** - Test coverage reporting (development)
+- **responses** - HTTP request mocking for tests (development)
 
 See [requirements.txt](requirements.txt) for specific versions.
 

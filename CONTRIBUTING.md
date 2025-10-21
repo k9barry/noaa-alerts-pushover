@@ -110,32 +110,81 @@ Examples:
 
 ## Testing
 
+### Running the Test Suite
+
+The project uses pytest for automated testing. **Always run tests before submitting a PR.**
+
+1. **Run all tests**:
+   ```bash
+   python -m pytest tests/ -v
+   ```
+
+2. **Run tests with coverage**:
+   ```bash
+   python -m pytest tests/ --cov=. --cov-report=html
+   ```
+
+3. **Run specific test file**:
+   ```bash
+   python -m pytest tests/test_parser.py -v
+   ```
+
+See [tests/README.md](tests/README.md) for comprehensive testing documentation.
+
 ### Before Submitting
 
-1. **Validate syntax**:
+1. **Run the test suite** ✅ **REQUIRED**:
+   ```bash
+   python -m pytest tests/ -v
+   ```
+   All tests must pass before submitting a PR.
+
+2. **Validate syntax**:
    ```bash
    python -m py_compile *.py
    ```
 
-2. **Test imports**:
+3. **Test imports**:
    ```bash
    python -c "import fetch; import models; print('OK')"
    ```
 
-3. **Run validation**:
+4. **Run validation**:
    ```bash
    python test_setup.py
    ```
 
-4. **Test functionality** (if you have credentials):
+5. **Test functionality** (if you have credentials):
    ```bash
    python fetch.py --nopush --debug
    ```
 
-5. **Test Docker build** (if Docker changes):
+6. **Test Docker build** (if Docker changes):
    ```bash
    docker compose build
    ```
+
+### Writing Tests
+
+When adding new features, **write tests** to cover your changes:
+
+- Place tests in the `tests/` directory
+- Follow the naming convention: `test_*.py`
+- Use descriptive test names
+- Mock external API calls using `responses` library
+- See [tests/README.md](tests/README.md) for examples
+
+Example:
+```python
+import pytest
+from fetch import Parser
+
+def test_new_feature():
+    """Test that new feature works correctly"""
+    parser = Parser("token", "user", "api_url", "noaa_url", ".", None)
+    result = parser.new_method()
+    assert result == expected_value
+```
 
 ### Test Coverage Areas
 
@@ -146,6 +195,20 @@ When making changes, consider testing:
 - **API interactions**: Does it handle errors gracefully?
 - **Database operations**: Does it prevent duplicates?
 - **Notification sending**: Does it format messages correctly?
+- **Input validation**: Does it validate FIPS/UGC codes correctly?
+- **Error handling**: Do custom exceptions work as expected?
+- **Rate limiting**: Does it respect API rate limits?
+
+### Current Test Coverage
+
+The project has 13+ automated tests covering:
+- Parser class methods
+- County code validation
+- API request handling
+- Error scenarios (timeouts, invalid JSON)
+- Pushover notification sending
+
+See the CI/CD workflow (`.github/workflows/ci.yml`) for automated test execution.
 
 ## Submitting Changes
 
@@ -194,12 +257,14 @@ When your PR is merged to main, a new version is **automatically created** based
 ### Pull Request Checklist
 
 - [ ] Code follows project style guidelines
-- [ ] All tests pass
+- [ ] **All tests pass** (`python -m pytest tests/ -v`) ✅ **REQUIRED**
+- [ ] New tests added for new features (if applicable)
 - [ ] Documentation updated (if needed)
 - [ ] CHANGELOG.md updated (for significant changes)
 - [ ] Commit messages are clear
 - [ ] No merge conflicts
 - [ ] Security implications considered
+- [ ] **Version bump label added** (`major`, `minor`, or `patch`)
 
 ### Review Process
 

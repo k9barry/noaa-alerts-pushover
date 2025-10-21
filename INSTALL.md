@@ -463,6 +463,36 @@ user = YOUR_PUSHOVER_USER_KEY
 
 Get your credentials at: https://pushover.net
 
+**Environment Variable Override (Recommended for Docker/Containers):**
+
+For enhanced security, especially in containerized environments, you can provide credentials via environment variables instead of storing them in `config.txt`:
+
+- `PUSHOVER_TOKEN` - Overrides `[pushover] token`
+- `PUSHOVER_USER` - Overrides `[pushover] user`
+
+Example with Docker:
+```bash
+docker run -e PUSHOVER_TOKEN="your_token" -e PUSHOVER_USER="your_user" \
+  -v ./data:/app/data \
+  -v ./output:/app/output \
+  k9barry/noaa-alerts-pushover:latest
+```
+
+Example with docker-compose.yml:
+```yaml
+services:
+  noaa-alerts:
+    image: k9barry/noaa-alerts-pushover:latest
+    environment:
+      - PUSHOVER_TOKEN=your_token_here
+      - PUSHOVER_USER=your_user_key_here
+    volumes:
+      - ./data:/app/data
+      - ./output:/app/output
+```
+
+**Security Note:** Environment variables take precedence over config.txt values. This allows you to keep placeholder values in `config.txt` while providing real credentials securely through your container orchestration system.
+
 **Base URL Configuration:**
 
 The `base_url` option controls what URL is included in Pushover notifications:
