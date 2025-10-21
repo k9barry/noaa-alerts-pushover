@@ -1,6 +1,14 @@
-# NOAA Alerts Pushover
+# NOAA Alerts Pushover# NOAA Alerts → Pushover
 
-Sends out NOAA Severe Weather Alerts via [Pushover](http://www.pushover.net). Any time a new alert is created for your monitored counties, you'll receive a push notification on your devices.
+[![License: MIT](https://img.shields.io/github/license/k9barry/noaa-alerts-pushover.svg)](LICENSE)
+[![Build (main)](https://github.com/k9barry/noaa-alerts-pushover/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/k9barry/noaa-alerts-pushover/actions/workflows/ci.yml)
+[![Open issues](https://img.shields.io/github/issues/k9barry/noaa-alerts-pushover.svg)](https://github.com/k9barry/noaa-alerts-pushover/issues)
+[![Latest release](https://img.shields.io/github/v/release/k9barry/noaa-alerts-pushover?label=release)](https://github.com/k9barry/noaa-alerts-pushover/releases)
+[![Stars](https://img.shields.io/github/stars/k9barry/noaa-alerts-pushover.svg?style=social)](https://github.com/k9barry/noaa-alerts-pushover/stargazers)
+[![Forks](https://img.shields.io/github/forks/k9barry/noaa-alerts-pushover.svg?style=social)](https://github.com/k9barry/noaa-alerts-pushover/network/members)
+
+Short description
+Sends out NOAA Severe Weather Alerts via Pushover.
 
 ## Features
 
