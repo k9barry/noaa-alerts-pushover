@@ -13,7 +13,7 @@
     "@id": "https://api.weather.gov/alerts/test123",
     "geocode": {
       "FIPS6": ["012057"],
-      "UGC": ["FL057"]
+      "UGC": ["FLC057"]
     }
   }
 }
