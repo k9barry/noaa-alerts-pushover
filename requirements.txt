@@ -4,3 +4,6 @@ Jinja2==3.1.6
 peewee==3.17.6
 requests==2.32.4
 schedule==1.2.2
+pytest==8.3.4
+pytest-cov==6.0.0
+responses==0.25.0

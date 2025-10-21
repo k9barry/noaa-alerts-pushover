@@ -45,6 +45,10 @@ jobs:
     - name: Test imports
       run: |
         python -c "import fetch; import models; import cleanup; print('All imports successful')"
+    
+    - name: Run pytest
+      run: |
+        python -m pytest tests/ -v --tb=short
 
   docker:
     runs-on: ubuntu-latest

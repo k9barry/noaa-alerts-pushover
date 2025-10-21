@@ -7,10 +7,92 @@ import jinja2
 import json
 import logging
 import os
+import re
 import requests
 import sys
+import time
+from functools import wraps
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 from models import Alert
+
+
+# Set up module-level logger (can be configured later)
+logger = logging.getLogger(__name__)
+
+
+# Custom exception hierarchy
+class NOAAAlertError(Exception):
+    """Base exception for NOAA alert errors"""
+    pass
+
+
+class APIConnectionError(NOAAAlertError):
+    """API connection or timeout error"""
+    pass
+
+
+class InvalidAlertDataError(NOAAAlertError):
+    """Alert data validation error"""
+    pass
+
+
+class ConfigurationError(NOAAAlertError):
+    """Configuration error"""
+    pass
+
+
+def create_session_with_retries():
+    """Create a requests session with retry logic and exponential backoff"""
+    session = requests.Session()
+    retry = Retry(
+        total=3,
+        backoff_factor=1,
+        status_forcelist=[429, 500, 502, 503, 504],
+        allowed_methods=["GET", "POST"]
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount("https://", adapter)
+    session.mount("http://", adapter)
+    return session
+
+
+def rate_limit(min_interval=1.0):
+    """Decorator to rate limit function calls"""
+    last_called = [0.0]
+    
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            elapsed = time.time() - last_called[0]
+            wait_time = min_interval - elapsed
+            if wait_time > 0:
+                time.sleep(wait_time)
+            result = func(*args, **kwargs)
+            last_called[0] = time.time()
+            return result
+        return wrapper
+    return decorator
+
+
+def validate_county(county):
+    """Validate county code formats"""
+    fips_pattern = r'^\d{6}$'  # 6 digits
+    ugc_pattern = r'^[A-Z]{2}\d{3}$'  # 2 letters + 3 digits
+    
+    fips = county.get('fips', '')
+    ugc = county.get('ugc', '')
+    
+    # FIPS can be empty for some counties
+    if fips and not re.match(fips_pattern, fips):
+        raise ConfigurationError(f"Invalid FIPS code: {fips}")
+    
+    # UGC should always be present and valid
+    if not ugc or not re.match(ugc_pattern, ugc):
+        raise ConfigurationError(f"Invalid UGC code: {ugc}")
+    
+    return True
 
 
 class Parser:
@@ -27,6 +109,7 @@ class Parser:
         self.counties = None
         self.fips_watch_list = None
         self.ugc_watch_list = None
+        self.session = create_session_with_retries()
 
 
     def create_alert_title(self, p_alert):
@@ -54,21 +137,27 @@ class Parser:
         return message
 
 
+    @rate_limit(min_interval=1.0)
     def send_pushover_alert(self, id, title, message, url):
         """ Sends an alert via Pushover API """
-        request = requests.post(self.pushover_api_url, data={
-            "title": title,
-            "token": self.pushover_token,
-            "user": self.pushover_user,
-            "message": message,
-            "sound": "falling",
-            "url": url,
-        }, timeout=30)
+        try:
+            request = self.session.post(self.pushover_api_url, data={
+                "title": title,
+                "token": self.pushover_token,
+                "user": self.pushover_user,
+                "message": message,
+                "sound": "falling",
+                "url": url,
+            }, timeout=30)
 
-        if not request.ok:
-            logger.error("Error sending push: %s\n" % request.text)
-        else:
-            logger.info("Sent push: %s" % title)
+            if not request.ok:
+                logger.error("Error sending push: %s\n" % request.text)
+            else:
+                logger.info("Sent push: %s" % title)
+        except requests.exceptions.Timeout:
+            raise APIConnectionError(f"Pushover API request timed out for alert {id}")
+        except requests.exceptions.RequestException as e:
+            raise APIConnectionError(f"Pushover API request failed for alert {id}: {e}")
 
 
     def check_new_alerts(self, created_ts):
@@ -118,13 +207,21 @@ class Parser:
         return matched_alerts
 
 
+    @rate_limit(min_interval=2.0)
     def details_for_alert(self, alert):
         """ Fetches the NOAA detail JSON feed for an alert and returns the description """
         logger.info('Fetching Detail Link for Alert %s' % alert.alert_id)
         headers = {}
         if self.user_agent:
             headers['User-Agent'] = self.user_agent
-        request = requests.get(alert.api_url, headers=headers, timeout=30)
+        
+        try:
+            request = self.session.get(alert.api_url, headers=headers, timeout=30)
+        except requests.exceptions.Timeout:
+            raise APIConnectionError(f"NOAA API request timed out for alert {alert.alert_id}")
+        except requests.exceptions.RequestException as e:
+            raise APIConnectionError(f"NOAA API request failed for alert {alert.alert_id}: {e}")
+        
         # Check for HTML or wrong content type
         if (
             'text/html' in request.headers.get('Content-Type', '')
@@ -133,11 +230,11 @@ class Parser:
         ):
             logger.error(f"Expected JSON but got HTML for alert {alert.alert_id}. Response was:\n{request.text[:1000]}")
             return None
+        
         try:
             data = request.json()
-        except Exception as e:
-            logger.error(f"Failed to parse alert detail JSON: {e}\nResponse was:\n{request.text[:1000]}")
-            return None
+        except json.JSONDecodeError as e:
+            raise InvalidAlertDataError(f"Invalid JSON response for alert {alert.alert_id}: {e}")
 
         # Extract properties from the GeoJSON feature response
         properties = data.get('properties', {})
@@ -152,6 +249,7 @@ class Parser:
         }
 
 
+    @rate_limit(min_interval=2.0)
     def fetch(self, run_timestamp):
         """ Fetches the NOAA alerts JSON feed and inserts into database """
 
@@ -159,10 +257,18 @@ class Parser:
         headers = {}
         if self.user_agent:
             headers['User-Agent'] = self.user_agent
-        request = requests.get(self.noaa_api_url, headers=headers, timeout=30)
+        
+        try:
+            request = self.session.get(self.noaa_api_url, headers=headers, timeout=30)
+        except requests.exceptions.Timeout:
+            raise APIConnectionError("NOAA API request timed out")
+        except requests.exceptions.RequestException as e:
+            raise APIConnectionError(f"NOAA API request failed: {e}")
+        
         if request.status_code != 200:
             logger.error(f"Failed to fetch alerts feed: HTTP {request.status_code}")
             return
+        
         # Check for HTML or wrong content type
         if (
             'text/html' in request.headers.get('Content-Type', '')
@@ -171,11 +277,11 @@ class Parser:
         ):
             logger.error(f"Expected JSON but got HTML. Response was:\n{request.text[:1000]}")
             return
+        
         try:
             data = request.json()
-        except Exception as e:
-            logger.error(f"Failed to parse alerts feed JSON: {e}\nResponse was:\n{request.text[:1000]}")
-            return
+        except json.JSONDecodeError as e:
+            raise InvalidAlertDataError(f"Failed to parse alerts feed JSON: {e}")
 
         total_count = 0
         insert_count = 0
@@ -259,10 +365,9 @@ if __name__ == '__main__':
     argparser.set_defaults(debug=False)
     args = vars(argparser.parse_args())
 
-    # Set up logger
+    # Set up logger (module logger already exists)
     logging.basicConfig(filename='log.txt', level=logging.INFO, format='%(asctime)s  %(message)s')
     logging.Formatter(fmt='%(asctime)s', datefmt='%Y-%m-%d,%H:%M:%S')
-    logger = logging.getLogger(__name__)
 
     # Make sure the requests library only logs errors
     logging.getLogger("requests").setLevel(logging.ERROR)
@@ -316,8 +421,9 @@ if __name__ == '__main__':
         ignored_events = []
 
     # Instantiate our parser object
-    PUSHOVER_TOKEN = config.get('pushover', 'token')
-    PUSHOVER_USER = config.get('pushover', 'user')
+    # Support environment variable overrides for sensitive data
+    PUSHOVER_TOKEN = os.getenv('PUSHOVER_TOKEN') or config.get('pushover', 'token')
+    PUSHOVER_USER = os.getenv('PUSHOVER_USER') or config.get('pushover', 'user')
     
     # Get optional Pushover API URL (defaults to standard endpoint)
     try:
@@ -356,8 +462,20 @@ if __name__ == '__main__':
 
     # Load the counties we want to monitor
     counties_filepath = os.path.join(CUR_DIR, 'counties.json')
-    with open(counties_filepath, 'r') as f:
-        parser.counties = json.loads(f.read())
+    try:
+        with open(counties_filepath, 'r') as f:
+            parser.counties = json.loads(f.read())
+        
+        # Validate county code formats
+        for county in parser.counties:
+            try:
+                validate_county(county)
+            except ConfigurationError as e:
+                logger.warning(f"County validation warning: {e}")
+    except FileNotFoundError:
+        raise ConfigurationError(f"Counties file not found: {counties_filepath}")
+    except json.JSONDecodeError as e:
+        raise ConfigurationError(f"Invalid JSON in counties file: {e}")
     
     # Check if test messages should be enabled
     try:
@@ -398,7 +516,14 @@ if __name__ == '__main__':
     run_ts = arrow.utcnow().timestamp()
 
     # Go grab the current alerts and process them
-    parser.fetch(run_ts)
+    try:
+        parser.fetch(run_ts)
+    except APIConnectionError as e:
+        logger.error(f"API connection error: {e}")
+        sys.exit(1)
+    except InvalidAlertDataError as e:
+        logger.error(f"Invalid alert data: {e}")
+        sys.exit(1)
 
     # Find any new alerts that match our counties
     for alert in parser.check_new_alerts(run_ts):
@@ -406,45 +531,53 @@ if __name__ == '__main__':
         # See if they are in the list of alerts to ignore
         if alert.event not in ignored_events:
 
-            # Get the details about the alert from the API
-            details = parser.details_for_alert(alert)
+            try:
+                # Get the details about the alert from the API
+                details = parser.details_for_alert(alert)
 
-            # Format expires timestamp as human-readable string for display
-            expires_formatted = arrow.get(alert.expires_utc_ts).format('YYYY-MM-DD HH:mm:ss')
+                # Format expires timestamp as human-readable string for display
+                expires_formatted = arrow.get(alert.expires_utc_ts).format('YYYY-MM-DD HH:mm:ss')
 
-            # Render the detail page
-            output = template.render({
-                'alert': details,
-                'expires': expires_formatted,
-                'expires_timestamp': int(alert.expires_utc_ts),
-                'alert_url': alert.url,
-                'template_options': template_options
-            })
-            detail_filepath = os.path.join(OUTPUT_DIR, '%s.html' % alert.alert_id)
-            with open(detail_filepath, 'w') as f:
-                f.write(output)
+                # Render the detail page
+                output = template.render({
+                    'alert': details,
+                    'expires': expires_formatted,
+                    'expires_timestamp': int(alert.expires_utc_ts),
+                    'alert_url': alert.url,
+                    'template_options': template_options
+                })
+                detail_filepath = os.path.join(OUTPUT_DIR, '%s.html' % alert.alert_id)
+                with open(detail_filepath, 'w') as f:
+                    f.write(output)
 
-            # Construct the title and message body for the alert
-            alert_title = parser.create_alert_title(alert)
-            alert_msg = parser.create_alert_message(alert)
-            alert_id = alert.alert_id
-            logger.info('Alert to send: %s' % alert_title)
+                # Construct the title and message body for the alert
+                alert_title = parser.create_alert_title(alert)
+                alert_msg = parser.create_alert_message(alert)
+                alert_id = alert.alert_id
+                logger.info('Alert to send: %s' % alert_title)
+                
+                # Determine the URL to use in the push notification
+                if BASE_URL:
+                    # Use custom base URL to link to locally hosted HTML
+                    push_url = '%s/%s.html' % (BASE_URL, alert_id)
+                    logger.debug('Using custom base URL: %s' % push_url)
+                else:
+                    # Fall back to NOAA's official alert URL
+                    push_url = alert.url
+                    logger.debug('Using NOAA URL: %s' % push_url)
+
+                # Check the argument to see if we should be sending the push
+                if not args['nopush']:
+                    parser.send_pushover_alert(alert_id, alert_title, alert_msg, push_url)
+                else:
+                    logger.info('Sending pushes disabled by argument')
             
-            # Determine the URL to use in the push notification
-            if BASE_URL:
-                # Use custom base URL to link to locally hosted HTML
-                push_url = '%s/%s.html' % (BASE_URL, alert_id)
-                logger.debug('Using custom base URL: %s' % push_url)
-            else:
-                # Fall back to NOAA's official alert URL
-                push_url = alert.url
-                logger.debug('Using NOAA URL: %s' % push_url)
-
-            # Check the argument to see if we should be sending the push
-            if not args['nopush']:
-                parser.send_pushover_alert(alert_id, alert_title, alert_msg, push_url)
-            else:
-                logger.info('Sending pushes disabled by argument')
+            except APIConnectionError as e:
+                logger.error(f"API connection error for alert {alert.alert_id}: {e}")
+                continue  # Skip this alert but continue processing others
+            except InvalidAlertDataError as e:
+                logger.error(f"Invalid data for alert {alert.alert_id}: {e}")
+                continue  # Skip this alert but continue processing others
 
         else:
             logger.info('Ignoring %s, %s alert for %s' % (alert.county, alert.state, alert.event))

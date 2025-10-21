@@ -1,0 +1,19 @@
+[pushover]
+token = TEST_TOKEN
+user = TEST_USER
+
+[noaa]
+api_url = https://api.weather.gov/alerts
+
+[user_agent]
+app_name = NOAA-Alerts-Pushover-Test
+version = 1.0
+contact = test@example.com
+
+[events]
+ignored = Red Flag Warning,Heat Advisory
+
+[schedule]
+fetch_interval = 5
+cleanup_interval = 24
+vacuum_interval = 168
