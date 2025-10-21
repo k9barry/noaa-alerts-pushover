@@ -40,7 +40,7 @@ class TestAPIIntegration:
                         '@id': 'https://api.weather.gov/alerts/1',
                         'geocode': {
                             'FIPS6': ['012057'],
-                            'UGC': ['FL057']
+                            'UGC': ['FLC057']
                         }
                     }
                 }
